@@ -1156,6 +1156,14 @@ ipcMain.handle('set-php-version', async (event, version) => {
   return await setPhpVersion(version);
 });
 
+ipcMain.handle('get-php-extensions', async (event, version) => {
+  return await getPHPExtensions(version);
+});
+
+ipcMain.handle('save-php-extensions', async (event, version, extensions) => {
+  return await savePHPExtensions(version, extensions);
+});
+
 ipcMain.handle('install-app', async (event, appName) => {
   return await installApp(appName);
 });
@@ -1595,6 +1603,169 @@ async function getPhpVersions() {
   
   console.log('Final PHP versions array:', versions);
   return versions;
+}
+
+async function getPHPExtensions(version) {
+  try {
+    const phpIniPath = path.join(__dirname, 'php', version, 'php.ini');
+    
+    if (!fs.existsSync(phpIniPath)) {
+      return { 
+        success: false, 
+        error: `PHP ${version} configuration file not found` 
+      };
+    }
+
+    const phpIniContent = fs.readFileSync(phpIniPath, 'utf8');
+    const extensions = {};
+    
+    // Define common extensions to check
+    const commonExtensions = [
+      'curl', 'gd', 'mbstring', 'mysqli', 'pdo_mysql', 'pdo_sqlite', 'pdo_pgsql',
+      'openssl', 'zip', 'json', 'session', 'filter', 'hash', 'xml',
+      'fileinfo', 'intl', 'xdebug', 'redis', 'imagick', 'memcached',
+      'ftp', 'soap', 'sockets', 'tidy', 'xsl', 'bz2', 'opcache', 'exif'
+    ];
+
+    // Check each extension
+    commonExtensions.forEach(ext => {
+      const enabledPattern = new RegExp(`^extension=${ext}`, 'm');
+      const disabledPattern = new RegExp(`^;extension=${ext}`, 'm');
+      
+      let enabled = false;
+      let category = 'Other';
+      let description = `${ext} extension`;
+      
+      // Check if extension is enabled
+      if (enabledPattern.test(phpIniContent)) {
+        enabled = true;
+      } else if (disabledPattern.test(phpIniContent)) {
+        enabled = false;
+      }
+      
+      // Categorize extensions
+      if (['mysqli', 'pdo_mysql', 'pdo_sqlite', 'pdo_pgsql'].includes(ext)) {
+        category = 'Database';
+      } else if (['curl', 'openssl', 'filter', 'hash'].includes(ext)) {
+        category = 'Security';
+      } else if (['gd', 'imagick', 'exif'].includes(ext)) {
+        category = 'Media';
+      } else if (['json', 'xml', 'zip', 'fileinfo'].includes(ext)) {
+        category = 'Core';
+      } else if (['session', 'mbstring', 'intl'].includes(ext)) {
+        category = 'Web Development';
+      } else if (['xdebug', 'opcache'].includes(ext)) {
+        category = 'Development';
+      } else if (['redis', 'memcached'].includes(ext)) {
+        category = 'Caching';
+      }
+      
+      // Add detailed descriptions
+      const descriptions = {
+        curl: 'HTTP requests and API communication',
+        gd: 'Image creation and manipulation',
+        mbstring: 'Unicode and multibyte character support',
+        mysqli: 'MySQL Improved extension for database connectivity',
+        pdo_mysql: 'PDO driver for MySQL databases',
+        pdo_sqlite: 'PDO driver for SQLite databases',
+        pdo_pgsql: 'PDO driver for PostgreSQL databases',
+        openssl: 'Encryption and secure communication',
+        zip: 'Archive creation and extraction',
+        json: 'JSON data encoding and decoding',
+        session: 'Session management for web applications',
+        filter: 'Data validation and sanitization',
+        hash: 'Hashing algorithms for security',
+        xml: 'XML parsing and processing',
+        fileinfo: 'File type detection and MIME types',
+        intl: 'Internationalization support',
+        xdebug: 'Debugging and profiling tools',
+        redis: 'Redis database connectivity',
+        imagick: 'Advanced image processing',
+        memcached: 'High-performance caching',
+        ftp: 'FTP client functionality',
+        soap: 'SOAP web services',
+        sockets: 'Low-level socket communication',
+        tidy: 'HTML cleanup and validation',
+        xsl: 'XSL transformations',
+        bz2: 'Bzip2 compression',
+        opcache: 'PHP accelerator for better performance',
+        exif: 'Image metadata extraction'
+      };
+      
+      extensions[ext] = {
+        enabled: enabled,
+        category: category,
+        description: descriptions[ext] || description
+      };
+    });
+
+    return {
+      success: true,
+      extensions: extensions,
+      version: version
+    };
+
+  } catch (error) {
+    return {
+      success: false,
+      error: error.message
+    };
+  }
+}
+
+async function savePHPExtensions(version, extensions) {
+  try {
+    const phpIniPath = path.join(__dirname, 'php', version, 'php.ini');
+    
+    if (!fs.existsSync(phpIniPath)) {
+      return { 
+        success: false, 
+        error: `PHP ${version} configuration file not found` 
+      };
+    }
+
+    // Create backup first
+    const backupPath = `${phpIniPath}.backup.${Date.now()}`;
+    fs.copyFileSync(phpIniPath, backupPath);
+
+    let phpIniContent = fs.readFileSync(phpIniPath, 'utf8');
+    
+    // Update extensions based on the provided configuration
+    Object.entries(extensions).forEach(([extName, config]) => {
+      const enabledPattern = new RegExp(`^extension=${extName}`, 'm');
+      const disabledPattern = new RegExp(`^;extension=${extName}`, 'm');
+      
+      if (config.enabled) {
+        // Enable the extension
+        if (disabledPattern.test(phpIniContent)) {
+          phpIniContent = phpIniContent.replace(disabledPattern, `extension=${extName}`);
+        } else if (!enabledPattern.test(phpIniContent)) {
+          // Add the extension if it doesn't exist
+          phpIniContent += `\n; Added by DevStackBox\nextension=${extName}\n`;
+        }
+      } else {
+        // Disable the extension
+        if (enabledPattern.test(phpIniContent)) {
+          phpIniContent = phpIniContent.replace(enabledPattern, `;extension=${extName}`);
+        }
+      }
+    });
+
+    // Write the updated configuration
+    fs.writeFileSync(phpIniPath, phpIniContent, 'utf8');
+    
+    return {
+      success: true,
+      message: `PHP ${version} extensions updated successfully`,
+      backupPath: backupPath
+    };
+
+  } catch (error) {
+    return {
+      success: false,
+      error: error.message
+    };
+  }
 }
 
 async function setPhpVersion(version) {

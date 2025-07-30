@@ -1267,6 +1267,71 @@ body {
   overflow-y: auto;
 }
 
+/* Compact Configuration Modal */
+.config-modal-compact .modal-content {
+  max-width: 1000px;
+  min-width: 800px;
+}
+
+.config-section-compact {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background-color: #f8fafc;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--border-color);
+}
+
+.config-section-compact h4 {
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.config-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.extensions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.75rem;
+}
+
+.extension-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  background-color: var(--surface-color);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.extension-item:hover {
+  background-color: var(--background-color);
+  border-color: var(--primary-color);
+}
+
+.extension-item input[type="checkbox"] {
+  margin: 0;
+}
+
+.ext-name {
+  font-weight: 500;
+  color: var(--text-primary);
+  flex: 1;
+}
+
+.ext-desc {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
 .config-form {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1336,6 +1401,79 @@ body {
   font-style: italic;
 }
 
+/* PHP Extensions Category Styles */
+.extension-category {
+  margin-bottom: 1.5rem;
+}
+
+.category-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--primary-color);
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.category-extensions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.5rem;
+}
+
+.extension-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background-color: var(--surface-color);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.85rem;
+}
+
+.extension-label:hover {
+  background-color: var(--background-color);
+  border-color: var(--primary-color);
+}
+
+.extension-label input[type="checkbox"] {
+  margin: 0;
+  width: 14px;
+  height: 14px;
+}
+
+.extension-name {
+  font-weight: 500;
+  color: var(--text-primary);
+  flex: 1;
+}
+
+.extension-desc {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin-top: 0.25rem;
+  line-height: 1.2;
+}
+
+/* More Compact Form Elements */
+.config-section-compact .form-group input,
+.config-section-compact .form-group select {
+  padding: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.config-section-compact .form-group label {
+  font-size: 0.85rem;
+  margin-bottom: 0.25rem;
+}
+
+.config-grid {
+  gap: 0.75rem;
+}
+
 @media (max-width: 1024px) {
   #configModal .modal-content {
     min-width: auto;
@@ -1343,6 +1481,10 @@ body {
   }
   
   .config-form {
+    grid-template-columns: 1fr;
+  }
+  
+  .category-extensions {
     grid-template-columns: 1fr;
   }
 }

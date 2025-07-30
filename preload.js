@@ -65,6 +65,10 @@ contextBridge.exposeInMainWorld('electronAPI', {
   saveConfig: (service, config, restart) => ipcRenderer.invoke('save-config', service, config, restart),
   restartService: (service) => ipcRenderer.invoke('restart-service', service),
   
+  // PHP Extensions management
+  getPHPExtensions: (version) => ipcRenderer.invoke('get-php-extensions', version),
+  savePHPExtensions: (version, extensions) => ipcRenderer.invoke('save-php-extensions', version, extensions),
+  
   // Generic invoke method for flexibility
   invoke: (channel, ...args) => ipcRenderer.invoke(channel, ...args),
 

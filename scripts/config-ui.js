@@ -29,14 +29,98 @@ class ConfigurationUI {
   /**
    * Initialize the configuration UI
    */
-  initializeUI() {
+  async initializeUI() {
+    console.log('Initializing Configuration UI...');
+    
     // Create configuration modal if not exists
     if (!document.getElementById('configModal')) {
       this.createConfigurationModal();
     }
     
+    // Populate PHP version selectors
+    await this.populatePhpVersionSelectors();
+    
     // Bind configuration button events
     this.bindConfigurationButtons();
+  }
+
+  /**
+   * Populate PHP version selectors with available versions
+   */
+  async populatePhpVersionSelectors() {
+    try {
+      // Get available PHP versions
+      const phpVersions = await window.electronAPI.getPhpVersions();
+      console.log('Available PHP versions:', phpVersions);
+      
+      if (phpVersions && phpVersions.length > 0) {
+        // Update PHP Config tab selector
+        const phpConfigSelector = document.getElementById('php-version-config');
+        if (phpConfigSelector) {
+          phpConfigSelector.innerHTML = '';
+          phpVersions.forEach(version => {
+            const option = document.createElement('option');
+            option.value = version.version;
+            option.textContent = `PHP ${version.version}`;
+            if (version.current) {
+              option.selected = true;
+            }
+            phpConfigSelector.appendChild(option);
+          });
+        }
+
+        // Update PHP Extensions tab selector
+        const phpExtensionsSelector = document.getElementById('php-version-extensions');
+        if (phpExtensionsSelector) {
+          phpExtensionsSelector.innerHTML = '';
+          phpVersions.forEach(version => {
+            const option = document.createElement('option');
+            option.value = version.version;
+            option.textContent = `PHP ${version.version}`;
+            if (version.current) {
+              option.selected = true;
+            }
+            phpExtensionsSelector.appendChild(option);
+          });
+        }
+      } else {
+        // Fallback to default versions if API is not available
+        console.log('Using fallback PHP versions');
+        this.populateFallbackPhpVersions();
+      }
+    } catch (error) {
+      console.error('Error loading PHP versions:', error);
+      this.populateFallbackPhpVersions();
+    }
+  }
+
+  /**
+   * Populate fallback PHP versions
+   */
+  populateFallbackPhpVersions() {
+    const defaultVersions = [
+      { version: '8.1', current: false },
+      { version: '8.2', current: true },
+      { version: '8.3', current: false },
+      { version: '8.4', current: false }
+    ];
+
+    // Update both selectors
+    ['php-version-config', 'php-version-extensions'].forEach(selectorId => {
+      const selector = document.getElementById(selectorId);
+      if (selector) {
+        selector.innerHTML = '';
+        defaultVersions.forEach(version => {
+          const option = document.createElement('option');
+          option.value = version.version;
+          option.textContent = `PHP ${version.version}`;
+          if (version.current) {
+            option.selected = true;
+          }
+          selector.appendChild(option);
+        });
+      }
+    });
   }
 
   /**
@@ -45,7 +129,7 @@ class ConfigurationUI {
   createConfigurationModal() {
     const modalHTML = `
     <div class="modal-overlay" id="configModal">
-        <div class="modal-content">
+        <div class="modal-content config-modal-compact">
             <div class="modal-header">
                 <h2>
                     <img src="assets/icons/settings.svg" alt="Configuration" class="modal-icon">
@@ -56,53 +140,38 @@ class ConfigurationUI {
             
             <div class="modal-body">
                 <div class="settings-tabs">
-                    <button class="tab-btn active" data-tab="apache">Apache HTTP Server</button>
-                    <button class="tab-btn" data-tab="mysql">MySQL Database</button>
-                    <button class="tab-btn" data-tab="php">PHP Settings</button>
+                    <button class="tab-btn active" data-tab="apache">Apache</button>
+                    <button class="tab-btn" data-tab="mysql">MySQL</button>
+                    <button class="tab-btn" data-tab="php">PHP Config</button>
+                    <button class="tab-btn" data-tab="php-extensions">PHP Extensions</button>
                 </div>
 
                 <!-- Apache Configuration Tab -->
                 <div class="tab-content active" id="apache-tab">
-                    <h3>Apache HTTP Server Configuration</h3>
-                    
-                    <div class="download-section">
-                        <div class="section-header">
-                            <h4>
-                                <img src="assets/icons/apache.svg" alt="Apache" class="section-icon-small">
-                                Network Settings
-                            </h4>
-                        </div>
-                        <div class="config-form">
+                    <div class="config-section-compact">
+                        <h4>Network Settings</h4>
+                        <div class="config-grid">
                             <div class="form-group">
-                                <label for="apache-port">Server Port:</label>
+                                <label for="apache-port">Port:</label>
                                 <input type="number" id="apache-port" min="1" max="65535" value="80">
-                                <small class="form-help">Default: 80 (HTTP), 443 (HTTPS)</small>
                             </div>
                             <div class="form-group">
                                 <label for="apache-servername">Server Name:</label>
                                 <input type="text" id="apache-servername" value="localhost">
-                                <small class="form-help">Domain name or IP address</small>
                             </div>
                         </div>
                     </div>
 
-                    <div class="download-section">
-                        <div class="section-header">
-                            <h4>
-                                <img src="assets/icons/folder.svg" alt="Directory" class="section-icon-small">
-                                Directory Settings
-                            </h4>
-                        </div>
-                        <div class="config-form">
+                    <div class="config-section-compact">
+                        <h4>Directory Settings</h4>
+                        <div class="config-grid">
                             <div class="form-group">
                                 <label for="apache-document-root">Document Root:</label>
                                 <input type="text" id="apache-document-root" readonly>
-                                <small class="form-help">Main web directory (auto-configured)</small>
                             </div>
                             <div class="form-group">
                                 <label for="apache-directory-index">Directory Index:</label>
                                 <input type="text" id="apache-directory-index" value="index.html index.php">
-                                <small class="form-help">Default files to serve</small>
                             </div>
                         </div>
                     </div>
@@ -110,46 +179,30 @@ class ConfigurationUI {
 
                 <!-- MySQL Configuration Tab -->
                 <div class="tab-content" id="mysql-tab">
-                    <h3>MySQL Database Configuration</h3>
-                    
-                    <div class="download-section">
-                        <div class="section-header">
-                            <h4>
-                                <img src="assets/icons/mysql.svg" alt="MySQL" class="section-icon-small">
-                                Connection Settings
-                            </h4>
-                        </div>
-                        <div class="config-form">
+                    <div class="config-section-compact">
+                        <h4>Connection Settings</h4>
+                        <div class="config-grid">
                             <div class="form-group">
-                                <label for="mysql-port">MySQL Port:</label>
+                                <label for="mysql-port">Port:</label>
                                 <input type="number" id="mysql-port" min="1" max="65535" value="3306">
-                                <small class="form-help">Default: 3306</small>
                             </div>
                             <div class="form-group">
                                 <label for="mysql-bind-address">Bind Address:</label>
                                 <input type="text" id="mysql-bind-address" value="127.0.0.1">
-                                <small class="form-help">IP address to bind to</small>
                             </div>
                         </div>
                     </div>
 
-                    <div class="download-section">
-                        <div class="section-header">
-                            <h4>
-                                <img src="assets/icons/performance.svg" alt="Performance" class="section-icon-small">
-                                Performance Settings
-                            </h4>
-                        </div>
-                        <div class="config-form">
+                    <div class="config-section-compact">
+                        <h4>Performance Settings</h4>
+                        <div class="config-grid">
                             <div class="form-group">
                                 <label for="mysql-max-connections">Max Connections:</label>
                                 <input type="number" id="mysql-max-connections" min="1" max="1000" value="151">
-                                <small class="form-help">Maximum concurrent connections</small>
                             </div>
                             <div class="form-group">
-                                <label for="mysql-innodb-buffer-pool">InnoDB Buffer Pool Size:</label>
+                                <label for="mysql-innodb-buffer-pool">Buffer Pool Size:</label>
                                 <input type="text" id="mysql-innodb-buffer-pool" value="128M">
-                                <small class="form-help">Memory for caching data and indexes</small>
                             </div>
                         </div>
                     </div>
@@ -157,58 +210,104 @@ class ConfigurationUI {
 
                 <!-- PHP Configuration Tab -->
                 <div class="tab-content" id="php-tab">
-                    <h3>PHP Configuration</h3>
-                    
-                    <div class="download-section">
-                        <div class="section-header">
-                            <h4>
-                                <img src="assets/icons/php.svg" alt="PHP" class="section-icon-small">
-                                Memory & Execution
-                            </h4>
-                        </div>
-                        <div class="config-form">
+                    <div class="config-section-compact">
+                        <h4>PHP Version & Basic Settings</h4>
+                        <div class="config-grid">
+                            <div class="form-group">
+                                <label for="php-version-config">PHP Version:</label>
+                                <select id="php-version-config">
+                                    <option value="8.1">PHP 8.1</option>
+                                    <option value="8.2" selected>PHP 8.2</option>
+                                    <option value="8.3">PHP 8.3</option>
+                                    <option value="8.4">PHP 8.4</option>
+                                </select>
+                            </div>
                             <div class="form-group">
                                 <label for="php-memory-limit">Memory Limit:</label>
                                 <input type="text" id="php-memory-limit" value="128M">
-                                <small class="form-help">Maximum memory per script</small>
                             </div>
                             <div class="form-group">
                                 <label for="php-max-execution-time">Max Execution Time:</label>
                                 <input type="number" id="php-max-execution-time" min="0" max="3600" value="30">
-                                <small class="form-help">Maximum execution time in seconds</small>
                             </div>
                             <div class="form-group">
-                                <label for="php-upload-max-filesize">Upload Max Filesize:</label>
+                                <label for="php-upload-max-filesize">Upload Max Size:</label>
                                 <input type="text" id="php-upload-max-filesize" value="2M">
-                                <small class="form-help">Maximum file upload size</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="php-post-max-size">Post Max Size:</label>
+                                <input type="text" id="php-post-max-size" value="8M">
                             </div>
                         </div>
                     </div>
 
-                    <div class="download-section">
-                        <div class="section-header">
-                            <h4>
-                                <img src="assets/icons/error.svg" alt="Error" class="section-icon-small">
-                                Error Reporting
-                            </h4>
-                        </div>
-                        <div class="config-form">
+                    <div class="config-section-compact">
+                        <h4>Error Reporting</h4>
+                        <div class="config-grid">
                             <div class="form-group">
                                 <label for="php-display-errors">Display Errors:</label>
                                 <select id="php-display-errors">
                                     <option value="On">On</option>
                                     <option value="Off">Off</option>
                                 </select>
-                                <small class="form-help">Show errors in browser</small>
                             </div>
                             <div class="form-group">
-                                <label for="php-error-reporting">Error Reporting Level:</label>
+                                <label for="php-error-reporting">Error Level:</label>
                                 <select id="php-error-reporting">
                                     <option value="E_ALL">All Errors</option>
                                     <option value="E_ALL & ~E_NOTICE">All except Notices</option>
                                     <option value="E_ERROR | E_WARNING | E_PARSE">Errors, Warnings, Parse</option>
                                 </select>
-                                <small class="form-help">Types of errors to report</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PHP Extensions Tab -->
+                <div class="tab-content" id="php-extensions-tab">
+                    <div class="config-section-compact">
+                        <h4>PHP Version & Extensions Management</h4>
+                        <div class="config-grid">
+                            <div class="form-group">
+                                <label for="php-version-extensions">PHP Version:</label>
+                                <select id="php-version-extensions">
+                                    <!-- Options will be populated dynamically -->
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <button type="button" id="refresh-extensions-btn" class="btn btn-secondary">
+                                    Refresh Extensions
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="extensions-container">
+                        <div class="config-section-compact">
+                            <h4>Database Extensions</h4>  
+                            <div class="extensions-grid" id="database-extensions">
+                                <!-- Dynamic content will be loaded here -->
+                            </div>
+                        </div>
+
+                        <div class="config-section-compact">
+                            <h4>Common Extensions</h4>
+                            <div class="extensions-grid" id="common-extensions">
+                                <!-- Dynamic content will be loaded here -->
+                            </div>
+                        </div>
+
+                        <div class="config-section-compact">
+                            <h4>Web Development Extensions</h4>
+                            <div class="extensions-grid" id="web-extensions">
+                                <!-- Dynamic content will be loaded here -->
+                            </div>
+                        </div>
+
+                        <div class="config-section-compact">
+                            <h4>Additional Extensions</h4>
+                            <div class="extensions-grid" id="additional-extensions">
+                                <!-- Dynamic content will be loaded here -->
                             </div>
                         </div>
                     </div>
@@ -218,15 +317,9 @@ class ConfigurationUI {
             <div class="modal-footer">
                 <div class="config-status" id="configStatus">Ready to configure</div>
                 <div class="modal-buttons">
-                    <button class="btn btn-secondary" id="configValidateBtn">
-                        <img src="assets/icons/check.svg" alt="Validate" class="btn-icon">
-                        Validate Configuration
-                    </button>
-                    <button class="btn btn-primary" id="configSaveBtn">
-                        <img src="assets/icons/save.svg" alt="Save" class="btn-icon">
-                        Save & Apply
-                    </button>
-                    <button class="btn btn-secondary" id="configResetBtn">Reset to Defaults</button>
+                    <button class="btn btn-secondary" id="configValidateBtn">Validate</button>
+                    <button class="btn btn-primary" id="configSaveBtn">Save & Apply</button>
+                    <button class="btn btn-secondary" id="configResetBtn">Reset</button>
                 </div>
             </div>
         </div>
@@ -284,6 +377,9 @@ class ConfigurationUI {
     const validateBtn = document.getElementById('configValidateBtn');
     const saveBtn = document.getElementById('configSaveBtn');
     const resetBtn = document.getElementById('configResetBtn');
+    const phpVersionConfig = document.getElementById('php-version-config');
+    const phpVersionExtensions = document.getElementById('php-version-extensions');
+    const refreshExtensionsBtn = document.getElementById('refresh-extensions-btn');
 
     // Close modal
     if (closeBtn) {
@@ -299,6 +395,42 @@ class ConfigurationUI {
         this.switchConfigTab(tabName);
       });
     });
+
+    // PHP version change in config tab
+    if (phpVersionConfig) {
+      phpVersionConfig.addEventListener('change', (e) => {
+        const version = e.target.value;
+        console.log(`PHP config version changed to: ${version}`);
+        // Sync with extensions tab
+        if (phpVersionExtensions) {
+          phpVersionExtensions.value = version;
+        }
+        // Load configuration for this version
+        this.loadConfigurationForService('php');
+      });
+    }
+
+    // PHP version change in extensions tab
+    if (phpVersionExtensions) {
+      phpVersionExtensions.addEventListener('change', (e) => {
+        const version = e.target.value;
+        console.log(`PHP extensions version changed to: ${version}`);
+        // Sync with config tab
+        if (phpVersionConfig) {
+          phpVersionConfig.value = version;
+        }
+        // Reload extensions for this version
+        this.loadPhpExtensions();
+      });
+    }
+
+    // Refresh extensions button
+    if (refreshExtensionsBtn) {
+      refreshExtensionsBtn.addEventListener('click', () => {
+        console.log('Refreshing PHP extensions...');
+        this.loadPhpExtensions();
+      });
+    }
 
     // Validate configuration
     if (validateBtn) {
@@ -322,11 +454,13 @@ class ConfigurationUI {
     }
 
     // Close modal when clicking outside
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) {
-        modal.classList.remove('active');
-      }
-    });
+    if (modal) {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          modal.classList.remove('active');
+        }
+      });
+    }
   }
 
   /**
@@ -403,11 +537,160 @@ class ConfigurationUI {
         console.error(`Tab content for ${tabName} not found`);
       }
 
-      // Load current configuration for this service
-      this.loadConfigurationForService(tabName);
+      // Load current configuration for this service (skip for php-extensions as it's managed separately)
+      if (tabName !== 'php-extensions') {
+        this.loadConfigurationForService(tabName);
+      } else {
+        // Load current PHP extensions status
+        this.loadPhpExtensions();
+      }
     } catch (error) {
       console.error('Error switching tabs:', error);
     }
+  }
+
+  /**
+   * Load PHP Extensions status
+   */
+  async loadPhpExtensions() {
+    console.log('Loading PHP extensions status...');
+    
+    try {
+      // Try to get current PHP version from extensions tab selector
+      let version = '8.2'; // Default fallback
+      
+      // Check the PHP version selector in extensions tab first
+      const phpVersionExtensions = document.getElementById('php-version-extensions');
+      if (phpVersionExtensions && phpVersionExtensions.value) {
+        version = phpVersionExtensions.value;
+        console.log('Found PHP version from extensions selector:', version);
+      } else {
+        // Fallback to main PHP version selector
+        const phpVersionSelect = document.getElementById('phpVersion');
+        if (phpVersionSelect && phpVersionSelect.value) {
+          version = phpVersionSelect.value;
+          console.log('Found PHP version from main selector:', version);
+        } else {
+          console.log('Using default PHP version:', version);
+        }
+      }
+      
+      // Get extensions status from backend
+      if (window.electronAPI && window.electronAPI.getPHPExtensions) {
+        console.log(`Requesting PHP extensions for version ${version}...`);
+        const result = await window.electronAPI.getPHPExtensions(version);
+        
+        if (result.success) {
+          console.log('Successfully loaded PHP extensions:', result.extensions);
+          this.renderPhpExtensions(result.extensions);
+          return;
+        } else {
+          console.error('Failed to load PHP extensions:', result.error);
+        }
+      } else {
+        console.error('electronAPI.getPHPExtensions not available');
+      }
+      
+      // Fallback to default extensions
+      console.log('Using default extensions configuration');
+      this.renderPhpExtensions(this.getDefaultExtensions());
+      
+    } catch (error) {
+      console.error('Error loading PHP extensions:', error);
+      // Fallback to default extensions
+      this.renderPhpExtensions(this.getDefaultExtensions());
+    }
+  }
+
+  /**
+   * Get default extensions list
+   */
+  getDefaultExtensions() {
+    return {
+      // Core extensions
+      curl: { enabled: true, category: 'Core', description: 'HTTP requests and API calls' },
+      gd: { enabled: true, category: 'Core', description: 'Image processing and thumbnail generation' },
+      mbstring: { enabled: true, category: 'Core', description: 'Multibyte string handling (required)' },
+      mysqli: { enabled: true, category: 'Database', description: 'MySQL database connection' },
+      openssl: { enabled: true, category: 'Security', description: 'SSL/TLS encryption and secure connections' },
+      zip: { enabled: true, category: 'Core', description: 'Archive handling for plugins/themes' },
+      fileinfo: { enabled: true, category: 'Core', description: 'File type detection and validation' },
+      exif: { enabled: true, category: 'Media', description: 'Image metadata extraction' },
+      intl: { enabled: true, category: 'Core', description: 'Internationalization support' },
+      opcache: { enabled: true, category: 'Performance', description: 'PHP accelerator for better performance' },
+      
+      // Optional extensions
+      ftp: { enabled: false, category: 'Network', description: 'FTP client functionality' },
+      soap: { enabled: false, category: 'Web Services', description: 'SOAP web services' },
+      sockets: { enabled: false, category: 'Network', description: 'Low-level socket communication' },
+      tidy: { enabled: false, category: 'HTML', description: 'HTML cleanup and validation' },
+      xsl: { enabled: false, category: 'XML', description: 'XSL transformations' },
+      bz2: { enabled: false, category: 'Compression', description: 'Bzip2 compression' }
+    };
+  }
+
+  /**
+   * Render PHP extensions interface
+   */
+  renderPhpExtensions(extensions) {
+    console.log('Rendering PHP extensions:', extensions);
+    
+    // Map categories to their container IDs with comprehensive category support
+    const categoryContainers = {
+      'Database': 'database-extensions',
+      'Security': 'common-extensions',
+      'Core': 'common-extensions',
+      'Media': 'web-extensions',
+      'Web Development': 'web-extensions',
+      'Development': 'additional-extensions',
+      'Caching': 'additional-extensions',
+      'Other': 'additional-extensions'
+    };
+
+    // Initialize containers - clear existing content
+    Object.values(categoryContainers).forEach(containerId => {
+      const container = document.getElementById(containerId);
+      if (container) {
+        container.innerHTML = ''; // Clear existing content
+      }
+    });
+    
+    // Group extensions by category first
+    const extensionsByCategory = {};
+    Object.entries(extensions).forEach(([name, config]) => {
+      const category = config.category || 'Other';
+      if (!extensionsByCategory[category]) {
+        extensionsByCategory[category] = [];
+      }
+      extensionsByCategory[category].push({ name, ...config });
+    });
+    
+    // Render extensions by category
+    Object.entries(extensionsByCategory).forEach(([category, exts]) => {
+      const containerId = categoryContainers[category] || 'additional-extensions';
+      const container = document.getElementById(containerId);
+      
+      if (!container) {
+        console.warn(`Container not found for category: ${category} (${containerId})`);
+        return;
+      }
+
+      // Add extensions to container
+      exts.forEach(ext => {
+        const extensionHTML = `
+          <label class="extension-label">
+            <input type="checkbox" 
+                   data-extension="${ext.name}" 
+                   ${ext.enabled ? 'checked' : ''}>
+            <span class="extension-name">${ext.name}</span>
+            <p class="extension-desc">${ext.description}</p>
+          </label>
+        `;
+        container.insertAdjacentHTML('beforeend', extensionHTML);
+      });
+    });
+
+    console.log('PHP extensions rendered successfully');
   }
 
   /**
@@ -547,13 +830,27 @@ class ConfigurationUI {
       // Collect configuration data
       const config = this.collectConfigurationData(service);
       
-      // Save via backend
-      const result = await window.electronAPI.saveConfig(service, config, true);
-      
-      if (result.success) {
-        this.updateStatus('Configuration saved and service restarted', 'success');
+      // Handle PHP extensions differently
+      if (service === 'php-extensions') {
+        // Save PHP extensions configuration
+        const result = await window.electronAPI.savePHPExtensions(config.version, config.extensions);
+        
+        if (result.success) {
+          this.updateStatus('PHP extensions saved successfully', 'success');
+          // Reload extensions to show updated status
+          this.loadPhpExtensions();
+        } else {
+          this.updateStatus(`Extensions save failed: ${result.error}`, 'error');
+        }
       } else {
-        this.updateStatus(`Save failed: ${result.error}`, 'error');
+        // Save regular service configuration
+        const result = await window.electronAPI.saveConfig(service, config, true);
+        
+        if (result.success) {
+          this.updateStatus('Configuration saved and service restarted', 'success');
+        } else {
+          this.updateStatus(`Save failed: ${result.error}`, 'error');
+        }
       }
       
     } catch (error) {
@@ -584,6 +881,24 @@ class ConfigurationUI {
       config.uploadMaxFilesize = document.getElementById('php-upload-max-filesize').value;
       config.displayErrors = document.getElementById('php-display-errors').value;
       config.errorReporting = document.getElementById('php-error-reporting').value;
+    } else if (service === 'php-extensions') {
+      // Collect PHP extensions configuration
+      config.extensions = {};
+      
+      // Try to get current PHP version
+      let phpVersion = '8.2'; // Default fallback
+      const phpVersionSelect = document.getElementById('phpVersion');
+      if (phpVersionSelect && phpVersionSelect.value) {
+        phpVersion = phpVersionSelect.value;
+      }
+      config.version = phpVersion;
+      
+      // Get all extension checkboxes
+      const extensionItems = document.querySelectorAll('.extension-label input[type="checkbox"]');
+      extensionItems.forEach(checkbox => {
+        const extensionName = checkbox.dataset.extension || checkbox.value;
+        config.extensions[extensionName] = checkbox.checked;
+      });
     }
     
     return config;
