@@ -138,7 +138,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🙏 Acknowledgments
 
-- Inspired by XAMPP, Laragon, and similar local development tools
+- Inspired by local development tools like Laragon
 - Built with Electron for cross-platform compatibility
 - Designed to be lightweight and developer-friendly
 

@@ -28,7 +28,7 @@ class PortableServerManager {
         extractTo: 'php/8.1'
       },
       php82: {
-        url: 'https://windows.php.net/downloads/releases/php-8.2.14-Win32-vs16-x64.zip',
+        url: 'https://windows.php.net/downloads/releases/php-8.2.26-Win32-vs16-x64.zip',
         filename: 'php82.zip',
         extractTo: 'php/8.2'
       },
@@ -52,10 +52,16 @@ class PortableServerManager {
     const status = {
       apache: fs.existsSync(path.join(this.appPath, 'apache', 'bin', 'httpd.exe')),
       mysql: fs.existsSync(path.join(this.appPath, 'mysql', 'bin', 'mysqld.exe')),
+      php: {
+        '8.1': fs.existsSync(path.join(this.appPath, 'php', '8.1', 'php.exe')),
+        '8.2': fs.existsSync(path.join(this.appPath, 'php', '8.2', 'php.exe')), // Default
+        '8.3': fs.existsSync(path.join(this.appPath, 'php', '8.3', 'php.exe'))
+      },
+      phpmyadmin: fs.existsSync(path.join(this.appPath, 'phpmyadmin', 'index.php')),
+      // Backward compatibility
       php81: fs.existsSync(path.join(this.appPath, 'php', '8.1', 'php.exe')),
       php82: fs.existsSync(path.join(this.appPath, 'php', '8.2', 'php.exe')),
-      php83: fs.existsSync(path.join(this.appPath, 'php', '8.3', 'php.exe')),
-      phpmyadmin: fs.existsSync(path.join(this.appPath, 'phpmyadmin', 'index.php'))
+      php83: fs.existsSync(path.join(this.appPath, 'php', '8.3', 'php.exe'))
     };
 
     return status;

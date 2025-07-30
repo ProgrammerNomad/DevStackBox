@@ -13,36 +13,67 @@ class ServiceManager {
   constructor(appPath) {
     this.appPath = appPath;
     
-    // Only use OUR portable installations - NO XAMPP!
+    // Look for pre-bundled portable servers
     this.services = {
       apache: {
         name: 'Apache',
-        executable: path.join(appPath, 'apache', 'bin', 'httpd.exe'),
+        executable: this.findExecutable('apache', ['apache/bin/httpd.exe', 'apache/Apache24/bin/httpd.exe']),
         processName: 'httpd.exe', 
         defaultPort: 80,
-        configPath: path.join(appPath, 'apache', 'conf', 'httpd.conf'),
+        configPath: this.findConfig('apache', ['apache/conf/httpd.conf', 'apache/Apache24/conf/httpd.conf']),
         startArgs: ['-D', 'FOREGROUND'],
         installed: false
       },
       mysql: {
         name: 'MySQL',
-        executable: path.join(appPath, 'mysql', 'bin', 'mysqld.exe'),
+        executable: this.findExecutable('mysql', ['mysql/bin/mysqld.exe', 'mysql/mysql-8.0.35-winx64/bin/mysqld.exe']),
         processName: 'mysqld.exe',
         defaultPort: 3306, 
-        configPath: path.join(appPath, 'mysql', 'my.ini'),
-        startArgs: ['--defaults-file=' + path.join(appPath, 'mysql', 'my.ini')],
+        configPath: this.findConfig('mysql', ['mysql/my.ini', 'mysql/mysql-8.0.35-winx64/my.ini']),
+        startArgs: ['--defaults-file=' + this.findConfig('mysql', ['mysql/my.ini', 'mysql/mysql-8.0.35-winx64/my.ini'])],
         installed: false
       }
     };
     
     this.runningProcesses = new Map();
+    // PHP 8.2 as default, with 8.1 and 8.3 as additional options
     this.phpVersions = ['8.1', '8.2', '8.3'];
-    this.currentPhpVersion = '8.3';
+    this.currentPhpVersion = '8.2'; // Default to PHP 8.2
     
-    // Check what's actually installed
+    // Check what's actually pre-bundled
     this.checkInstallations();
     
-    console.log('DevStackBox: ServiceManager initialized - PORTABLE ONLY, NO XAMPP!');
+    console.log('DevStackBox: ServiceManager initialized - Looking for pre-bundled servers (PHP 8.2 default)');
+  }
+
+  /**
+   * Find executable in possible locations
+   */
+  findExecutable(service, possiblePaths) {
+    for (const possiblePath of possiblePaths) {
+      const fullPath = path.join(this.appPath, possiblePath);
+      if (fs.existsSync(fullPath)) {
+        console.log(`✅ Found ${service} executable: ${fullPath}`);
+        return fullPath;
+      }
+    }
+    // Return default path as fallback
+    return path.join(this.appPath, possiblePaths[0]);
+  }
+
+  /**
+   * Find config file in possible locations
+   */
+  findConfig(service, possiblePaths) {
+    for (const possiblePath of possiblePaths) {
+      const fullPath = path.join(this.appPath, possiblePath);
+      if (fs.existsSync(fullPath)) {
+        console.log(`✅ Found ${service} config: ${fullPath}`);
+        return fullPath;
+      }
+    }
+    // Return default path as fallback
+    return path.join(this.appPath, possiblePaths[0]);
   }
 
   /**
@@ -71,7 +102,7 @@ class ServiceManager {
     }
 
     if (!service.installed) {
-      throw new Error(`${service.name} portable binary not found. Please download portable servers first using the menu: File > Download Portable Servers`);
+      throw new Error(`${service.name} binaries not found. Please add ${service.name.toLowerCase()} binaries to the project or use the bundled setup. Expected location: ${service.executable}`);
     }
 
     // Check if already running
@@ -202,7 +233,7 @@ class ServiceManager {
       executable: service.executable,
       message: service.installed ? 
         (running ? 'Running' : 'Stopped') : 
-        'Not installed - download portable servers first'
+        'Binaries not found - please add server files to project folders'
     };
   }
 
@@ -241,11 +272,33 @@ class ServiceManager {
   getPhpVersions() {
     const versions = [];
     this.phpVersions.forEach(version => {
-      const phpPath = path.join(this.appPath, 'php', version, 'php.exe');
+      // Look for PHP in multiple possible locations
+      const possiblePaths = [
+        path.join(this.appPath, 'php', version, 'php.exe'),
+        path.join(this.appPath, 'php', `php-${version}`, 'php.exe'),
+        path.join(this.appPath, 'php', `${version}`, 'php.exe')
+      ];
+      
+      let phpPath = null;
+      let installed = false;
+      
+      for (const possiblePath of possiblePaths) {
+        if (fs.existsSync(possiblePath)) {
+          phpPath = possiblePath;
+          installed = true;
+          console.log(`✅ Found PHP ${version}: ${possiblePath}`);
+          break;
+        }
+      }
+      
+      if (!phpPath) {
+        phpPath = possiblePaths[0]; // Default fallback
+      }
+      
       versions.push({
         version: version,
         path: phpPath,
-        installed: fs.existsSync(phpPath),
+        installed: installed,
         current: version === this.currentPhpVersion
       });
     });
@@ -277,13 +330,20 @@ class ServiceManager {
     const status = {
       apache: this.services.apache.installed,
       mysql: this.services.mysql.installed,
-      php: {}
+      php: {},
+      phpmyadmin: fs.existsSync(path.join(this.appPath, 'phpmyadmin', 'index.php'))
     };
 
+    // Check PHP versions, prioritizing 8.2 as default
     this.phpVersions.forEach(version => {
       const phpPath = path.join(this.appPath, 'php', version, 'php.exe');
       status.php[version] = fs.existsSync(phpPath);
     });
+
+    // Set default PHP version to 8.2 if available
+    if (status.php['8.2']) {
+      this.currentPhpVersion = '8.2';
+    }
 
     return status;
   }

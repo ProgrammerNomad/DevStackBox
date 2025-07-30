@@ -25,4 +25,4 @@ To add Apache binaries:
 3. Update configuration files
 4. Test startup
 
-For development purposes, you can also use the existing XAMPP Apache installation temporarily.
+DevStackBox includes pre-bundled Apache binaries for immediate use.

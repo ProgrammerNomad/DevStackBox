@@ -28,4 +28,4 @@ To add MySQL binaries:
 3. Initialize data directory: `mysqld --initialize-insecure`
 4. Test startup
 
-For development purposes, you can also use the existing XAMPP MySQL installation temporarily.
+DevStackBox includes pre-bundled MySQL binaries for immediate use.

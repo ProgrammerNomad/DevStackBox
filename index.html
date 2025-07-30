@@ -51,75 +51,25 @@
             <div class="installation-banner" id="installationBanner">
                 <div class="banner-content">
                     <div class="banner-icon">
-                        <img src="assets/icons/download.svg" alt="Download" class="banner-svg-icon">
+                        <img src="assets/icons/download.svg" alt="Setup" class="banner-svg-icon">
                     </div>
                     <div class="banner-text">
-                        <h3>Portable Servers Required</h3>
-                        <p>DevStackBox needs Apache, MySQL, and PHP binaries. Click to download and configure your portable development environment.</p>
+                        <h3>Server Binaries Required</h3>
+                        <p>DevStackBox needs Apache, MySQL, and PHP binaries. You can either download them automatically or add offline copies to the project folders.</p>
                         <div class="banner-actions">
                             <button class="btn btn-primary" id="downloadServersBtn">
                                 <img src="assets/icons/installer.svg" alt="Install" class="btn-icon">
-                                Download All Servers
+                                Auto Download All
                             </button>
-                            <button class="btn btn-secondary" id="customDownloadBtn">Custom Downloads</button>
+                            <button class="btn btn-secondary" id="offlineSetupBtn">
+                                <img src="assets/icons/folder.svg" alt="Offline" class="btn-icon">
+                                Offline Setup Guide
+                            </button>
+                            <button class="btn btn-outline" id="customDownloadBtn">Custom Downloads</button>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <!-- Services Panel -->
-            <section class="panel services-panel">
-                <h2>
-                    <img src="assets/icons/server.svg" alt="Server" class="section-icon">
-                    Server Services
-                </h2>
-                
-                <div class="services-grid">
-                    <!-- Apache Service -->
-                    <div class="service-card" data-service="apache">
-                        <div class="service-header">
-                            <h3>
-                                <img src="assets/icons/apache.svg" alt="Apache" class="service-icon">
-                                Apache HTTP Server
-                            </h3>
-                            <span class="status-indicator" id="apache-status">
-                                <span class="status-dot stopped"></span>
-                                Stopped
-                            </span>
-                        </div>
-                        <div class="service-info">
-                            <p>Web Server - Port: <span id="apache-port">80</span></p>
-                        </div>
-                        <div class="service-controls">
-                            <button class="btn btn-success start-btn" data-service="apache">Start</button>
-                            <button class="btn btn-danger stop-btn" data-service="apache" disabled>Stop</button>
-                            <button class="btn btn-secondary config-btn" data-config="apache">Config</button>
-                        </div>
-                    </div>
-
-                    <!-- MySQL Service -->
-                    <div class="service-card" data-service="mysql">
-                        <div class="service-header">
-                            <h3>
-                                <img src="assets/icons/mysql.svg" alt="MySQL" class="service-icon">
-                                MySQL Database
-                            </h3>
-                            <span class="status-indicator" id="mysql-status">
-                                <span class="status-dot stopped"></span>
-                                Stopped
-                            </span>
-                        </div>
-                        <div class="service-info">
-                            <p>Database Server - Port: <span id="mysql-port">3306</span></p>
-                        </div>
-                        <div class="service-controls">
-                            <button class="btn btn-success start-btn" data-service="mysql">Start</button>
-                            <button class="btn btn-danger stop-btn" data-service="mysql" disabled>Stop</button>
-                            <button class="btn btn-secondary config-btn" data-config="mysql">Config</button>
-                        </div>
-                    </div>
-                </div>
-            </section>
 
             <!-- Services Panel -->
             <section class="panel services-panel">
@@ -526,13 +476,6 @@
         </div>
     </div>
 
-    <!-- Loading Overlay -->
-    <div class="loading-overlay" id="loadingOverlay">
-        <div class="loading-content">
-            <div class="loading-spinner"></div>
-            <p id="loadingText">Loading DevStackBox...</p>
-        </div>
-    </div>
             </section>
 
             <!-- Quick Actions Panel -->

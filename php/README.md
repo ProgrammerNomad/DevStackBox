@@ -36,4 +36,4 @@ To add PHP versions:
 3. Copy and configure php.ini
 4. Test CLI: `php --version`
 
-For development purposes, you can also use the existing XAMPP PHP installation temporarily.
+DevStackBox includes pre-bundled PHP 8.2 by default, with 8.1 and 8.3 available for download.

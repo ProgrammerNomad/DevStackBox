@@ -13,6 +13,16 @@ class DevStackBox {
   async init() {
     console.log('Initializing DevStackBox...');
     
+    // ✅ HIDE LOADING IMMEDIATELY - FIRST THING!
+    this.hideLoading();
+    
+    // Check if running in Electron
+    if (typeof window.electronAPI === 'undefined') {
+      console.warn('ElectronAPI not available - running in browser mode');
+      this.showError('DevStackBox must be run as an Electron application');
+      return;
+    }
+    
     try {
       // Setup event listeners
       this.setupEventListeners();
@@ -22,14 +32,10 @@ class DevStackBox {
       await this.loadPhpVersions();
       await this.checkInstallation();
       
-      // Hide loading overlay
-      this.hideLoading();
-      
       console.log('DevStackBox initialized successfully');
     } catch (error) {
       console.error('Failed to initialize DevStackBox:', error);
       this.showError('Failed to initialize application: ' + error.message);
-      this.hideLoading();
     }
   }
 
@@ -65,6 +71,14 @@ class DevStackBox {
     if (downloadBtn) {
       downloadBtn.addEventListener('click', () => {
         this.showDownloadModal();
+      });
+    }
+
+    // Offline setup guide button
+    const offlineSetupBtn = document.getElementById('offlineSetupBtn');
+    if (offlineSetupBtn) {
+      offlineSetupBtn.addEventListener('click', () => {
+        this.showOfflineSetupGuide();
       });
     }
 
@@ -226,12 +240,29 @@ class DevStackBox {
       const banner = document.getElementById('installationBanner');
       
       if (banner) {
-        const hasAnyService = status.apache || status.mysql || status.php81 || status.php82 || status.php83;
-        banner.style.display = hasAnyService ? 'none' : 'block';
+        // Check if core components are bundled (Apache, MySQL, PHP 8.2, phpMyAdmin)
+        const hasCoreComponents = status.apache && status.mysql && 
+                                 (status.php82 || status.php) && status.phpmyadmin;
+        
+        banner.style.display = hasCoreComponents ? 'none' : 'block';
+        
+        if (!hasCoreComponents) {
+          // Update banner text for bundled setup
+          const bannerText = banner.querySelector('.banner-text p');
+          if (bannerText) {
+            bannerText.textContent = 'DevStackBox requires pre-bundled server binaries. Please ensure Apache, MySQL, PHP 8.2, and phpMyAdmin are included in the application bundle.';
+          }
+        }
       }
 
       // Update system information
       this.updateSystemInfo(status);
+      
+      // Set PHP 8.2 as default if available
+      if (status.php && status.php['8.2']) {
+        this.currentPhp = '8.2';
+        this.updatePhpVersionDisplay('8.2');
+      }
     } catch (error) {
       console.error('Failed to check installation:', error);
     }
@@ -243,17 +274,66 @@ class DevStackBox {
     const phpStatus = document.getElementById('systemPhpStatus');
 
     if (apacheStatus) {
-      apacheStatus.textContent = status.apache ? 'Installed' : 'Not Installed';
+      apacheStatus.textContent = status.apache ? 'Pre-bundled' : 'Not Bundled';
+      apacheStatus.className = status.apache ? 'status-available' : 'status-missing';
     }
     if (mysqlStatus) {
-      mysqlStatus.textContent = status.mysql ? 'Installed' : 'Not Installed';
+      mysqlStatus.textContent = status.mysql ? 'Pre-bundled' : 'Not Bundled';
+      mysqlStatus.className = status.mysql ? 'status-available' : 'status-missing';
     }
     if (phpStatus) {
       const phpVersions = [];
-      if (status.php81) phpVersions.push('8.1');
-      if (status.php82) phpVersions.push('8.2');
-      if (status.php83) phpVersions.push('8.3');
-      phpStatus.textContent = phpVersions.length > 0 ? `PHP ${phpVersions.join(', ')}` : 'Not Installed';
+      // Check for new format (status.php object) or old format (status.php81, etc.)
+      if (status.php && typeof status.php === 'object') {
+        Object.keys(status.php).forEach(version => {
+          if (status.php[version]) phpVersions.push(version);
+        });
+      } else {
+        if (status.php81) phpVersions.push('8.1');
+        if (status.php82) phpVersions.push('8.2');
+        if (status.php83) phpVersions.push('8.3');
+      }
+      
+      if (phpVersions.length > 0) {
+        // Prioritize PHP 8.2 in display
+        const sortedVersions = phpVersions.sort((a, b) => {
+          if (a === '8.2') return -1;
+          if (b === '8.2') return 1;
+          return a.localeCompare(b);
+        });
+        phpStatus.textContent = `PHP ${sortedVersions.join(', ')} (8.2 default)`;
+        phpStatus.className = 'status-available';
+      } else {
+        phpStatus.textContent = 'Not Bundled';
+        phpStatus.className = 'status-missing';
+      }
+    }
+    
+    // Update phpMyAdmin status if element exists
+    const pmaStatus = document.getElementById('systemPhpmyadminStatus');
+    if (pmaStatus) {
+      pmaStatus.textContent = status.phpmyadmin ? 'Pre-bundled' : 'Not Bundled';
+      pmaStatus.className = status.phpmyadmin ? 'status-available' : 'status-missing';
+    }
+  }
+
+  updatePhpVersionDisplay(version) {
+    const phpVersionSelect = document.getElementById('phpVersion');
+    const phpVersionDisplay = document.getElementById('currentPhpVersion');
+    
+    if (phpVersionSelect && phpVersionSelect.querySelector(`option[value="${version}"]`)) {
+      phpVersionSelect.value = version;
+    }
+    
+    if (phpVersionDisplay) {
+      phpVersionDisplay.textContent = `PHP ${version}`;
+    }
+    
+    // Update footer status
+    const footerPhpStatus = document.getElementById('footer-php-status');
+    if (footerPhpStatus) {
+      footerPhpStatus.textContent = `PHP ${version}`;
+      footerPhpStatus.className = 'status-running';
     }
   }
 
@@ -294,7 +374,7 @@ class DevStackBox {
     const text = document.getElementById('loadingText');
     
     if (overlay) {
-      overlay.style.display = 'flex';
+      overlay.classList.add('show'); // Use CSS class for better control
     }
     if (text) {
       text.textContent = message;
@@ -304,7 +384,7 @@ class DevStackBox {
   hideLoading() {
     const overlay = document.getElementById('loadingOverlay');
     if (overlay) {
-      overlay.style.display = 'none';
+      overlay.classList.remove('show'); // Use CSS class for better control
     }
   }
 
@@ -343,14 +423,95 @@ class DevStackBox {
     
     console.error('DevStackBox Error:', message);
   }
+
+  showOfflineSetupGuide() {
+    const modal = document.createElement('div');
+    modal.className = 'modal-overlay active';
+    modal.id = 'offlineSetupModal';
+    
+    modal.innerHTML = `
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>
+            <img src="assets/icons/folder.svg" alt="Offline Setup" class="modal-icon">
+            Offline Server Setup Guide
+          </h2>
+          <button type="button" class="modal-close" onclick="this.closest('.modal-overlay').remove()">×</button>
+        </div>
+        <div class="modal-body">
+          <div style="max-height: 500px; overflow-y: auto;">
+            <h3>📦 Quick Setup Options</h3>
+            <div style="margin-bottom: 20px;">
+              <div style="padding: 15px; border: 1px solid #ddd; border-radius: 8px;">
+                <h4>Download Pre-bundled Binaries</h4>
+                <ul style="margin-left: 20px;">
+                  <li><strong>Apache:</strong> <a href="https://www.apachelounge.com/download/" target="_blank">apachelounge.com</a> → Extract to <code>apache/</code></li>
+                  <li><strong>MySQL:</strong> <a href="https://dev.mysql.com/downloads/mysql/" target="_blank">MySQL Downloads</a> → Extract to <code>mysql/</code></li>
+                  <li><strong>PHP:</strong> <a href="https://windows.php.net/downloads/" target="_blank">PHP Windows</a> → Extract to <code>php/8.3/</code></li>
+                  <li><strong>phpMyAdmin:</strong> <a href="https://www.phpmyadmin.net/downloads/" target="_blank">phpMyAdmin</a> → Extract to <code>phpmyadmin/</code></li>
+                </ul>
+              </div>
+            </div>
+            
+            <h3>📁 Expected Folder Structure</h3>
+            <pre style="background: #f5f5f5; padding: 15px; border-radius: 4px; font-size: 12px;">
+DevStackBox/
+├── apache/
+│   ├── bin/httpd.exe ✓
+│   ├── conf/httpd.conf
+│   └── modules/
+├── mysql/
+│   ├── bin/mysqld.exe ✓
+│   └── bin/mysql.exe ✓
+├── php/
+│   └── 8.3/
+│       ├── php.exe ✓
+│       └── ext/
+└── phpmyadmin/
+    ├── index.php ✓
+    └── libraries/
+            </pre>
+            
+            <h3>✅ After Setup</h3>
+            <p>Restart DevStackBox and all services should show as <strong>"Available"</strong> instead of <strong>"Binaries not found"</strong>.</p>
+            
+            <div style="padding: 15px; background: #e8f5e8; border-radius: 8px; margin-top: 20px;">
+              <strong>💡 Benefits:</strong> No internet required, faster startup, completely portable, version controlled!
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+    
+    document.body.appendChild(modal);
+  }
 }
 
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-  if (window.electronAPI) {
+  console.log('DOM loaded - initializing DevStackBox...');
+  
+  // FIRST: Immediately hide loading overlay
+  const overlay = document.getElementById('loadingOverlay');
+  if (overlay) {
+    overlay.classList.remove('show'); // Ensure it's hidden
+  }
+  
+  // Always create DevStackBox instance
+  try {
     new DevStackBox();
-  } else {
-    console.error('Electron API not available');
-    document.getElementById('loadingText').textContent = 'Failed to load - Electron API not available';
+  } catch (error) {
+    console.error('Failed to create DevStackBox:', error);
+    
+    // Hide loading overlay even on error
+    if (overlay) {
+      overlay.classList.remove('show');
+    }
+    
+    // Show error message
+    const loadingText = document.getElementById('loadingText');
+    if (loadingText) {
+      loadingText.textContent = 'Failed to initialize DevStackBox';
+    }
   }
 });
