@@ -24,7 +24,8 @@ class ConfigEditorManager {
       php: {
         '8.1': path.join(appPath, 'php', '8.1', 'php.ini'),
         '8.2': path.join(appPath, 'php', '8.2', 'php.ini'),
-        '8.3': path.join(appPath, 'php', '8.3', 'php.ini')
+        '8.3': path.join(appPath, 'php', '8.3', 'php.ini'),
+        '8.4': path.join(appPath, 'php', '8.4', 'php.ini')
       },
       phpmyadmin: {
         main: path.join(appPath, 'phpmyadmin', 'config.inc.php')

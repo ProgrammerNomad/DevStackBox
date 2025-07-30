@@ -242,7 +242,8 @@ class DevStackBox {
       if (banner) {
         // Check if core components are bundled (Apache, MySQL, PHP 8.2, phpMyAdmin)
         const hasCoreComponents = status.apache && status.mysql && 
-                                 (status.php82 || status.php) && status.phpmyadmin;
+                                 (status.php82 || (status.php && status.php['8.2'])) && 
+                                 status.phpmyadmin;
         
         banner.style.display = hasCoreComponents ? 'none' : 'block';
         
@@ -259,10 +260,14 @@ class DevStackBox {
       this.updateSystemInfo(status);
       
       // Set PHP 8.2 as default if available
-      if (status.php && status.php['8.2']) {
+      if (status.php82 || (status.php && status.php['8.2'])) {
         this.currentPhp = '8.2';
         this.updatePhpVersionDisplay('8.2');
       }
+      
+      // Update services status to show pre-bundled state
+      this.updateServicesStatus(status);
+      
     } catch (error) {
       console.error('Failed to check installation:', error);
     }
@@ -292,6 +297,7 @@ class DevStackBox {
         if (status.php81) phpVersions.push('8.1');
         if (status.php82) phpVersions.push('8.2');
         if (status.php83) phpVersions.push('8.3');
+        if (status.php84) phpVersions.push('8.4');
       }
       
       if (phpVersions.length > 0) {
@@ -433,50 +439,58 @@ class DevStackBox {
       <div class="modal-content">
         <div class="modal-header">
           <h2>
-            <img src="assets/icons/folder.svg" alt="Offline Setup" class="modal-icon">
-            Offline Server Setup Guide
+            <img src="assets/icons/system.svg" alt="System Status" class="modal-icon">
+            Pre-bundled Server Status
           </h2>
           <button type="button" class="modal-close" onclick="this.closest('.modal-overlay').remove()">×</button>
         </div>
         <div class="modal-body">
           <div style="max-height: 500px; overflow-y: auto;">
-            <h3>📦 Quick Setup Options</h3>
+            <h3>✅ Pre-bundled Components</h3>
             <div style="margin-bottom: 20px;">
-              <div style="padding: 15px; border: 1px solid #ddd; border-radius: 8px;">
-                <h4>Download Pre-bundled Binaries</h4>
-                <ul style="margin-left: 20px;">
-                  <li><strong>Apache:</strong> <a href="https://www.apachelounge.com/download/" target="_blank">apachelounge.com</a> → Extract to <code>apache/</code></li>
-                  <li><strong>MySQL:</strong> <a href="https://dev.mysql.com/downloads/mysql/" target="_blank">MySQL Downloads</a> → Extract to <code>mysql/</code></li>
-                  <li><strong>PHP:</strong> <a href="https://windows.php.net/downloads/" target="_blank">PHP Windows</a> → Extract to <code>php/8.3/</code></li>
-                  <li><strong>phpMyAdmin:</strong> <a href="https://www.phpmyadmin.net/downloads/" target="_blank">phpMyAdmin</a> → Extract to <code>phpmyadmin/</code></li>
+              <div style="padding: 15px; border: 1px solid #28a745; border-radius: 8px; background: #f8fff8;">
+                <h4>🚀 Ready to Use - No Downloads Required!</h4>
+                <ul style="margin-left: 20px; line-height: 1.8;">
+                  <li><strong>✅ Apache:</strong> Pre-installed and ready</li>
+                  <li><strong>✅ MySQL:</strong> Pre-installed and ready</li>
+                  <li><strong>✅ PHP 8.1:</strong> Available for switching</li>
+                  <li><strong>✅ PHP 8.2:</strong> <span style="color: #28a745; font-weight: bold;">Default Version</span></li>
+                  <li><strong>✅ PHP 8.3:</strong> Available for switching</li>
+                  <li><strong>✅ PHP 8.4:</strong> Available for switching</li>
+                  <li><strong>✅ phpMyAdmin:</strong> Pre-installed and ready</li>
                 </ul>
               </div>
             </div>
             
-            <h3>📁 Expected Folder Structure</h3>
+            <h3>📁 Current Structure</h3>
             <pre style="background: #f5f5f5; padding: 15px; border-radius: 4px; font-size: 12px;">
 DevStackBox/
-├── apache/
-│   ├── bin/httpd.exe ✓
+├── apache/          ✅ Ready
+│   ├── bin/httpd.exe
 │   ├── conf/httpd.conf
 │   └── modules/
-├── mysql/
-│   ├── bin/mysqld.exe ✓
-│   └── bin/mysql.exe ✓
+├── mysql/           ✅ Ready
+│   ├── bin/mysqld.exe
+│   └── bin/mysql.exe
 ├── php/
-│   └── 8.3/
-│       ├── php.exe ✓
-│       └── ext/
-└── phpmyadmin/
-    ├── index.php ✓
+│   ├── 8.1/         ✅ Available
+│   ├── 8.2/         ✅ Default
+│   ├── 8.3/         ✅ Available
+│   └── 8.4/         ✅ Available
+└── phpmyadmin/      ✅ Ready
+    ├── index.php
     └── libraries/
             </pre>
             
-            <h3>✅ After Setup</h3>
-            <p>Restart DevStackBox and all services should show as <strong>"Available"</strong> instead of <strong>"Binaries not found"</strong>.</p>
+            <h3>⚙️ Settings</h3>
+            <div style="padding: 15px; background: #f8f9fa; border-radius: 8px;">
+              <p><strong>Default PHP Version:</strong> 8.2 (can be changed from main panel)</p>
+              <p><strong>Server Binaries:</strong> All pre-bundled, no internet required</p>
+              <p><strong>Status:</strong> Fully portable and offline-ready</p>
+            </div>
             
             <div style="padding: 15px; background: #e8f5e8; border-radius: 8px; margin-top: 20px;">
-              <strong>💡 Benefits:</strong> No internet required, faster startup, completely portable, version controlled!
+              <strong>💡 Benefits:</strong> Instant startup, no downloads, completely portable, version controlled, offline development ready!
             </div>
           </div>
         </div>
@@ -484,6 +498,54 @@ DevStackBox/
     `;
     
     document.body.appendChild(modal);
+  }
+
+  updateDownloadModalStatus(status) {
+    // Update Apache status
+    const apacheStatus = document.getElementById('apache-download-status');
+    if (apacheStatus) {
+      apacheStatus.textContent = status.apache ? '✅ Pre-bundled' : '❌ Missing';
+      apacheStatus.className = status.apache ? 'status-badge status-success' : 'status-badge status-error';
+    }
+
+    // Update MySQL status
+    const mysqlStatus = document.getElementById('mysql-download-status');
+    if (mysqlStatus) {
+      mysqlStatus.textContent = status.mysql ? '✅ Pre-bundled' : '❌ Missing';
+      mysqlStatus.className = status.mysql ? 'status-badge status-success' : 'status-badge status-error';
+    }
+
+    // Update phpMyAdmin status
+    const phpmyadminStatus = document.getElementById('phpmyadmin-download-status');
+    if (phpmyadminStatus) {
+      phpmyadminStatus.textContent = status.phpmyadmin ? '✅ Pre-bundled' : '❌ Missing';
+      phpmyadminStatus.className = status.phpmyadmin ? 'status-badge status-success' : 'status-badge status-error';
+    }
+
+    // Update PHP versions status
+    if (status.php) {
+      ['8.1', '8.2', '8.3', '8.4'].forEach(version => {
+        const phpStatus = document.getElementById(`php${version.replace('.', '')}-status`);
+        if (phpStatus) {
+          const isInstalled = status.php[version];
+          phpStatus.textContent = isInstalled ? '✅ Pre-bundled' : '❌ Missing';
+          phpStatus.className = isInstalled ? 'version-status status-success' : 'version-status status-error';
+        }
+      });
+    }
+
+    // Update download buttons to show pre-bundled status
+    const downloadButtons = document.querySelectorAll('.download-btn');
+    downloadButtons.forEach(btn => {
+      const component = btn.getAttribute('data-component');
+      if ((component === 'apache' && status.apache) ||
+          (component === 'mysql' && status.mysql) ||
+          (component === 'phpmyadmin' && status.phpmyadmin)) {
+        btn.innerHTML = '<img src="assets/icons/system.svg" alt="Bundled" class="btn-icon"> Pre-bundled';
+        btn.disabled = true;
+        btn.className = 'btn btn-success download-btn';
+      }
+    });
   }
 }
 

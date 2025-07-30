@@ -22,10 +22,6 @@
                             Downloads & Settings
                         </button>
                     </div>
-                    <div class="status-info">
-                        <span class="version">v1.0.0</span>
-                        <span class="status-text" id="headerStatus">Portable Development Environment</span>
-                    </div>
                 </div>
             </div>
         </header>
@@ -368,12 +364,17 @@
                         </div>
                         <div class="php-versions-grid">
                             <div class="php-version-card">
+                                <h5>PHP 8.4</h5>
+                                <span class="version-status" id="php84-status">Not Installed</span>
+                                <button class="btn btn-sm btn-primary" data-php-version="8.4">Download</button>
+                            </div>
+                            <div class="php-version-card">
                                 <h5>PHP 8.3</h5>
                                 <span class="version-status" id="php83-status">Not Installed</span>
                                 <button class="btn btn-sm btn-primary" data-php-version="8.3">Download</button>
                             </div>
                             <div class="php-version-card">
-                                <h5>PHP 8.2</h5>
+                                <h5>PHP 8.2 (Default)</h5>
                                 <span class="version-status" id="php82-status">Not Installed</span>
                                 <button class="btn btn-sm btn-primary" data-php-version="8.2">Download</button>
                             </div>
@@ -628,11 +629,12 @@
                                 </div>
                             </div>
                             <div class="component-details">
-                                <p>PHP 8.1, 8.2, and 8.3 with extensions</p>
+                                <p>PHP 8.1, 8.2, 8.3, and 8.4 with extensions (8.2 default)</p>
                                 <div class="php-versions">
                                     <span class="version-tag">PHP 8.1</span>
                                     <span class="version-tag">PHP 8.2</span>
                                     <span class="version-tag">PHP 8.3</span>
+                                    <span class="version-tag">PHP 8.4</span>
                                 </div>
                             </div>
                             <button class="btn btn-secondary component-btn" data-component="php">

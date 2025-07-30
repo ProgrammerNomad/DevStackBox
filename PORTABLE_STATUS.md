@@ -39,7 +39,7 @@ Removed unused files:
 This should download and extract:
 - Apache HTTP Server
 - MySQL Database  
-- PHP 8.1, 8.2, 8.3
+- PHP 8.1, 8.2, 8.3, 8.4 (8.2 is default)
 - phpMyAdmin
 
 Then test starting services and creating projects!

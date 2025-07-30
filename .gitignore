@@ -60,17 +60,22 @@ desktop.ini
 # DevStackBox Specific Files
 # ===========================
 
-# Portable Server Binaries (if added)
+# Server Binaries (Pre-bundled but not tracked)
 apache/bin/
 apache/modules/
+apache/cgi-bin/
 apache/htdocs/
+apache/manual/
+apache/error/
+apache/icons/
 mysql/bin/
-mysql/data/
 mysql/lib/
 mysql/share/
+mysql/data/
 php/*/
-phpmyadmin/vendor/
-phpmyadmin/tmp/
+!php/README.md
+phpmyadmin/*
+!phpmyadmin/README.md
 
 # Configuration Backups
 *.ini.bak
@@ -124,3 +129,4 @@ temp/
 !assets/icon.png
 !assets/logo.png
 !assets/tray-icon.png
+mysql/data/*

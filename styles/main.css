@@ -756,6 +756,36 @@ body {
   height: 18px;
 }
 
+/* Status badges */
+.status-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.status-badge.status-success {
+  background-color: var(--success-light);
+  color: var(--success-color);
+}
+
+.status-badge.status-error {
+  background-color: var(--danger-light);
+  color: var(--danger-color);
+}
+
+.version-status.status-success {
+  color: var(--success-color);
+  font-weight: 600;
+}
+
+.version-status.status-error {
+  color: var(--danger-color);
+  font-weight: 600;
+}
+
 .status-badge {
   padding: 0.25rem 0.5rem;
   border-radius: 4px;
@@ -893,24 +923,44 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: rgba(255, 255, 255, 0.95);
   display: none; /* Hidden by default */
   align-items: center;
   justify-content: center;
   z-index: 2000;
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.3s ease, visibility 0s linear 0.3s;
   visibility: hidden;
+  backdrop-filter: blur(2px);
 }
 
 .loading-overlay.show {
   display: flex;
   opacity: 1;
   visibility: visible;
+  transition: opacity 0.3s ease;
 }
 
 .loading-content {
   text-align: center;
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--border-color);
+  min-width: 200px;
+}
+
+.loading-content h3 {
+  margin: 0 0 1rem 0;
+  color: var(--text-primary);
+  font-size: 1.1rem;
+}
+
+.loading-content p {
+  margin: 0.5rem 0 0 0;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
 }
 
 .loading-spinner {
@@ -926,6 +976,28 @@ body {
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+/* Status Classes */
+.status-available {
+  color: var(--success-color) !important;
+  font-weight: 600;
+}
+
+.status-missing {
+  color: var(--error-color) !important;
+  font-weight: 600;
+}
+
+.status-running {
+  color: var(--primary-color) !important;
+  font-weight: 600;
+}
+
+.service-status {
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+  display: inline-block;
 }
 
 /* Notifications */

@@ -11,6 +11,7 @@ const execAsync = promisify(exec);
 class PortableServerManager {
   constructor(appPath) {
     this.appPath = appPath;
+    this.defaultPhpVersion = '8.2'; // Set PHP 8.2 as default
     this.downloadUrls = {
       apache: {
         url: 'https://www.apachelounge.com/download/VS17/binaries/httpd-2.4.58-240718-win64-VS17.zip',
@@ -37,6 +38,11 @@ class PortableServerManager {
         filename: 'php83.zip',
         extractTo: 'php/8.3'
       },
+      php84: {
+        url: 'https://windows.php.net/downloads/releases/php-8.4.0-Win32-vs16-x64.zip',
+        filename: 'php84.zip',
+        extractTo: 'php/8.4'
+      },
       phpmyadmin: {
         url: 'https://files.phpmyadmin.net/phpMyAdmin/5.2.1/phpMyAdmin-5.2.1-all-languages.zip',
         filename: 'phpmyadmin.zip',
@@ -55,16 +61,45 @@ class PortableServerManager {
       php: {
         '8.1': fs.existsSync(path.join(this.appPath, 'php', '8.1', 'php.exe')),
         '8.2': fs.existsSync(path.join(this.appPath, 'php', '8.2', 'php.exe')), // Default
-        '8.3': fs.existsSync(path.join(this.appPath, 'php', '8.3', 'php.exe'))
+        '8.3': fs.existsSync(path.join(this.appPath, 'php', '8.3', 'php.exe')),
+        '8.4': fs.existsSync(path.join(this.appPath, 'php', '8.4', 'php.exe'))
       },
       phpmyadmin: fs.existsSync(path.join(this.appPath, 'phpmyadmin', 'index.php')),
       // Backward compatibility
       php81: fs.existsSync(path.join(this.appPath, 'php', '8.1', 'php.exe')),
       php82: fs.existsSync(path.join(this.appPath, 'php', '8.2', 'php.exe')),
-      php83: fs.existsSync(path.join(this.appPath, 'php', '8.3', 'php.exe'))
+      php83: fs.existsSync(path.join(this.appPath, 'php', '8.3', 'php.exe')),
+      php84: fs.existsSync(path.join(this.appPath, 'php', '8.4', 'php.exe'))
     };
 
     return status;
+  }
+
+  /**
+   * Get the default PHP version
+   */
+  getDefaultPhpVersion() {
+    return this.defaultPhpVersion;
+  }
+
+  /**
+   * Get available PHP versions
+   */
+  getAvailablePhpVersions() {
+    const versions = [];
+    const phpDir = path.join(this.appPath, 'php');
+    
+    if (fs.existsSync(phpDir)) {
+      const subdirs = fs.readdirSync(phpDir, { withFileTypes: true })
+        .filter(dirent => dirent.isDirectory())
+        .map(dirent => dirent.name)
+        .filter(name => /^\d+\.\d+$/.test(name))
+        .sort();
+      
+      versions.push(...subdirs);
+    }
+    
+    return versions;
   }
 
   /**

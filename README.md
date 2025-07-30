@@ -6,7 +6,7 @@ A lightweight, portable, open-source local development tool for PHP developers
 
 - **Apache HTTP Server** - Portable Apache with easy start/stop controls
 - **MySQL Database** - Embedded MySQL server with GUI management
-- **Multiple PHP Versions** - Switch between PHP versions easily
+- **Multiple PHP Versions** - Switch between PHP 8.1, 8.2 (default), 8.3, and 8.4
 - **phpMyAdmin** - Built-in database management interface
 - **One-Click App Installers** - Install WordPress, Laravel, and more
 - **System Tray Support** - Minimize to system tray like Laragon

@@ -28,7 +28,8 @@ class LogViewerManager extends EventEmitter {
         error: path.join(appPath, 'php', 'logs', 'php_error.log'),
         '8.1': path.join(appPath, 'php', '8.1', 'logs', 'php_error.log'),
         '8.2': path.join(appPath, 'php', '8.2', 'logs', 'php_error.log'),
-        '8.3': path.join(appPath, 'php', '8.3', 'logs', 'php_error.log')
+        '8.3': path.join(appPath, 'php', '8.3', 'logs', 'php_error.log'),
+        '8.4': path.join(appPath, 'php', '8.4', 'logs', 'php_error.log')
       },
       system: {
         devstackbox: path.join(appPath, 'logs', 'devstackbox.log'),

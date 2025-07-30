@@ -22,6 +22,7 @@ if not exist "php" mkdir php
 if not exist "php\8.1" mkdir php\8.1
 if not exist "php\8.2" mkdir php\8.2
 if not exist "php\8.3" mkdir php\8.3
+if not exist "php\8.4" mkdir php\8.4
 if not exist "php\logs" mkdir php\logs
 
 if not exist "phpmyadmin" mkdir phpmyadmin
@@ -45,6 +46,7 @@ echo    mysql/      - MySQL Database Server
 echo    php/8.1/    - PHP 8.1 (optional)
 echo    php/8.2/    - PHP 8.2 (default)
 echo    php/8.3/    - PHP 8.3 (optional)
+echo    php/8.4/    - PHP 8.4 (optional)
 echo    phpmyadmin/ - phpMyAdmin
 echo    www/        - Web document root
 echo.

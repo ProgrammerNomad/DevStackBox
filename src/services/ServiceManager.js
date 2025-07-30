@@ -36,8 +36,8 @@ class ServiceManager {
     };
     
     this.runningProcesses = new Map();
-    // PHP 8.2 as default, with 8.1 and 8.3 as additional options
-    this.phpVersions = ['8.1', '8.2', '8.3'];
+    // PHP 8.2 as default, with 8.1, 8.3, and 8.4 as additional options
+    this.phpVersions = ['8.1', '8.2', '8.3', '8.4'];
     this.currentPhpVersion = '8.2'; // Default to PHP 8.2
     
     // Check what's actually pre-bundled
@@ -331,7 +331,8 @@ class ServiceManager {
       apache: this.services.apache.installed,
       mysql: this.services.mysql.installed,
       php: {},
-      phpmyadmin: fs.existsSync(path.join(this.appPath, 'phpmyadmin', 'index.php'))
+      phpmyadmin: fs.existsSync(path.join(this.appPath, 'phpmyadmin', 'index.php')),
+      prebundled: true // Mark as pre-bundled installation
     };
 
     // Check PHP versions, prioritizing 8.2 as default
