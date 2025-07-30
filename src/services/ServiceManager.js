@@ -242,6 +242,19 @@ class ServiceManager {
     const configPath = path.join(this.appPath, 'phpmyadmin', 'config.inc.php');
     
     try {
+      // Check if config file already exists and has working settings
+      if (fs.existsSync(configPath)) {
+        const existingConfig = fs.readFileSync(configPath, 'utf8');
+        
+        // If it already has cookie auth and proper connection settings, don't overwrite
+        if (existingConfig.includes("auth_type'] = 'cookie'") && 
+            existingConfig.includes("AllowNoPassword'] = true") &&
+            existingConfig.includes("AllowRoot'] = true")) {
+          console.log('✅ phpMyAdmin config already configured with working settings - skipping overwrite');
+          return;
+        }
+      }
+      
       const normalizedAppPath = this.appPath.replace(/\\/g, '/');
       
       const configContent = `<?php
@@ -251,13 +264,15 @@ class ServiceManager {
  */
 
 // Server configuration
-$cfg['Servers'][1]['auth_type'] = 'config';
-$cfg['Servers'][1]['host'] = 'localhost';
+$cfg['Servers'][1]['auth_type'] = 'cookie';
+$cfg['Servers'][1]['host'] = '127.0.0.1';
 $cfg['Servers'][1]['port'] = 3306;
 $cfg['Servers'][1]['connect_type'] = 'tcp';
 $cfg['Servers'][1]['compress'] = false;
 $cfg['Servers'][1]['user'] = 'root';
 $cfg['Servers'][1]['password'] = '';
+$cfg['Servers'][1]['AllowNoPassword'] = true;
+$cfg['Servers'][1]['AllowRoot'] = true;
 
 // Directories with dynamic paths
 $cfg['UploadDir'] = '${normalizedAppPath}/phpmyadmin/upload';
@@ -285,7 +300,7 @@ $cfg['ThemeDefault'] = 'pmahomme';
 ?>`;
       
       fs.writeFileSync(configPath, configContent, 'utf8');
-      console.log('✅ phpMyAdmin config created with dynamic paths');
+      console.log('✅ phpMyAdmin config created with working connection settings');
     } catch (error) {
       console.error('❌ Error creating phpMyAdmin config:', error);
     }

@@ -21,7 +21,7 @@ $cfg['SaveDir'] = 'C:/xampp/htdocs/DevStackBox/phpmyadmin/save';
 $cfg['TempDir'] = 'C:/xampp/htdocs/DevStackBox/phpmyadmin/tmp';
 
 // Security settings
-$cfg['blowfish_secret'] = '95LB2QLijs0y2r5SaAjtrhitnLgRjqXn';
+$cfg['blowfish_secret'] = 'nYSd6wlCE7kRo3kX5o4gAZ03zEWpiaLK';
 $cfg['DefaultLang'] = 'en';
 $cfg['ServerDefault'] = 1;
 
