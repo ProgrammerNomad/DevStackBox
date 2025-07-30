@@ -6,6 +6,7 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;">
     <title>DevStackBox - Local Development Environment</title>
     <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/config-ui.css">
 </head>
 <body>
     <div class="app-container">
@@ -802,7 +803,240 @@
         </div>
     </div>
 
+    <!-- Apache Configuration Modal -->
+    <div class="modal-overlay" id="apacheConfigModal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h2>
+                    <img src="assets/icons/apache.svg" alt="Apache" class="modal-icon">
+                    Apache Configuration
+                </h2>
+                <button class="modal-close" id="closeApacheConfigModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="apacheConfigForm">
+                    <div class="config-section">
+                        <h3>Basic Settings</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="apache-port">Port:</label>
+                                <input type="number" id="apache-port" name="port" min="1" max="65535" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="apache-servername">Server Name:</label>
+                                <input type="text" id="apache-servername" name="serverName" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="apache-docroot">Document Root:</label>
+                            <input type="text" id="apache-docroot" name="documentRoot" required>
+                        </div>
+                    </div>
+
+                    <div class="config-section">
+                        <h3>Performance Settings</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="apache-timeout">Timeout (seconds):</label>
+                                <input type="number" id="apache-timeout" name="timeout" min="1" max="3600" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="apache-workers">Max Request Workers:</label>
+                                <input type="number" id="apache-workers" name="maxRequestWorkers" min="1" max="1000" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="config-section">
+                        <h3>KeepAlive Settings</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="apache-keepalive">KeepAlive:</label>
+                                <select id="apache-keepalive" name="keepAlive" required>
+                                    <option value="On">On</option>
+                                    <option value="Off">Off</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="apache-keepalive-timeout">KeepAlive Timeout:</label>
+                                <input type="number" id="apache-keepalive-timeout" name="keepAliveTimeout" min="1" max="300" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="apache-max-keepalive">Max KeepAlive Requests:</label>
+                            <input type="number" id="apache-max-keepalive" name="maxKeepAliveRequests" min="0" max="1000" required>
+                        </div>
+                    </div>
+
+                    <div class="config-section">
+                        <h3>Security Settings</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="apache-tokens">Server Tokens:</label>
+                                <select id="apache-tokens" name="serverTokens" required>
+                                    <option value="Prod">Prod</option>
+                                    <option value="Major">Major</option>
+                                    <option value="Minor">Minor</option>
+                                    <option value="Min">Min</option>
+                                    <option value="OS">OS</option>
+                                    <option value="Full">Full</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="apache-signature">Server Signature:</label>
+                                <select id="apache-signature" name="serverSignature" required>
+                                    <option value="Off">Off</option>
+                                    <option value="On">On</option>
+                                    <option value="EMail">EMail</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="apache-loglevel">Log Level:</label>
+                            <select id="apache-loglevel" name="errorLogLevel" required>
+                                <option value="emerg">Emergency</option>
+                                <option value="alert">Alert</option>
+                                <option value="crit">Critical</option>
+                                <option value="error">Error</option>
+                                <option value="warn">Warning</option>
+                                <option value="notice">Notice</option>
+                                <option value="info">Info</option>
+                                <option value="debug">Debug</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <div class="config-actions">
+                    <button type="button" class="btn btn-secondary" id="validateApacheBtn">Validate</button>
+                    <button type="button" class="btn btn-info" id="apacheBackupsBtn">Backups</button>
+                    <button type="button" class="btn btn-warning" id="resetApacheBtn">Reset</button>
+                    <button type="button" class="btn btn-success" id="saveApacheBtn">Save & Restart</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MySQL Configuration Modal -->
+    <div class="modal-overlay" id="mysqlConfigModal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h2>
+                    <img src="assets/icons/mysql.svg" alt="MySQL" class="modal-icon">
+                    MySQL Configuration
+                </h2>
+                <button class="modal-close" id="closeMySQLConfigModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="mysqlConfigForm">
+                    <div class="config-section">
+                        <h3>Connection Settings</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="mysql-port">Port:</label>
+                                <input type="number" id="mysql-port" name="port" min="1" max="65535" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="mysql-bind">Bind Address:</label>
+                                <input type="text" id="mysql-bind" name="bindAddress" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="mysql-maxconn">Max Connections:</label>
+                            <input type="number" id="mysql-maxconn" name="maxConnections" min="1" max="10000" required>
+                        </div>
+                    </div>
+
+                    <div class="config-section">
+                        <h3>Performance Settings</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="mysql-packet">Max Allowed Packet:</label>
+                                <input type="text" id="mysql-packet" name="maxAllowedPacket" required>
+                                <small>e.g., 64M, 128M, 1G</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="mysql-buffer">InnoDB Buffer Pool Size:</label>
+                                <input type="text" id="mysql-buffer" name="innodbBufferPoolSize" required>
+                                <small>e.g., 256M, 512M, 1G</small>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="mysql-logsize">InnoDB Log File Size:</label>
+                            <input type="text" id="mysql-logsize" name="innodbLogFileSize" required>
+                            <small>e.g., 50M, 100M, 256M</small>
+                        </div>
+                    </div>
+
+                    <div class="config-section">
+                        <h3>Logging Settings</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="mysql-slowlog">Enable Slow Query Log:</label>
+                                <select id="mysql-slowlog" name="slowQueryLog" required>
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="mysql-slowtime">Long Query Time (seconds):</label>
+                                <input type="number" id="mysql-slowtime" name="longQueryTime" min="0" step="0.1" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="mysql-generallog">Enable General Log:</label>
+                            <select id="mysql-generallog" name="generalLog" required>
+                                <option value="false">No</option>
+                                <option value="true">Yes</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="config-section">
+                        <h3>SQL Mode</h3>
+                        <div class="form-group">
+                            <label for="mysql-sqlmode">SQL Mode:</label>
+                            <input type="text" id="mysql-sqlmode" name="sqlMode" required>
+                            <small>Comma-separated list of SQL modes</small>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <div class="config-actions">
+                    <button type="button" class="btn btn-secondary" id="validateMySQLBtn">Validate</button>
+                    <button type="button" class="btn btn-info" id="mysqlBackupsBtn">Backups</button>
+                    <button type="button" class="btn btn-warning" id="resetMySQLBtn">Reset</button>
+                    <button type="button" class="btn btn-success" id="saveMySQLBtn">Save & Restart</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Configuration Backups Modal -->
+    <div class="modal-overlay" id="configBackupsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>
+                    <img src="assets/icons/backup.svg" alt="Backups" class="modal-icon">
+                    Configuration Backups
+                </h2>
+                <button class="modal-close" id="closeBackupsModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="backupsList" class="backups-list">
+                    <p>Loading backups...</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="closeBackupsBtn">Close</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Scripts -->
+    <script src="scripts/config-ui.js"></script>
     <script src="scripts/app.js?v=1.0.1"></script>
 </body>
 </html>

@@ -72,11 +72,11 @@ mysql/logs/*
 !mysql/logs/.gitkeep
 php/*/logs/*
 !php/*/logs/.gitkeep
+php/*/tmp/*
+!php/*/tmp/.gitkeep
 
-# Configuration Backups
-*.ini.bak
-*.conf.bak
-*.cnf.bak
+# Configuration Backups (generated dynamically)
+config-backups/
 
 # Large Debug Files (Not needed for runtime)
 *.pdb
@@ -84,16 +84,7 @@ php/*/logs/*
 *.exp
 *.lib
 
-# Large Binary Files (Optional for server operation)
-# Uncomment the following lines if MySQL executable is too large for your git hosting:
-# mysql/bin/mysqld.exe
-
-# Server Runtime Logs
-logs/
-*.error.log
-*.access.log
-
-# Temporary Files
+# Server Runtime Files
 tmp/
 temp/
 *.tmp
@@ -121,6 +112,14 @@ temp/
 # ESLint Cache
 .eslintcache
 
+# Upload directories
+phpmyadmin/upload/*
+!phpmyadmin/upload/.gitkeep
+phpmyadmin/save/*
+!phpmyadmin/save/.gitkeep
+phpmyadmin/tmp/*
+!phpmyadmin/tmp/.gitkeep
+
 # Keep Important Files
 !apache/README.md
 !mysql/README.md
@@ -129,7 +128,7 @@ temp/
 !apps/README.md
 !www/README.md
 
-# Keep Asset Files
+# Keep Asset Files  
 !assets/icon.png
 !assets/logo.png
 !assets/tray-icon.png

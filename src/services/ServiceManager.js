@@ -3,6 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const { promisify } = require('util');
 const process = require('process');
+const DynamicPathManager = require('../utils/DynamicPathManager');
 
 const execAsync = promisify(exec);
 
@@ -12,7 +13,7 @@ const execAsync = promisify(exec);
  */
 class ServiceManager {
   constructor(appPath) {
-    this.appPath = appPath;
+    this.appPath = appPath || DynamicPathManager.getBasePath();
     
     // Look for pre-bundled portable servers
     this.services = {
@@ -43,6 +44,9 @@ class ServiceManager {
     
     // Check what's actually pre-bundled
     this.checkInstallations();
+    
+    // Configure dynamic paths on initialization
+    this.configureDynamicPaths();
     
     console.log('DevStackBox: ServiceManager initialized - Looking for pre-bundled servers (PHP 8.2 default)');
   }
@@ -91,6 +95,270 @@ class ServiceManager {
         console.log(`❌ ${service.name} portable binary missing: ${service.executable}`);
       }
     });
+  }
+
+  /**
+   * Configure all configuration files with dynamic paths
+   * This replaces all static paths with the current installation directory
+   */
+  async configureDynamicPaths() {
+    console.log('🔧 Configuring dynamic paths for portability...');
+    
+    try {
+      // Configure Apache httpd.conf with dynamic paths
+      await this.configureApacheConfig();
+      
+      // Configure MySQL my.ini with dynamic paths
+      await this.configureMySQLConfig();
+      
+      // Configure phpMyAdmin config with dynamic paths
+      await this.configurePhpMyAdminConfig();
+      
+      // Configure PHP ini files with dynamic paths
+      await this.configurePHPConfig();
+      
+      console.log('✅ All configuration files updated with dynamic paths');
+    } catch (error) {
+      console.error('❌ Error configuring dynamic paths:', error);
+    }
+  }
+
+  /**
+   * Configure Apache httpd.conf with dynamic paths
+   */
+  async configureApacheConfig() {
+    const configPath = this.services.apache.configPath;
+    
+    if (!fs.existsSync(configPath)) {
+      console.log(`⚠️ Apache config not found: ${configPath}`);
+      return;
+    }
+    
+    try {
+      let content = fs.readFileSync(configPath, 'utf8');
+      
+      // Replace all static paths with dynamic ones
+      const normalizedAppPath = this.appPath.replace(/\\/g, '/');
+      
+      // Replace ServerRoot
+      content = content.replace(
+        /^Define SRVROOT .+$/m,
+        `Define SRVROOT "${normalizedAppPath}/apache"`
+      );
+      
+      // Replace DocumentRoot
+      content = content.replace(
+        /^DocumentRoot .+$/m,
+        `DocumentRoot "${normalizedAppPath}/www"`
+      );
+      
+      // Replace Directory paths
+      content = content.replace(
+        /<Directory\s+"[^"]*\/www">/g,
+        `<Directory "${normalizedAppPath}/www">`
+      );
+      
+      // Replace PHP CGI script alias
+      content = content.replace(
+        /^ScriptAlias \/cgi-bin\/ .+$/m,
+        `ScriptAlias /cgi-bin/ "${normalizedAppPath}/php/${this.currentPhpVersion}/"`
+      );
+      
+      // Replace phpMyAdmin alias
+      content = content.replace(
+        /^Alias \/phpmyadmin .+$/m,
+        `Alias /phpmyadmin "${normalizedAppPath}/phpmyadmin"`
+      );
+      
+      // Replace phpMyAdmin directory
+      content = content.replace(
+        /<Directory\s+"[^"]*\/phpmyadmin">/g,
+        `<Directory "${normalizedAppPath}/phpmyadmin">`
+      );
+      
+      fs.writeFileSync(configPath, content, 'utf8');
+      console.log('✅ Apache config updated with dynamic paths');
+    } catch (error) {
+      console.error('❌ Error updating Apache config:', error);
+    }
+  }
+
+  /**
+   * Configure MySQL my.ini with dynamic paths
+   */
+  async configureMySQLConfig() {
+    const configPath = this.services.mysql.configPath;
+    
+    if (!fs.existsSync(configPath)) {
+      console.log(`⚠️ MySQL config not found: ${configPath}`);
+      return;
+    }
+    
+    try {
+      let content = fs.readFileSync(configPath, 'utf8');
+      
+      // Replace all paths with dynamic ones
+      const normalizedAppPath = this.appPath.replace(/\\/g, '/');
+      
+      // Replace basedir
+      content = content.replace(
+        /^basedir\s*=.+$/m,
+        `basedir = ${normalizedAppPath}/mysql`
+      );
+      
+      // Replace datadir
+      content = content.replace(
+        /^datadir\s*=.+$/m,
+        `datadir = ${normalizedAppPath}/mysql/data`
+      );
+      
+      // Replace log files
+      content = content.replace(
+        /^log-error\s*=.+$/m,
+        `log-error = ${normalizedAppPath}/mysql/logs/error.log`
+      );
+      
+      content = content.replace(
+        /^general_log_file\s*=.+$/m,
+        `general_log_file = ${normalizedAppPath}/mysql/logs/general.log`
+      );
+      
+      content = content.replace(
+        /^slow_query_log_file\s*=.+$/m,
+        `slow_query_log_file = ${normalizedAppPath}/mysql/logs/slow.log`
+      );
+      
+      fs.writeFileSync(configPath, content, 'utf8');
+      console.log('✅ MySQL config updated with dynamic paths');
+    } catch (error) {
+      console.error('❌ Error updating MySQL config:', error);
+    }
+  }
+
+  /**
+   * Configure phpMyAdmin config with dynamic paths
+   */
+  async configurePhpMyAdminConfig() {
+    const configPath = path.join(this.appPath, 'phpmyadmin', 'config.inc.php');
+    
+    try {
+      const normalizedAppPath = this.appPath.replace(/\\/g, '/');
+      
+      const configContent = `<?php
+/**
+ * phpMyAdmin Configuration - Dynamic Paths
+ * Auto-generated by DevStackBox ServiceManager
+ */
+
+// Server configuration
+$cfg['Servers'][1]['auth_type'] = 'config';
+$cfg['Servers'][1]['host'] = 'localhost';
+$cfg['Servers'][1]['port'] = 3306;
+$cfg['Servers'][1]['connect_type'] = 'tcp';
+$cfg['Servers'][1]['compress'] = false;
+$cfg['Servers'][1]['user'] = 'root';
+$cfg['Servers'][1]['password'] = '';
+
+// Directories with dynamic paths
+$cfg['UploadDir'] = '${normalizedAppPath}/phpmyadmin/upload';
+$cfg['SaveDir'] = '${normalizedAppPath}/phpmyadmin/save';
+$cfg['TempDir'] = '${normalizedAppPath}/phpmyadmin/tmp';
+
+// Security settings
+$cfg['blowfish_secret'] = '${this.generateBlowfishSecret()}';
+$cfg['DefaultLang'] = 'en';
+$cfg['ServerDefault'] = 1;
+
+// Performance settings
+$cfg['MaxRows'] = 100;
+$cfg['MemoryLimit'] = '512M';
+$cfg['ExecTimeLimit'] = 300;
+
+// UI settings
+$cfg['ShowPhpInfo'] = true;
+$cfg['ShowServerInfo'] = true;
+$cfg['ShowAll'] = true;
+$cfg['MaxNavigationItems'] = 200;
+
+// Theme
+$cfg['ThemeDefault'] = 'pmahomme';
+?>`;
+      
+      fs.writeFileSync(configPath, configContent, 'utf8');
+      console.log('✅ phpMyAdmin config created with dynamic paths');
+    } catch (error) {
+      console.error('❌ Error creating phpMyAdmin config:', error);
+    }
+  }
+
+  /**
+   * Configure PHP ini files with dynamic paths
+   */
+  async configurePHPConfig() {
+    for (const version of this.phpVersions) {
+      const phpIniPath = path.join(this.appPath, 'php', version, 'php.ini');
+      
+      if (!fs.existsSync(phpIniPath)) {
+        console.log(`⚠️ PHP ${version} config not found: ${phpIniPath}`);
+        continue;
+      }
+      
+      try {
+        let content = fs.readFileSync(phpIniPath, 'utf8');
+        
+        const normalizedAppPath = this.appPath.replace(/\\/g, '/');
+        
+        // Update extension directory
+        content = content.replace(
+          /^extension_dir\s*=.+$/m,
+          `extension_dir = "${normalizedAppPath}/php/${version}/ext"`
+        );
+        
+        // Update session save path
+        content = content.replace(
+          /^;?session\.save_path\s*=.+$/m,
+          `session.save_path = "${normalizedAppPath}/php/${version}/tmp"`
+        );
+        
+        // Update upload tmp dir
+        content = content.replace(
+          /^;?upload_tmp_dir\s*=.+$/m,
+          `upload_tmp_dir = "${normalizedAppPath}/php/${version}/tmp"`
+        );
+        
+        // Update error log
+        content = content.replace(
+          /^;?log_errors_max_len\s*=.+$/m,
+          `log_errors = On\nerror_log = "${normalizedAppPath}/php/logs/php_${version}_errors.log"`
+        );
+        
+        fs.writeFileSync(phpIniPath, content, 'utf8');
+        console.log(`✅ PHP ${version} config updated with dynamic paths`);
+      } catch (error) {
+        console.error(`❌ Error updating PHP ${version} config:`, error);
+      }
+    }
+  }
+
+  /**
+   * Generate a random blowfish secret for phpMyAdmin
+   */
+  generateBlowfishSecret() {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let secret = '';
+    for (let i = 0; i < 32; i++) {
+      secret += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return secret;
+  }
+
+  /**
+   * Update PHP configuration for a specific version (compatibility method)
+   */
+  async updatePhpConfig(version) {
+    console.log(`🔧 Updating PHP ${version} configuration with dynamic paths...`);
+    // This is handled by configurePHPConfig() method above
+    return true;
   }
 
   /**

@@ -1,10 +1,36 @@
 <?php
-// DevStackBox PHP Test
-echo "<h1>DevStackBox PHP Test</h1>";
-echo "<p>PHP Version: " . phpversion() . "</p>";
-echo "<p>Server Software: " . $_SERVER['SERVER_SOFTWARE'] . "</p>";
-echo "<p>Document Root: " . $_SERVER['DOCUMENT_ROOT'] . "</p>";
-echo "<p>Script Name: " . $_SERVER['SCRIPT_NAME'] . "</p>";
-echo "<p>Current Time: " . date('Y-m-d H:i:s') . "</p>";
+echo "PHP is working!<br>";
+echo "PHP Version: " . phpversion() . "<br>";
+
+// Test MySQL connection
+$host = 'localhost';
+$port = 3306;
+$user = 'root';
+$password = '';
+
+try {
+    $dsn = "mysql:host=$host;port=$port";
+    $pdo = new PDO($dsn, $user, $password);
+    echo "MySQL Connection: SUCCESS<br>";
+    echo "MySQL Version: " . $pdo->getAttribute(PDO::ATTR_SERVER_VERSION) . "<br>";
+} catch (PDOException $e) {
+    echo "MySQL Connection: FAILED<br>";
+    echo "Error: " . $e->getMessage() . "<br>";
+}
+
+// Check mysqli extension
+if (extension_loaded('mysqli')) {
+    echo "MySQLi Extension: LOADED<br>";
+} else {
+    echo "MySQLi Extension: NOT LOADED<br>";
+}
+
+// Check pdo_mysql extension
+if (extension_loaded('pdo_mysql')) {
+    echo "PDO MySQL Extension: LOADED<br>";
+} else {
+    echo "PDO MySQL Extension: NOT LOADED<br>";
+}
+
 phpinfo();
 ?>

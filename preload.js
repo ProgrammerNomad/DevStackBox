@@ -49,6 +49,25 @@ contextBridge.exposeInMainWorld('electronAPI', {
   getLogStats: (service, type) => ipcRenderer.invoke('get-log-stats', service, type),
   searchLogs: (services, query, options) => ipcRenderer.invoke('search-logs', services, query, options),
 
+  // Server Configuration Manager
+  getApacheConfig: () => ipcRenderer.invoke('get-apache-config'),
+  getMySQLConfig: () => ipcRenderer.invoke('get-mysql-config'),
+  getPHPConfig: () => ipcRenderer.invoke('get-php-config'),
+  updateApacheConfig: (config) => ipcRenderer.invoke('update-apache-config', config),
+  updateMySQLConfig: (config) => ipcRenderer.invoke('update-mysql-config', config),
+  validateApacheConfig: () => ipcRenderer.invoke('validate-apache-config'),
+  validateMySQLConfig: () => ipcRenderer.invoke('validate-mysql-config'),
+  getConfigBackups: (service) => ipcRenderer.invoke('get-config-backups', service),
+  restoreConfigBackup: (service, backupName) => ipcRenderer.invoke('restore-config-backup', service, backupName),
+  
+  // Configuration UI methods
+  validateConfig: (service, config) => ipcRenderer.invoke('validate-config', service, config),
+  saveConfig: (service, config, restart) => ipcRenderer.invoke('save-config', service, config, restart),
+  restartService: (service) => ipcRenderer.invoke('restart-service', service),
+  
+  // Generic invoke method for flexibility
+  invoke: (channel, ...args) => ipcRenderer.invoke(channel, ...args),
+
   // Event listeners for progress updates
   onInstallProgress: (callback) => ipcRenderer.on('install-progress', callback),
   onInstallAllProgress: (callback) => ipcRenderer.on('install-all-progress', callback),

@@ -562,6 +562,272 @@ port=3306
 
     return templates[service] && templates[service][type] ? templates[service][type] : '';
   }
+
+  /**
+   * Get Apache configuration settings
+   */
+  async getApacheConfig() {
+    try {
+      const configPath = this.configPaths.apache.main;
+      const content = fs.readFileSync(configPath, 'utf8');
+      
+      const config = {
+        port: this.extractConfigValue(content, /^Listen\s+(\d+)/m, 80),
+        serverName: this.extractConfigValue(content, /^ServerName\s+(.+)/m, 'localhost'),
+        documentRoot: this.extractConfigValue(content, /^DocumentRoot\s+"([^"]+)"/m, ''),
+        directoryIndex: this.extractConfigValue(content, /^DirectoryIndex\s+(.+)/m, 'index.html index.php'),
+        serverTokens: this.extractConfigValue(content, /^ServerTokens\s+(\w+)/m, 'Full'),
+        serverSignature: this.extractConfigValue(content, /^ServerSignature\s+(\w+)/m, 'On'),
+        maxRequestsPerChild: this.extractConfigValue(content, /^MaxRequestsPerChild\s+(\d+)/m, 10000),
+        keepAlive: this.extractConfigValue(content, /^KeepAlive\s+(\w+)/m, 'On'),
+        keepAliveTimeout: this.extractConfigValue(content, /^KeepAliveTimeout\s+(\d+)/m, 5)
+      };
+
+      return config;
+    } catch (error) {
+      return { error: error.message };
+    }
+  }
+
+  /**
+   * Get MySQL configuration settings
+   */
+  async getMySQLConfig() {
+    try {
+      const configPath = this.configPaths.mysql.main;
+      const content = fs.readFileSync(configPath, 'utf8');
+      
+      const config = {
+        port: this.extractConfigValue(content, /^port\s*=\s*(\d+)/m, 3306),
+        bindAddress: this.extractConfigValue(content, /^bind-address\s*=\s*(.+)/m, '127.0.0.1'),
+        maxConnections: this.extractConfigValue(content, /^max_connections\s*=\s*(\d+)/m, 100),
+        maxAllowedPacket: this.extractConfigValue(content, /^max_allowed_packet\s*=\s*(.+)/m, '64M'),
+        innodbBufferPoolSize: this.extractConfigValue(content, /^innodb_buffer_pool_size\s*=\s*(.+)/m, '256M'),
+        queryCacheType: this.extractConfigValue(content, /^query_cache_type\s*=\s*(\d+)/m, '0'),
+        generalLog: this.extractConfigValue(content, /^general_log\s*=\s*(\d+)/m, '1'),
+        slowQueryLog: this.extractConfigValue(content, /^slow_query_log\s*=\s*(\d+)/m, '1'),
+        longQueryTime: this.extractConfigValue(content, /^long_query_time\s*=\s*(\d+(?:\.\d+)?)/m, 2)
+      };
+
+      return config;
+    } catch (error) {
+      return { error: error.message };
+    }
+  }
+
+  /**
+   * Get PHP configuration settings
+   */
+  async getPHPConfig() {
+    try {
+      const configPath = this.configPaths.php['8.2']; // Default to PHP 8.2
+      const content = fs.readFileSync(configPath, 'utf8');
+      
+      const config = {
+        version: '8.2',
+        memoryLimit: this.extractConfigValue(content, /^memory_limit\s*=\s*(.+)/m, '256M'),
+        uploadMaxFilesize: this.extractConfigValue(content, /^upload_max_filesize\s*=\s*(.+)/m, '64M'),
+        postMaxSize: this.extractConfigValue(content, /^post_max_size\s*=\s*(.+)/m, '128M')
+      };
+
+      return config;
+    } catch (error) {
+      return { error: error.message };
+    }
+  }
+
+  /**
+   * Validate configuration settings before saving
+   */
+  async validateConfig(service, config) {
+    try {
+      if (service === 'apache') {
+        return this.validateApacheSettings(config);
+      } else if (service === 'mysql') {
+        return this.validateMySQLSettings(config);
+      } else if (service === 'php') {
+        return this.validatePHPSettings(config);
+      }
+      
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  }
+
+  /**
+   * Save configuration settings
+   */
+  async saveConfig(service, config) {
+    try {
+      if (service === 'apache') {
+        return await this.saveApacheConfig(config);
+      } else if (service === 'mysql') {
+        return await this.saveMySQLConfig(config);
+      } else if (service === 'php') {
+        return await this.savePHPConfig(config);
+      }
+      
+      return { success: false, error: 'Unknown service' };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  }
+
+  /**
+   * Validate Apache settings
+   */
+  validateApacheSettings(config) {
+    if (config.port < 1 || config.port > 65535) {
+      return { success: false, error: 'Port must be between 1 and 65535' };
+    }
+    
+    if (!config.serverName || config.serverName.trim() === '') {
+      return { success: false, error: 'Server name cannot be empty' };
+    }
+    
+    if (config.keepAliveTimeout < 1 || config.keepAliveTimeout > 300) {
+      return { success: false, error: 'Keep alive timeout must be between 1 and 300 seconds' };
+    }
+    
+    return { success: true };
+  }
+
+  /**
+   * Validate MySQL settings
+   */
+  validateMySQLSettings(config) {
+    if (config.port < 1 || config.port > 65535) {
+      return { success: false, error: 'Port must be between 1 and 65535' };
+    }
+    
+    if (config.maxConnections < 1 || config.maxConnections > 10000) {
+      return { success: false, error: 'Max connections must be between 1 and 10000' };
+    }
+    
+    if (config.longQueryTime < 0.1 || config.longQueryTime > 60) {
+      return { success: false, error: 'Slow query time must be between 0.1 and 60 seconds' };
+    }
+    
+    return { success: true };
+  }
+
+  /**
+   * Validate PHP settings
+   */
+  validatePHPSettings(config) {
+    const validVersions = ['8.1', '8.2', '8.3', '8.4'];
+    if (!validVersions.includes(config.version)) {
+      return { success: false, error: 'Invalid PHP version' };
+    }
+    
+    return { success: true };
+  }
+
+  /**
+   * Save Apache configuration
+   */
+  async saveApacheConfig(config) {
+    try {
+      const configPath = this.configPaths.apache.main;
+      let content = fs.readFileSync(configPath, 'utf8');
+      
+      // Update configuration values
+      content = this.updateConfigValue(content, /^Listen\s+\d+/m, `Listen ${config.port}`);
+      content = this.updateConfigValue(content, /^ServerName\s+.+/m, `ServerName ${config.serverName}`);
+      content = this.updateConfigValue(content, /^DirectoryIndex\s+.+/m, `DirectoryIndex ${config.directoryIndex}`);
+      content = this.updateConfigValue(content, /^ServerTokens\s+\w+/m, `ServerTokens ${config.serverTokens}`);
+      content = this.updateConfigValue(content, /^ServerSignature\s+\w+/m, `ServerSignature ${config.serverSignature}`);
+      content = this.updateConfigValue(content, /^MaxRequestsPerChild\s+\d+/m, `MaxRequestsPerChild ${config.maxRequestsPerChild}`);
+      content = this.updateConfigValue(content, /^KeepAlive\s+\w+/m, `KeepAlive ${config.keepAlive}`);
+      content = this.updateConfigValue(content, /^KeepAliveTimeout\s+\d+/m, `KeepAliveTimeout ${config.keepAliveTimeout}`);
+      
+      // Create backup before saving
+      await this.createBackup('apache', 'main');
+      
+      // Save updated configuration
+      fs.writeFileSync(configPath, content, 'utf8');
+      
+      return { success: true, message: 'Apache configuration saved successfully' };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  }
+
+  /**
+   * Save MySQL configuration
+   */
+  async saveMySQLConfig(config) {
+    try {
+      const configPath = this.configPaths.mysql.main;
+      let content = fs.readFileSync(configPath, 'utf8');
+      
+      // Update configuration values
+      content = this.updateConfigValue(content, /^port\s*=\s*\d+/m, `port = ${config.port}`);
+      content = this.updateConfigValue(content, /^bind-address\s*=\s*.+/m, `bind-address = ${config.bindAddress}`);
+      content = this.updateConfigValue(content, /^max_connections\s*=\s*\d+/m, `max_connections = ${config.maxConnections}`);
+      content = this.updateConfigValue(content, /^max_allowed_packet\s*=\s*.+/m, `max_allowed_packet = ${config.maxAllowedPacket}`);
+      content = this.updateConfigValue(content, /^innodb_buffer_pool_size\s*=\s*.+/m, `innodb_buffer_pool_size = ${config.innodbBufferPoolSize}`);
+      content = this.updateConfigValue(content, /^general_log\s*=\s*\d+/m, `general_log = ${config.generalLog}`);
+      content = this.updateConfigValue(content, /^slow_query_log\s*=\s*\d+/m, `slow_query_log = ${config.slowQueryLog}`);
+      content = this.updateConfigValue(content, /^long_query_time\s*=\s*\d+(?:\.\d+)?/m, `long_query_time = ${config.longQueryTime}`);
+      
+      // Create backup before saving
+      await this.createBackup('mysql', 'main');
+      
+      // Save updated configuration
+      fs.writeFileSync(configPath, content, 'utf8');
+      
+      return { success: true, message: 'MySQL configuration saved successfully' };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  }
+
+  /**
+   * Save PHP configuration
+   */
+  async savePHPConfig(config) {
+    try {
+      const configPath = this.configPaths.php[config.version];
+      let content = fs.readFileSync(configPath, 'utf8');
+      
+      // Update configuration values
+      content = this.updateConfigValue(content, /^memory_limit\s*=\s*.+/m, `memory_limit = ${config.memoryLimit}`);
+      content = this.updateConfigValue(content, /^upload_max_filesize\s*=\s*.+/m, `upload_max_filesize = ${config.uploadMaxFilesize}`);
+      content = this.updateConfigValue(content, /^post_max_size\s*=\s*.+/m, `post_max_size = ${config.postMaxSize}`);
+      
+      // Create backup before saving
+      await this.createBackup('php', config.version);
+      
+      // Save updated configuration
+      fs.writeFileSync(configPath, content, 'utf8');
+      
+      return { success: true, message: `PHP ${config.version} configuration saved successfully` };
+    } catch (error) {
+      return { success: false, error: error.message };
+    }
+  }
+
+  /**
+   * Extract configuration value using regex
+   */
+  extractConfigValue(content, regex, defaultValue) {
+    const match = content.match(regex);
+    return match ? match[1].trim() : defaultValue;
+  }
+
+  /**
+   * Update configuration value in content
+   */
+  updateConfigValue(content, regex, newValue) {
+    if (regex.test(content)) {
+      return content.replace(regex, newValue);
+    } else {
+      // If the directive doesn't exist, add it at the end
+      return content + '\n' + newValue + '\n';
+    }
+  }
 }
 
 module.exports = ConfigEditorManager;

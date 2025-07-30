@@ -1101,3 +1101,146 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+/* Configuration Modal Styles */
+.modal-large {
+  max-width: 800px;
+  width: 90vw;
+}
+
+.config-section {
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background-color: #f8fafc;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--border-color);
+}
+
+.config-section h3 {
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group label {
+  font-weight: 500;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+}
+
+.form-group input,
+.form-group select {
+  padding: 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  font-size: 0.9rem;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.form-group small {
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+}
+
+.config-actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.backups-list {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.backup-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  margin-bottom: 0.5rem;
+  background-color: var(--surface-color);
+}
+
+.backup-info {
+  flex-grow: 1;
+}
+
+.backup-name {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.backup-date {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.backup-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.validation-message {
+  padding: 0.75rem;
+  border-radius: var(--border-radius);
+  margin-top: 1rem;
+  font-size: 0.9rem;
+}
+
+.validation-success {
+  background-color: #dcfce7;
+  border: 1px solid #16a34a;
+  color: #16a34a;
+}
+
+.validation-error {
+  background-color: #fee2e2;
+  border: 1px solid #dc2626;
+  color: #dc2626;
+}
+
+/* Responsive Configuration Modal */
+@media (max-width: 768px) {
+  .modal-large {
+    width: 95vw;
+  }
+  
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .config-actions {
+    justify-content: center;
+  }
+  
+  .backup-item {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+}

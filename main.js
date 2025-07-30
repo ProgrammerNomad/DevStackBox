@@ -9,6 +9,8 @@ const PortableServerManager = require('./src/services/PortableServerManager');
 const AppInstallerManager = require('./src/services/AppInstallerManager');
 const ConfigEditorManager = require('./src/services/ConfigEditorManager');
 const LogViewerManager = require('./src/services/LogViewerManager');
+const ServerConfigManager = require('./src/services/ServerConfigManager');
+const DynamicPathManager = require('./src/utils/DynamicPathManager');
 
 // Keep a global reference of the window object
 let mainWindow;
@@ -18,9 +20,20 @@ let portableServerManager;
 let appInstallerManager;
 let configEditorManager;
 let logViewerManager;
+let serverConfigManager;
 let isDevMode = process.argv.includes('--dev');
 
-function createWindow() {
+async function createWindow() {
+  try {
+    // Initialize dynamic paths first
+    console.log('Initializing dynamic paths...');
+    await DynamicPathManager.initializePaths();
+    console.log('Dynamic paths initialized successfully');
+  } catch (error) {
+    console.error('Failed to initialize dynamic paths:', error);
+    // Continue anyway - might work with existing config
+  }
+
   // Create application menu
   createApplicationMenu();
   
@@ -1092,6 +1105,7 @@ app.whenReady().then(() => {
   appInstallerManager = new AppInstallerManager(__dirname);
   configEditorManager = new ConfigEditorManager(__dirname);
   logViewerManager = new LogViewerManager(__dirname);
+  serverConfigManager = new ServerConfigManager(__dirname);
   
   createWindow();
   createMenu();
@@ -1232,36 +1246,6 @@ ipcMain.handle('open-folder', async (event, folderPath) => {
     const fullPath = path.join(__dirname, folderPath);
     await shell.openPath(fullPath);
     return { success: true };
-  } catch (error) {
-    return { success: false, error: error.message };
-  }
-});
-
-ipcMain.handle('create-project', async (event, projectName) => {
-  try {
-    const fs = require('fs');
-    const path = require('path');
-    
-    const projectPath = path.join(__dirname, 'www', 'projects', projectName);
-    
-    // Check if project already exists
-    if (fs.existsSync(projectPath)) {
-      return { success: false, error: 'Project already exists' };
-    }
-    
-    // Create project directory
-    fs.mkdirSync(projectPath, { recursive: true });
-    
-    // Create a basic index.php file
-    const indexContent = `<?php
-echo "<h1>Welcome to ${projectName}</h1>";
-echo "<p>This is your new project!</p>";
-echo "<p>Current time: " . date('Y-m-d H:i:s') . "</p>";
-?>`;
-    
-    fs.writeFileSync(path.join(projectPath, 'index.php'), indexContent);
-    
-    return { success: true, path: projectPath };
   } catch (error) {
     return { success: false, error: error.message };
   }
@@ -1483,15 +1467,6 @@ ipcMain.handle('delete-project', async (event, projectName) => {
   }
 });
 
-ipcMain.handle('open-url', async (event, url) => {
-  try {
-    await shell.openExternal(url);
-    return { success: true };
-  } catch (error) {
-    return { success: false, error: error.message };
-  }
-});
-
 ipcMain.handle('open-path', async (event, folderPath) => {
   try {
     await shell.openPath(folderPath);
@@ -1666,6 +1641,179 @@ async function openConfig(configType) {
     return { success: false, error: error.message };
   }
 }
+
+// Configuration Management IPC Handlers
+ipcMain.handle('get-apache-config', async () => {
+  try {
+    return await configEditorManager.getApacheConfig();
+  } catch (error) {
+    return { error: error.message };
+  }
+});
+
+ipcMain.handle('get-mysql-config', async () => {
+  try {
+    return await configEditorManager.getMySQLConfig();
+  } catch (error) {
+    return { error: error.message };
+  }
+});
+
+ipcMain.handle('get-php-config', async () => {
+  try {
+    return await configEditorManager.getPHPConfig();
+  } catch (error) {
+    return { error: error.message };
+  }
+});
+
+ipcMain.handle('validate-config', async (event, service, config) => {
+  try {
+    return await configEditorManager.validateConfig(service, config);
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle('save-config', async (event, service, config) => {
+  try {
+    return await configEditorManager.saveConfig(service, config);
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle('restart-service', async (event, service) => {
+  try {
+    if (!serviceManager) {
+      return { success: false, error: 'Service manager not initialized' };
+    }
+
+    // Stop the service
+    const stopResult = await serviceManager.stopService(service);
+    if (!stopResult.success) {
+      return { success: false, error: `Failed to stop ${service}: ${stopResult.message}` };
+    }
+
+    // Wait a moment for the service to fully stop
+    await new Promise(resolve => setTimeout(resolve, 2000));
+
+    // Start the service
+    const startResult = await serviceManager.startService(service);
+    if (!startResult.success) {
+      return { success: false, error: `Failed to start ${service}: ${startResult.message}` };
+    }
+
+    return { success: true, message: `${service} restarted successfully` };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle('update-apache-config', async (event, config) => {
+  try {
+    const result = await serverConfigManager.updateApacheConfig(config);
+    
+    // Validate configuration
+    const validation = await serverConfigManager.validateApacheConfig();
+    if (!validation.valid) {
+      throw new Error(`Configuration validation failed: ${validation.error}`);
+    }
+    
+    // Restart Apache service to apply changes
+    if (serviceManager) {
+      try {
+        await serviceManager.stopService('apache');
+        await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2 seconds
+        await serviceManager.startService('apache');
+        result.serviceRestarted = true;
+      } catch (serviceError) {
+        result.serviceError = serviceError.message;
+        result.serviceRestarted = false;
+      }
+    }
+    
+    return result;
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle('update-mysql-config', async (event, config) => {
+  try {
+    const result = await serverConfigManager.updateMySQLConfig(config);
+    
+    // Validate configuration
+    const validation = await serverConfigManager.validateMySQLConfig();
+    if (!validation.valid) {
+      throw new Error(`Configuration validation failed: ${validation.error}`);
+    }
+    
+    // Restart MySQL service to apply changes
+    if (serviceManager) {
+      try {
+        await serviceManager.stopService('mysql');
+        await new Promise(resolve => setTimeout(resolve, 3000)); // Wait 3 seconds for MySQL
+        await serviceManager.startService('mysql');
+        result.serviceRestarted = true;
+      } catch (serviceError) {
+        result.serviceError = serviceError.message;
+        result.serviceRestarted = false;
+      }
+    }
+    
+    return result;
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle('validate-apache-config', async () => {
+  try {
+    return await serverConfigManager.validateApacheConfig();
+  } catch (error) {
+    return { valid: false, error: error.message };
+  }
+});
+
+ipcMain.handle('validate-mysql-config', async () => {
+  try {
+    return await serverConfigManager.validateMySQLConfig();
+  } catch (error) {
+    return { valid: false, error: error.message };
+  }
+});
+
+ipcMain.handle('get-config-backups', async (event, service) => {
+  try {
+    return serverConfigManager.getConfigBackups(service);
+  } catch (error) {
+    return { error: error.message };
+  }
+});
+
+ipcMain.handle('restore-config-backup', async (event, service, backupName) => {
+  try {
+    const result = await serverConfigManager.restoreFromBackup(service, backupName);
+    
+    // Restart the service after restoring configuration
+    if (serviceManager) {
+      try {
+        await serviceManager.stopService(service);
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        await serviceManager.startService(service);
+        result.serviceRestarted = true;
+      } catch (serviceError) {
+        result.serviceError = serviceError.message;
+        result.serviceRestarted = false;
+      }
+    }
+    
+    return result;
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+});
 
 // Handle app cleanup on quit
 app.on('before-quit', async () => {
