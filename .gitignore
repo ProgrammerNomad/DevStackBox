@@ -73,7 +73,7 @@ mysql/logs/*
 php/*/logs/*
 !php/*/logs/.gitkeep
 
-mysql/bin/*
+mysql/bin/mysqld.pdb
 # Configuration Backups
 *.ini.bak
 *.conf.bak
