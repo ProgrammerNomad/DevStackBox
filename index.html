@@ -15,24 +15,22 @@
                     <img src="assets/logo.png" alt="DevStackBox" class="logo-img">
                     <h1>DevStackBox</h1>
                 </div>
-                <div class="header-controls">
-                    <button class="btn btn-secondary" id="settingsBtn">
-                        <span class="icon">⚙️</span>
-                        Settings
-                    </button>
+                <div class="header-info">
+                    <span class="version">v1.0.0</span>
+                    <span class="status-text" id="headerStatus">Portable Development Environment</span>
                 </div>
             </div>
         </header>
 
         <!-- Main Content -->
         <main class="main-content">
-            <!-- Installation Status Banner -->
+            <!-- Installation Status Banner (shown when portable servers not installed) -->
             <div class="installation-banner" id="installationBanner" style="display: none;">
                 <div class="banner-content">
                     <div class="banner-icon">📦</div>
                     <div class="banner-text">
-                        <h3>Portable Servers Not Installed</h3>
-                        <p>DevStackBox needs to download Apache, MySQL, and PHP to work independently.</p>
+                        <h3>Portable Servers Required</h3>
+                        <p>DevStackBox needs to download Apache, MySQL, and PHP binaries to work independently.</p>
                         <button class="btn btn-primary" id="downloadServersBtn">Download Portable Servers</button>
                     </div>
                 </div>
@@ -42,7 +40,7 @@
             <section class="panel services-panel">
                 <h2>
                     <span class="icon">🚀</span>
-                    Services
+                    Server Services
                 </h2>
                 
                 <div class="services-grid">
@@ -51,7 +49,7 @@
                         <div class="service-header">
                             <h3>
                                 <span class="icon">🌐</span>
-                                Apache
+                                Apache HTTP Server
                             </h3>
                             <span class="status-indicator" id="apache-status">
                                 <span class="status-dot stopped"></span>
@@ -59,7 +57,7 @@
                             </span>
                         </div>
                         <div class="service-info">
-                            <p>HTTP Server - Port: <span id="apache-port">80</span></p>
+                            <p>Web Server - Port: <span id="apache-port">80</span></p>
                         </div>
                         <div class="service-controls">
                             <button class="btn btn-success start-btn" data-service="apache">Start</button>
@@ -73,7 +71,7 @@
                         <div class="service-header">
                             <h3>
                                 <span class="icon">🗄️</span>
-                                MySQL
+                                MySQL Database
                             </h3>
                             <span class="status-indicator" id="mysql-status">
                                 <span class="status-dot stopped"></span>
@@ -111,7 +109,7 @@
                     <div class="php-info">
                         <div class="info-item">
                             <strong>Current Version:</strong>
-                            <span id="currentPhpVersion">Not set</span>
+                            <span id="currentPhpVersion">Not detected</span>
                         </div>
                         <div class="php-actions">
                             <button class="btn btn-secondary config-btn" data-config="php">Edit php.ini</button>
@@ -144,10 +142,30 @@
                         <span class="label">View Logs</span>
                     </button>
                     
-                    <button class="action-btn" id="installWordPress">
+                    <button class="action-btn" id="createProject">
                         <span class="icon">📝</span>
-                        <span class="label">Install WordPress</span>
+                        <span class="label">New Project</span>
                     </button>
+                </div>
+            </section>
+
+            <!-- Project Management Panel -->
+            <section class="panel projects-panel">
+                <h2>
+                    <span class="icon">📁</span>
+                    Project Management
+                </h2>
+                
+                <div class="projects-toolbar">
+                    <button class="btn btn-primary" id="newProjectBtn">New Project</button>
+                    <button class="btn btn-secondary" id="refreshProjectsBtn">Refresh</button>
+                    <button class="btn btn-secondary" id="openProjectsFolderBtn">Open Folder</button>
+                </div>
+                
+                <div class="projects-list" id="projectsList">
+                    <div class="projects-placeholder">
+                        <p>No projects found. Create your first project to get started!</p>
+                    </div>
                 </div>
             </section>
 
@@ -155,253 +173,66 @@
             <section class="panel installers-panel">
                 <h2>
                     <span class="icon">📦</span>
-                    App Installers
+                    One-Click Installers
                 </h2>
                 
                 <div class="installers-grid">
                     <div class="installer-card">
                         <div class="installer-header">
+                            <span class="installer-icon">📝</span>
                             <h3>WordPress</h3>
-                            <span class="version">Latest</span>
                         </div>
                         <p>Popular CMS for websites and blogs</p>
-                        <button class="btn btn-primary install-btn" data-app="wordpress">Install</button>
+                        <button class="btn btn-primary install-btn" data-app="wordpress">Install WordPress</button>
                     </div>
                     
                     <div class="installer-card">
                         <div class="installer-header">
+                            <span class="installer-icon">🎨</span>
                             <h3>Laravel</h3>
-                            <span class="version">Latest</span>
                         </div>
                         <p>PHP framework for web applications</p>
-                        <button class="btn btn-primary install-btn" data-app="laravel">Install</button>
+                        <button class="btn btn-primary install-btn" data-app="laravel">Install Laravel</button>
                     </div>
                     
                     <div class="installer-card">
                         <div class="installer-header">
+                            <span class="installer-icon">🔥</span>
                             <h3>CodeIgniter</h3>
-                            <span class="version">4.x</span>
                         </div>
                         <p>Lightweight PHP framework</p>
-                        <button class="btn btn-primary install-btn" data-app="codeigniter">Install</button>
-            </section>
-
-            <!-- Portable Installation Panel -->
-            <section class="panel installation-panel" id="installationPanel" style="display: none;">
-                <h2>
-                    <span class="icon">📦</span>
-                    Portable Server Installation
-                </h2>
-                
-                <div class="installation-status">
-                    <p>DevStackBox needs to download and install portable server binaries for first-time use.</p>
-                    
-                    <div class="components-grid">
-                        <div class="component-card" data-component="apache">
-                            <h4>Apache HTTP Server</h4>
-                            <div class="component-status">
-                                <span class="status-indicator" id="apache-install-status">Not Installed</span>
-                                <button class="btn btn-primary" id="install-apache">Install</button>
-                            </div>
-                        </div>
-                        
-                        <div class="component-card" data-component="mysql">
-                            <h4>MySQL Database</h4>
-                            <div class="component-status">
-                                <span class="status-indicator" id="mysql-install-status">Not Installed</span>
-                                <button class="btn btn-primary" id="install-mysql">Install</button>
-                            </div>
-                        </div>
-                        
-                        <div class="component-card" data-component="php83">
-                            <h4>PHP 8.3</h4>
-                            <div class="component-status">
-                                <span class="status-indicator" id="php83-install-status">Not Installed</span>
-                                <button class="btn btn-primary" id="install-php83">Install</button>
-                            </div>
-                        </div>
-                        
-                        <div class="component-card" data-component="phpmyadmin">
-                            <h4>phpMyAdmin</h4>
-                            <div class="component-status">
-                                <span class="status-indicator" id="phpmyadmin-install-status">Not Installed</span>
-                                <button class="btn btn-primary" id="install-phpmyadmin">Install</button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="install-all-section">
-                        <button class="btn btn-success btn-large" id="installAllBtn">
-                            <span class="icon">⬇️</span>
-                            Install All Components
-                        </button>
-                        <div class="install-progress" id="installProgress" style="display: none;">
-                            <div class="progress-bar">
-                                <div class="progress-fill" id="progressFill"></div>
-                            </div>
-                            <p id="progressText">Installing...</p>
-                        </div>
+                        <button class="btn btn-primary install-btn" data-app="codeigniter">Install CodeIgniter</button>
                     </div>
                 </div>
             </section>
 
-            <!-- App Installer Panel -->
-            <section class="panel apps-panel">
+            <!-- System Information Panel -->
+            <section class="panel system-panel">
                 <h2>
-                    <span class="icon">📱</span>
-                    Application Installer
+                    <span class="icon">💻</span>
+                    System Information
                 </h2>
                 
-                <div class="apps-tabs">
-                    <button class="tab-btn active" data-tab="available">Available Apps</button>
-                    <button class="tab-btn" data-tab="installed">Installed Projects</button>
-                </div>
-                
-                <div class="tab-content" id="availableApps">
-                    <div class="apps-grid" id="availableAppsGrid">
-                        <!-- Apps will be loaded dynamically -->
+                <div class="system-info">
+                    <div class="info-row">
+                        <span class="info-label">DevStackBox Version:</span>
+                        <span class="info-value">1.0.0</span>
                     </div>
-                </div>
-                
-                <div class="tab-content" id="installedApps" style="display: none;">
-                    <div class="installed-projects" id="installedProjectsList">
-                        <!-- Installed projects will be loaded dynamically -->
+                    <div class="info-row">
+                        <span class="info-label">Installation Type:</span>
+                        <span class="info-value" id="installationType">Portable</span>
                     </div>
-                </div>
-            </section>
-
-            <!-- Configuration Editor Panel -->
-            <section class="panel config-panel">
-                <h2>
-                    <span class="icon">⚙️</span>
-                    Configuration Editor
-                </h2>
-                
-                <div class="config-tabs">
-                    <button class="tab-btn active" data-tab="configs">Edit Configs</button>
-                    <button class="tab-btn" data-tab="backups">Backups</button>
-                </div>
-                
-                <div class="tab-content" id="configsTab">
-                    <div class="config-selector">
-                        <select id="configSelect">
-                            <option value="">Select a configuration file</option>
-                        </select>
-                        <button class="btn btn-secondary" id="reloadConfigs">Reload</button>
+                    <div class="info-row">
+                        <span class="info-label">Apache Status:</span>
+                        <span class="info-value" id="systemApacheStatus">Not Installed</span>
                     </div>
-                    
-                    <div class="config-editor" id="configEditor" style="display: none;">
-                        <div class="config-info">
-                            <h4 id="configName"></h4>
-                            <p id="configDescription"></p>
-                            <div class="config-actions">
-                                <button class="btn btn-primary" id="saveConfig">Save</button>
-                                <button class="btn btn-secondary" id="testConfig">Test</button>
-                                <button class="btn btn-secondary" id="backupConfig">Backup</button>
-                                <button class="btn btn-danger" id="cancelConfig">Cancel</button>
-                            </div>
-                        </div>
-                        <textarea id="configContent" rows="20"></textarea>
+                    <div class="info-row">
+                        <span class="info-label">MySQL Status:</span>
+                        <span class="info-value" id="systemMysqlStatus">Not Installed</span>
                     </div>
-                </div>
-                
-                <div class="tab-content" id="backupsTab" style="display: none;">
-                    <div class="backups-list" id="backupsList">
-                        <!-- Backups will be loaded dynamically -->
-                    </div>
-                </div>
-            </section>
-
-            <!-- Log Viewer Panel -->
-            <section class="panel logs-panel">
-                <h2>
-                    <span class="icon">📋</span>
-                    Log Viewer
-                </h2>
-                
-                <div class="logs-toolbar">
-                    <select id="logSelect">
-                        <option value="">Select a log file</option>
-                    </select>
-                    <button class="btn btn-secondary" id="reloadLogs">Reload</button>
-                    <button class="btn btn-secondary" id="watchLog">Watch</button>
-                    <button class="btn btn-secondary" id="clearLog">Clear</button>
-                    <button class="btn btn-secondary" id="archiveLog">Archive</button>
-                </div>
-                
-                <div class="logs-filters">
-                    <select id="logLevel">
-                        <option value="">All Levels</option>
-                        <option value="error">Errors</option>
-                        <option value="warn">Warnings</option>
-                        <option value="info">Info</option>
-                        <option value="debug">Debug</option>
-                    </select>
-                    <input type="text" id="logFilter" placeholder="Filter logs...">
-                    <input type="number" id="logLines" value="100" min="10" max="1000" placeholder="Lines">
-                    <button class="btn btn-secondary" id="filterLogs">Filter</button>
-                </div>
-                
-                <div class="log-content" id="logContent">
-                    <div class="log-viewer" id="logViewer">
-                        <p class="log-placeholder">Select a log file to view its contents</p>
-                    </div>
-                </div>
-                
-                <div class="log-info" id="logInfo">
-                    <span class="log-stats" id="logStats"></span>
-                    <span class="log-watching" id="logWatching" style="display: none;">
-                        <span class="icon">👁️</span>
-                        Watching for changes...
-                    </span>
-                </div>
-            </section>
-
-            <!-- Quick Apps Section (Existing) -->
-            <section class="panel quick-apps-panel">
-                <h2>
-                    <span class="icon">⚡</span>
-                    Quick Install
-                </h2>
-                
-                <div class="quick-apps-grid">
-                    <!-- WordPress -->
-                    <div class="app-card">
-                        <div class="app-icon">
-                            <span class="icon">📝</span>
-                        </div>
-                        <div class="app-info">
-                            <h3>WordPress</h3>
-                            <span class="version">Latest</span>
-                        </div>
-                        <p>Popular CMS platform</p>
-                        <button class="btn btn-primary install-btn" data-app="wordpress">Install</button>
-                    </div>
-
-                    <!-- Laravel -->
-                    <div class="app-card">
-                        <div class="app-icon">
-                            <span class="icon">🎨</span>
-                        </div>
-                        <div class="app-info">
-                            <h3>Laravel</h3>
-                            <span class="version">10.x</span>
-                        </div>
-                        <p>PHP web framework</p>
-                        <button class="btn btn-primary install-btn" data-app="laravel">Install</button>
-                    </div>
-
-                    <!-- CodeIgniter -->
-                    <div class="app-card">
-                        <div class="app-icon">
-                            <span class="icon">🔥</span>
-                        </div>
-                        <div class="app-info">
-                            <h3>CodeIgniter</h3>
-                            <span class="version">4.x</span>
-                        </div>
-                        <p>Lightweight PHP framework</p>
-                        <button class="btn btn-primary install-btn" data-app="codeigniter">Install</button>
+                    <div class="info-row">
+                        <span class="info-label">PHP Status:</span>
+                        <span class="info-value" id="systemPhpStatus">Not Installed</span>
                     </div>
                 </div>
             </section>
@@ -410,11 +241,12 @@
         <!-- Status Bar -->
         <footer class="status-bar">
             <div class="status-info">
-                <span id="systemInfo">Ready</span>
+                <span id="systemInfo">DevStackBox Ready</span>
             </div>
             <div class="status-actions">
-                <span class="status-item">Apache: <span id="footer-apache-status">Stopped</span></span>
-                <span class="status-item">MySQL: <span id="footer-mysql-status">Stopped</span></span>
+                <span class="status-item">Apache: <span id="footer-apache-status" class="status-stopped">Stopped</span></span>
+                <span class="status-item">MySQL: <span id="footer-mysql-status" class="status-stopped">Stopped</span></span>
+                <span class="status-item">PHP: <span id="footer-php-status">Not Set</span></span>
             </div>
         </footer>
     </div>
@@ -423,7 +255,7 @@
     <div class="loading-overlay" id="loadingOverlay">
         <div class="loading-content">
             <div class="loading-spinner"></div>
-            <p id="loadingText">Loading...</p>
+            <p id="loadingText">Loading DevStackBox...</p>
         </div>
     </div>
 
