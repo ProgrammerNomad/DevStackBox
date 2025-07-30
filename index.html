@@ -24,10 +24,20 @@
 
         <!-- Main Content -->
         <main class="main-content">
+            <!-- UI Description -->
+            <div class="ui-description" id="uiDescription">
+                <div class="description-content">
+                    <h3>🎯 DevStackBox Interface</h3>
+                    <p>Complete portable development environment with Apache, MySQL, PHP management, project creation, and one-click app installers. All services run independently without external dependencies.</p>
+                </div>
+            </div>
+
             <!-- Installation Status Banner (shown when portable servers not installed) -->
             <div class="installation-banner" id="installationBanner" style="display: none;">
                 <div class="banner-content">
-                    <div class="banner-icon">📦</div>
+                    <div class="banner-icon">
+                        <img src="assets/icons/download.svg" alt="Download" class="banner-svg-icon">
+                    </div>
                     <div class="banner-text">
                         <h3>Portable Servers Required</h3>
                         <p>DevStackBox needs to download Apache, MySQL, and PHP binaries to work independently.</p>
@@ -39,7 +49,7 @@
             <!-- Services Panel -->
             <section class="panel services-panel">
                 <h2>
-                    <span class="icon">🚀</span>
+                    <img src="assets/icons/server.svg" alt="Server" class="section-icon">
                     Server Services
                 </h2>
                 
@@ -48,7 +58,7 @@
                     <div class="service-card" data-service="apache">
                         <div class="service-header">
                             <h3>
-                                <span class="icon">🌐</span>
+                                <img src="assets/icons/apache.svg" alt="Apache" class="service-icon">
                                 Apache HTTP Server
                             </h3>
                             <span class="status-indicator" id="apache-status">
@@ -70,7 +80,7 @@
                     <div class="service-card" data-service="mysql">
                         <div class="service-header">
                             <h3>
-                                <span class="icon">🗄️</span>
+                                <img src="assets/icons/mysql.svg" alt="MySQL" class="service-icon">
                                 MySQL Database
                             </h3>
                             <span class="status-indicator" id="mysql-status">
@@ -93,7 +103,7 @@
             <!-- PHP Management Panel -->
             <section class="panel php-panel">
                 <h2>
-                    <span class="icon">🐘</span>
+                    <img src="assets/icons/php.svg" alt="PHP" class="section-icon">
                     PHP Management
                 </h2>
                 
@@ -122,28 +132,28 @@
             <!-- Quick Actions Panel -->
             <section class="panel quick-actions-panel">
                 <h2>
-                    <span class="icon">⚡</span>
+                    <img src="assets/icons/lightning.svg" alt="Quick Actions" class="section-icon">
                     Quick Actions
                 </h2>
                 
                 <div class="actions-grid">
                     <button class="action-btn" id="openPhpMyAdmin">
-                        <span class="icon">📊</span>
+                        <img src="assets/icons/phpmyadmin.svg" alt="phpMyAdmin" class="action-icon">
                         <span class="label">phpMyAdmin</span>
                     </button>
                     
                     <button class="action-btn" id="openWebRoot">
-                        <span class="icon">📁</span>
+                        <img src="assets/icons/folder.svg" alt="Folder" class="action-icon">
                         <span class="label">Web Root</span>
                     </button>
                     
                     <button class="action-btn" id="viewLogs">
-                        <span class="icon">📋</span>
+                        <img src="assets/icons/logs.svg" alt="Logs" class="action-icon">
                         <span class="label">View Logs</span>
                     </button>
                     
                     <button class="action-btn" id="createProject">
-                        <span class="icon">📝</span>
+                        <img src="assets/icons/project.svg" alt="Project" class="action-icon">
                         <span class="label">New Project</span>
                     </button>
                 </div>
@@ -152,7 +162,7 @@
             <!-- Project Management Panel -->
             <section class="panel projects-panel">
                 <h2>
-                    <span class="icon">📁</span>
+                    <img src="assets/icons/projects.svg" alt="Projects" class="section-icon">
                     Project Management
                 </h2>
                 
@@ -172,14 +182,14 @@
             <!-- App Installers Panel -->
             <section class="panel installers-panel">
                 <h2>
-                    <span class="icon">📦</span>
+                    <img src="assets/icons/installer.svg" alt="Installers" class="section-icon">
                     One-Click Installers
                 </h2>
                 
                 <div class="installers-grid">
                     <div class="installer-card">
                         <div class="installer-header">
-                            <span class="installer-icon">📝</span>
+                            <img src="assets/icons/wordpress.svg" alt="WordPress" class="installer-icon">
                             <h3>WordPress</h3>
                         </div>
                         <p>Popular CMS for websites and blogs</p>
@@ -188,7 +198,7 @@
                     
                     <div class="installer-card">
                         <div class="installer-header">
-                            <span class="installer-icon">🎨</span>
+                            <img src="assets/icons/laravel.svg" alt="Laravel" class="installer-icon">
                             <h3>Laravel</h3>
                         </div>
                         <p>PHP framework for web applications</p>
@@ -197,7 +207,7 @@
                     
                     <div class="installer-card">
                         <div class="installer-header">
-                            <span class="installer-icon">🔥</span>
+                            <img src="assets/icons/codeigniter.svg" alt="CodeIgniter" class="installer-icon">
                             <h3>CodeIgniter</h3>
                         </div>
                         <p>Lightweight PHP framework</p>
@@ -209,7 +219,7 @@
             <!-- System Information Panel -->
             <section class="panel system-panel">
                 <h2>
-                    <span class="icon">💻</span>
+                    <img src="assets/icons/system.svg" alt="System" class="section-icon">
                     System Information
                 </h2>
                 
