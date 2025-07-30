@@ -190,29 +190,69 @@ class DevStackBox {
 
   async loadPhpVersions() {
     try {
+      console.log('Loading PHP versions...');
       const versions = await window.electronAPI.getPhpVersions();
+      console.log('Received PHP versions:', versions);
+      
       const select = document.getElementById('phpVersion');
       const currentVersionEl = document.getElementById('currentPhpVersion');
       
       if (select) {
         select.innerHTML = '';
-        versions.forEach(version => {
+        
+        if (versions && versions.length > 0) {
+          versions.forEach(version => {
+            const option = document.createElement('option');
+            option.value = version.version;
+            
+            if (version.installed) {
+              option.textContent = `PHP ${version.version}${version.current ? ' (Default)' : ''}`;
+              option.disabled = false;
+            } else {
+              option.textContent = `PHP ${version.version} (Not Installed)`;
+              option.disabled = true;
+            }
+            
+            if (version.current) {
+              option.selected = true;
+            }
+            
+            select.appendChild(option);
+          });
+        } else {
+          // Fallback if no versions found
           const option = document.createElement('option');
-          option.value = version.version;
-          option.textContent = `PHP ${version.version}${version.installed ? '' : ' (Not Installed)'}`;
-          option.disabled = !version.installed;
+          option.value = '';
+          option.textContent = 'No PHP versions found';
+          option.disabled = true;
           select.appendChild(option);
-        });
+        }
       }
 
-      // Set current version
-      const currentVersion = versions.find(v => v.current);
+      // Set current version display
+      const currentVersion = versions.find(v => v.current) || versions.find(v => v.installed) || versions[0];
       if (currentVersion && currentVersionEl) {
-        currentVersionEl.textContent = `PHP ${currentVersion.version}`;
-        this.currentPhp = currentVersion.version;
+        if (currentVersion.installed) {
+          currentVersionEl.textContent = `PHP ${currentVersion.version}`;
+          this.currentPhp = currentVersion.version;
+        } else {
+          currentVersionEl.textContent = 'No PHP version installed';
+          this.currentPhp = null;
+        }
       }
     } catch (error) {
       console.error('Failed to load PHP versions:', error);
+      
+      // Fallback UI update
+      const select = document.getElementById('phpVersion');
+      const currentVersionEl = document.getElementById('currentPhpVersion');
+      
+      if (select) {
+        select.innerHTML = '<option value="" disabled>Error loading PHP versions</option>';
+      }
+      if (currentVersionEl) {
+        currentVersionEl.textContent = 'Error loading PHP version';
+      }
     }
   }
 

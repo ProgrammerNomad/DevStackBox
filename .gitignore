@@ -60,28 +60,35 @@ desktop.ini
 # DevStackBox Specific Files
 # ===========================
 
-# Server Binaries are PRE-BUNDLED and INCLUDED in repository
-# Users get immediate access to Apache, MySQL, PHP, and phpMyAdmin
+# 🎯 SERVER BINARIES ARE INCLUDED IN REPOSITORY
+# Apache, MySQL, PHP, and phpMyAdmin binaries are pre-bundled for immediate use
 
-# Exclude only runtime data and logs that shouldn't be committed:
+# Only exclude runtime data and logs (not the server binaries themselves):
 mysql/data/*
 !mysql/data/.gitkeep
 apache/logs/*
 !apache/logs/.gitkeep
-mysql/logs/*
+mysql/logs/*  
 !mysql/logs/.gitkeep
 php/*/logs/*
 !php/*/logs/.gitkeep
 
-mysql/bin/mysqld.pdb
 # Configuration Backups
 *.ini.bak
 *.conf.bak
 *.cnf.bak
 
-# Server Logs
-apache/logs/
-mysql/logs/
+# Large Debug Files (Not needed for runtime)
+*.pdb
+*.ilk
+*.exp
+*.lib
+
+# Large Binary Files (Optional for server operation)
+# Uncomment the following lines if MySQL executable is too large for your git hosting:
+# mysql/bin/mysqld.exe
+
+# Server Runtime Logs
 logs/
 *.error.log
 *.access.log
@@ -92,7 +99,7 @@ temp/
 *.tmp
 *.temp
 
-# Database Files
+# Database Files (user data)
 *.sql
 *.db
 *.sqlite
@@ -114,7 +121,7 @@ temp/
 # ESLint Cache
 .eslintcache
 
-# Optional: Keep README files in empty directories
+# Keep Important Files
 !apache/README.md
 !mysql/README.md
 !php/README.md
@@ -122,8 +129,7 @@ temp/
 !apps/README.md
 !www/README.md
 
-# Keep asset files
+# Keep Asset Files
 !assets/icon.png
 !assets/logo.png
 !assets/tray-icon.png
-mysql/data/*

@@ -1515,8 +1515,10 @@ async function getServiceStatus(serviceName) {
 async function getPhpVersions() {
   const versions = [];
   
-  // Check DevStackBox PHP directory
+  // Check DevStackBox PHP directory for pre-bundled versions
   const phpDir = path.join(__dirname, 'php');
+  console.log('Checking PHP directory:', phpDir);
+  
   if (fs.existsSync(phpDir)) {
     try {
       const phpVersions = fs.readdirSync(phpDir, { withFileTypes: true })
@@ -1525,29 +1527,45 @@ async function getPhpVersions() {
         .filter(name => /^\d+\.\d+$/.test(name)) // Only valid version numbers
         .sort();
       
+      console.log('Found PHP versions:', phpVersions);
+      
       // Convert to proper format expected by frontend
       for (const version of phpVersions) {
         const phpExe = path.join(phpDir, version, 'php.exe');
+        const isInstalled = fs.existsSync(phpExe);
+        console.log(`PHP ${version}: ${isInstalled ? 'FOUND' : 'MISSING'} at ${phpExe}`);
+        
         versions.push({
           version: version,
-          installed: fs.existsSync(phpExe),
-          current: version === '8.2' // Set 8.2 as default/current
+          installed: isInstalled,
+          current: version === '8.2', // Set 8.2 as default/current
+          path: phpExe
         });
       }
     } catch (error) {
       console.error('Error reading DevStackBox PHP versions:', error);
     }
+  } else {
+    console.warn('PHP directory not found:', phpDir);
   }
   
-  // If no versions found, return default structure
+  // If no versions found, check if we have the expected pre-bundled versions
   if (versions.length === 0) {
-    versions.push({
-      version: '8.2',
-      installed: false,
-      current: false
-    });
+    const expectedVersions = ['8.1', '8.2', '8.3', '8.4'];
+    for (const version of expectedVersions) {
+      const phpExe = path.join(phpDir, version, 'php.exe');
+      const isInstalled = fs.existsSync(phpExe);
+      
+      versions.push({
+        version: version,
+        installed: isInstalled,
+        current: version === '8.2', // Set 8.2 as default
+        path: phpExe
+      });
+    }
   }
   
+  console.log('Final PHP versions array:', versions);
   return versions;
 }
 
