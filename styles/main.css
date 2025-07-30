@@ -419,6 +419,67 @@ body {
   100% { transform: rotate(360deg); }
 }
 
+/* Joke Panel Styles */
+.joke-panel {
+  background-color: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.joke-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.joke-controls {
+  display: flex;
+  justify-content: center;
+}
+
+.joke-display {
+  background-color: var(--background-color);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  margin-top: 1rem;
+}
+
+.joke-setup, .joke-punchline {
+  margin-bottom: 1rem;
+}
+
+.joke-setup h4, .joke-punchline h4 {
+  color: var(--primary-color);
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.joke-setup p, .joke-punchline p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: var(--text-primary);
+  padding: 0.75rem;
+  background-color: var(--surface-color);
+  border-radius: var(--border-radius);
+  border-left: 4px solid var(--primary-color);
+}
+
+.joke-punchline p {
+  border-left-color: var(--success-color);
+  font-weight: 500;
+}
+
+.joke-meta {
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .main-content {

@@ -18,6 +18,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
   // Configuration
   openConfig: (configType) => ipcRenderer.invoke('open-config', configType),
   
+  // Joke generator
+  fetchJoke: () => ipcRenderer.invoke('fetch-joke'),
+  
   // Utility functions
   platform: process.platform,
   versions: process.versions

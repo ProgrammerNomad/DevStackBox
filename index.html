@@ -175,6 +175,37 @@
                     </div>
                 </div>
             </section>
+
+            <!-- Random Joke Generator Panel -->
+            <section class="panel joke-panel">
+                <h2>
+                    <span class="icon">😄</span>
+                    Random Joke Generator
+                </h2>
+                
+                <div class="joke-content">
+                    <div class="joke-controls">
+                        <button class="btn btn-primary" id="fetchJokeBtn">
+                            <span class="icon">🎲</span>
+                            Get Random Joke
+                        </button>
+                    </div>
+                    
+                    <div class="joke-display" id="jokeDisplay" style="display: none;">
+                        <div class="joke-setup">
+                            <h4>Setup:</h4>
+                            <p id="jokeSetup"></p>
+                        </div>
+                        <div class="joke-punchline">
+                            <h4>Punchline:</h4>
+                            <p id="jokePunchline"></p>
+                        </div>
+                        <div class="joke-meta">
+                            <small>Type: <span id="jokeType"></span></small>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </main>
 
         <!-- Status Bar -->

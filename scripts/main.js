@@ -86,6 +86,14 @@ class DevStackBox {
         this.openSettings();
       });
     }
+
+    // Joke generator button
+    const fetchJokeBtn = document.getElementById('fetchJokeBtn');
+    if (fetchJokeBtn) {
+      fetchJokeBtn.addEventListener('click', () => {
+        this.fetchRandomJoke();
+      });
+    }
   }
 
   async loadInitialData() {
@@ -311,6 +319,50 @@ class DevStackBox {
   openSettings() {
     console.log('Opening settings...');
     this.showInfo('Opening settings...');
+  }
+
+  async fetchRandomJoke() {
+    try {
+      this.showLoading('Fetching a random joke...');
+      
+      const result = await window.electronAPI.fetchJoke();
+      
+      if (result.success) {
+        this.displayJoke(result.joke);
+        this.showSuccess('New joke loaded!');
+      } else {
+        this.showError(result.error || 'Failed to fetch joke');
+        this.hideJokeDisplay();
+      }
+    } catch (error) {
+      console.error('Error fetching joke:', error);
+      this.showError(`Failed to fetch joke: ${error.message}`);
+      this.hideJokeDisplay();
+    } finally {
+      this.hideLoading();
+    }
+  }
+
+  displayJoke(joke) {
+    const jokeDisplay = document.getElementById('jokeDisplay');
+    const jokeSetup = document.getElementById('jokeSetup');
+    const jokePunchline = document.getElementById('jokePunchline');
+    const jokeType = document.getElementById('jokeType');
+
+    if (jokeDisplay && jokeSetup && jokePunchline && jokeType) {
+      jokeSetup.textContent = joke.setup;
+      jokePunchline.textContent = joke.punchline;
+      jokeType.textContent = joke.type || 'general';
+      
+      jokeDisplay.style.display = 'block';
+    }
+  }
+
+  hideJokeDisplay() {
+    const jokeDisplay = document.getElementById('jokeDisplay');
+    if (jokeDisplay) {
+      jokeDisplay.style.display = 'none';
+    }
   }
 
   startStatusPolling() {

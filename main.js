@@ -183,6 +183,10 @@ ipcMain.handle('open-config', async (event, configType) => {
   return await openConfig(configType);
 });
 
+ipcMain.handle('fetch-joke', async () => {
+  return await fetchRandomJoke();
+});
+
 // Service management functions - now using ServiceManager
 async function startService(serviceName) {
   try {
@@ -297,6 +301,41 @@ async function openConfig(configType) {
     return { success: true, path: configPath };
   } catch (error) {
     return { success: false, error: error.message };
+  }
+}
+
+async function fetchRandomJoke() {
+  try {
+    // Use fetch API (available in Node.js 18+)
+    const response = await fetch('https://official-joke-api.appspot.com/random_joke');
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const joke = await response.json();
+    
+    // Validate joke structure
+    if (!joke.setup || !joke.punchline) {
+      throw new Error('Invalid joke format received');
+    }
+    
+    return {
+      success: true,
+      joke: {
+        setup: joke.setup,
+        punchline: joke.punchline,
+        type: joke.type || 'general',
+        id: joke.id || Date.now()
+      }
+    };
+    
+  } catch (error) {
+    console.error('Error fetching joke:', error);
+    return {
+      success: false,
+      error: error.message || 'Failed to fetch joke'
+    };
   }
 }
 
