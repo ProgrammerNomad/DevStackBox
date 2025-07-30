@@ -617,7 +617,7 @@ default-character-set=utf8
 
 async function configurePhp() {
   const fs = require('fs').promises;
-  const phpVersions = ['8.1', '8.2', '8.3'];
+  const phpVersions = ['8.1', '8.2', '8.3', '8.4'];
   
   for (const version of phpVersions) {
     const phpDir = path.join(__dirname, 'php', version);
@@ -1521,19 +1521,34 @@ async function getPhpVersions() {
     try {
       const phpVersions = fs.readdirSync(phpDir, { withFileTypes: true })
         .filter(dirent => dirent.isDirectory())
-        .map(dirent => dirent.name);
-      versions.push(...phpVersions);
+        .map(dirent => dirent.name)
+        .filter(name => /^\d+\.\d+$/.test(name)) // Only valid version numbers
+        .sort();
+      
+      // Convert to proper format expected by frontend
+      for (const version of phpVersions) {
+        const phpExe = path.join(phpDir, version, 'php.exe');
+        versions.push({
+          version: version,
+          installed: fs.existsSync(phpExe),
+          current: version === '8.2' // Set 8.2 as default/current
+        });
+      }
     } catch (error) {
       console.error('Error reading DevStackBox PHP versions:', error);
     }
   }
   
-  // NO XAMPP FALLBACK - DevStackBox is fully portable!
+  // If no versions found, return default structure
   if (versions.length === 0) {
-    versions.push('No PHP versions installed - download portable servers first');
+    versions.push({
+      version: '8.2',
+      installed: false,
+      current: false
+    });
   }
   
-  return [...new Set(versions)]; // Remove duplicates
+  return versions;
 }
 
 async function setPhpVersion(version) {

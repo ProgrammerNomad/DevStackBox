@@ -60,23 +60,20 @@ desktop.ini
 # DevStackBox Specific Files
 # ===========================
 
-# Server Binaries (Pre-bundled but not tracked)
-apache/bin/
-apache/modules/
-apache/cgi-bin/
-apache/htdocs/
-apache/manual/
-apache/error/
-apache/icons/
-mysql/bin/
-mysql/lib/
-mysql/share/
-mysql/data/
-php/*/
-!php/README.md
-phpmyadmin/*
-!phpmyadmin/README.md
+# Server Binaries are PRE-BUNDLED and INCLUDED in repository
+# Users get immediate access to Apache, MySQL, PHP, and phpMyAdmin
 
+# Exclude only runtime data and logs that shouldn't be committed:
+mysql/data/*
+!mysql/data/.gitkeep
+apache/logs/*
+!apache/logs/.gitkeep
+mysql/logs/*
+!mysql/logs/.gitkeep
+php/*/logs/*
+!php/*/logs/.gitkeep
+
+mysql/bin/*
 # Configuration Backups
 *.ini.bak
 *.conf.bak
