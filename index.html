@@ -16,35 +16,110 @@
                     <h1>DevStackBox</h1>
                 </div>
                 <div class="header-info">
-                    <span class="version">v1.0.0</span>
-                    <span class="status-text" id="headerStatus">Portable Development Environment</span>
+                    <div class="header-actions">
+                        <button class="btn btn-settings" id="downloadSettingsBtn" title="Download & Settings">
+                            <img src="assets/icons/installer.svg" alt="Settings" class="btn-icon">
+                            Downloads & Settings
+                        </button>
+                    </div>
+                    <div class="status-info">
+                        <span class="version">v1.0.0</span>
+                        <span class="status-text" id="headerStatus">Portable Development Environment</span>
+                    </div>
                 </div>
             </div>
         </header>
 
         <!-- Main Content -->
         <main class="main-content">
-            <!-- UI Description -->
-            <div class="ui-description" id="uiDescription">
-                <div class="description-content">
-                    <h3>🎯 DevStackBox Interface</h3>
-                    <p>Complete portable development environment with Apache, MySQL, PHP management, project creation, and one-click app installers. All services run independently without external dependencies.</p>
+            <!-- Current UI Status -->
+            <div class="ui-status-banner">
+                <div class="status-content">
+                    <h3>
+                        <img src="assets/icons/system.svg" alt="System" class="status-icon">
+                        DevStackBox Control Panel
+                    </h3>
+                    <p>Complete portable LAMP/WAMP development environment. Start/stop services, manage projects, install apps, and configure your development stack without external dependencies.</p>
+                    <div class="ui-actions">
+                        <button class="btn btn-outline" id="showQuickStartBtn">Quick Start Guide</button>
+                        <button class="btn btn-outline" id="systemStatusBtn">System Status</button>
+                    </div>
                 </div>
             </div>
 
             <!-- Installation Status Banner (shown when portable servers not installed) -->
-            <div class="installation-banner" id="installationBanner" style="display: none;">
+            <div class="installation-banner" id="installationBanner">
                 <div class="banner-content">
                     <div class="banner-icon">
                         <img src="assets/icons/download.svg" alt="Download" class="banner-svg-icon">
                     </div>
                     <div class="banner-text">
                         <h3>Portable Servers Required</h3>
-                        <p>DevStackBox needs to download Apache, MySQL, and PHP binaries to work independently.</p>
-                        <button class="btn btn-primary" id="downloadServersBtn">Download Portable Servers</button>
+                        <p>DevStackBox needs Apache, MySQL, and PHP binaries. Click to download and configure your portable development environment.</p>
+                        <div class="banner-actions">
+                            <button class="btn btn-primary" id="downloadServersBtn">
+                                <img src="assets/icons/installer.svg" alt="Install" class="btn-icon">
+                                Download All Servers
+                            </button>
+                            <button class="btn btn-secondary" id="customDownloadBtn">Custom Downloads</button>
+                        </div>
                     </div>
                 </div>
             </div>
+
+            <!-- Services Panel -->
+            <section class="panel services-panel">
+                <h2>
+                    <img src="assets/icons/server.svg" alt="Server" class="section-icon">
+                    Server Services
+                </h2>
+                
+                <div class="services-grid">
+                    <!-- Apache Service -->
+                    <div class="service-card" data-service="apache">
+                        <div class="service-header">
+                            <h3>
+                                <img src="assets/icons/apache.svg" alt="Apache" class="service-icon">
+                                Apache HTTP Server
+                            </h3>
+                            <span class="status-indicator" id="apache-status">
+                                <span class="status-dot stopped"></span>
+                                Stopped
+                            </span>
+                        </div>
+                        <div class="service-info">
+                            <p>Web Server - Port: <span id="apache-port">80</span></p>
+                        </div>
+                        <div class="service-controls">
+                            <button class="btn btn-success start-btn" data-service="apache">Start</button>
+                            <button class="btn btn-danger stop-btn" data-service="apache" disabled>Stop</button>
+                            <button class="btn btn-secondary config-btn" data-config="apache">Config</button>
+                        </div>
+                    </div>
+
+                    <!-- MySQL Service -->
+                    <div class="service-card" data-service="mysql">
+                        <div class="service-header">
+                            <h3>
+                                <img src="assets/icons/mysql.svg" alt="MySQL" class="service-icon">
+                                MySQL Database
+                            </h3>
+                            <span class="status-indicator" id="mysql-status">
+                                <span class="status-dot stopped"></span>
+                                Stopped
+                            </span>
+                        </div>
+                        <div class="service-info">
+                            <p>Database Server - Port: <span id="mysql-port">3306</span></p>
+                        </div>
+                        <div class="service-controls">
+                            <button class="btn btn-success start-btn" data-service="mysql">Start</button>
+                            <button class="btn btn-danger stop-btn" data-service="mysql" disabled>Stop</button>
+                            <button class="btn btn-secondary config-btn" data-config="mysql">Config</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
             <!-- Services Panel -->
             <section class="panel services-panel">
@@ -143,7 +218,7 @@
                     </button>
                     
                     <button class="action-btn" id="openWebRoot">
-                        <img src="assets/icons/folder.svg" alt="Folder" class="action-icon">
+                        <img src="assets/icons/folder.svg" alt="Web Root" class="action-icon">
                         <span class="label">Web Root</span>
                     </button>
                     
@@ -153,7 +228,7 @@
                     </button>
                     
                     <button class="action-btn" id="createProject">
-                        <img src="assets/icons/project.svg" alt="Project" class="action-icon">
+                        <img src="assets/icons/project.svg" alt="New Project" class="action-icon">
                         <span class="label">New Project</span>
                     </button>
                 </div>
@@ -261,6 +336,518 @@
         </footer>
     </div>
 
+    <!-- Download & Settings Modal -->
+    <div class="modal-overlay" id="downloadSettingsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>
+                    <img src="assets/icons/installer.svg" alt="Downloads" class="modal-icon">
+                    Downloads & Settings
+                </h2>
+                <button class="modal-close" id="closeDownloadModal">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="settings-tabs">
+                    <button class="tab-btn active" data-tab="servers">Server Downloads</button>
+                    <button class="tab-btn" data-tab="php-extensions">PHP Extensions</button>
+                    <button class="tab-btn" data-tab="tools">Additional Tools</button>
+                </div>
+
+                <!-- Server Downloads Tab -->
+                <div class="tab-content active" id="servers-tab">
+                    <h3>Server Components</h3>
+                    
+                    <!-- Apache Section -->
+                    <div class="download-section">
+                        <div class="section-header">
+                            <h4>
+                                <img src="assets/icons/apache.svg" alt="Apache" class="section-icon-small">
+                                Apache HTTP Server
+                            </h4>
+                            <span class="status-badge" id="apache-download-status">Not Installed</span>
+                        </div>
+                        <div class="download-options">
+                            <label>
+                                <input type="radio" name="apache-version" value="2.4.57" checked>
+                                Apache 2.4.57 (Recommended)
+                            </label>
+                            <label>
+                                <input type="radio" name="apache-version" value="2.4.56">
+                                Apache 2.4.56 (Stable)
+                            </label>
+                        </div>
+                        <button class="btn btn-primary download-btn" data-component="apache">
+                            <img src="assets/icons/download.svg" alt="Download" class="btn-icon">
+                            Download Apache
+                        </button>
+                    </div>
+
+                    <!-- MySQL Section -->
+                    <div class="download-section">
+                        <div class="section-header">
+                            <h4>
+                                <img src="assets/icons/mysql.svg" alt="MySQL" class="section-icon-small">
+                                MySQL Database
+                            </h4>
+                            <span class="status-badge" id="mysql-download-status">Not Installed</span>
+                        </div>
+                        <div class="download-options">
+                            <label>
+                                <input type="radio" name="mysql-version" value="8.0.35" checked>
+                                MySQL 8.0.35 (Recommended)
+                            </label>
+                            <label>
+                                <input type="radio" name="mysql-version" value="5.7.44">
+                                MySQL 5.7.44 (Legacy)
+                            </label>
+                        </div>
+                        <button class="btn btn-primary download-btn" data-component="mysql">
+                            <img src="assets/icons/download.svg" alt="Download" class="btn-icon">
+                            Download MySQL
+                        </button>
+                    </div>
+
+                    <!-- PHP Section -->
+                    <div class="download-section">
+                        <div class="section-header">
+                            <h4>
+                                <img src="assets/icons/php.svg" alt="PHP" class="section-icon-small">
+                                PHP Versions
+                            </h4>
+                        </div>
+                        <div class="php-versions-grid">
+                            <div class="php-version-card">
+                                <h5>PHP 8.3</h5>
+                                <span class="version-status" id="php83-status">Not Installed</span>
+                                <button class="btn btn-sm btn-primary" data-php-version="8.3">Download</button>
+                            </div>
+                            <div class="php-version-card">
+                                <h5>PHP 8.2</h5>
+                                <span class="version-status" id="php82-status">Not Installed</span>
+                                <button class="btn btn-sm btn-primary" data-php-version="8.2">Download</button>
+                            </div>
+                            <div class="php-version-card">
+                                <h5>PHP 8.1</h5>
+                                <span class="version-status" id="php81-status">Not Installed</span>
+                                <button class="btn btn-sm btn-primary" data-php-version="8.1">Download</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- phpMyAdmin Section -->
+                    <div class="download-section">
+                        <div class="section-header">
+                            <h4>
+                                <img src="assets/icons/phpmyadmin.svg" alt="phpMyAdmin" class="section-icon-small">
+                                phpMyAdmin
+                            </h4>
+                            <span class="status-badge" id="phpmyadmin-download-status">Not Installed</span>
+                        </div>
+                        <button class="btn btn-primary download-btn" data-component="phpmyadmin">
+                            <img src="assets/icons/download.svg" alt="Download" class="btn-icon">
+                            Download phpMyAdmin
+                        </button>
+                    </div>
+
+                    <div class="download-all-section">
+                        <button class="btn btn-success btn-large" id="downloadAllServersBtn">
+                            <img src="assets/icons/installer.svg" alt="Download All" class="btn-icon">
+                            Download All Server Components
+                        </button>
+                    </div>
+                </div>
+
+                <!-- PHP Extensions Tab -->
+                <div class="tab-content" id="php-extensions-tab">
+                    <h3>PHP Extensions</h3>
+                    <div class="extensions-grid">
+                        <div class="extension-card">
+                            <h4>Database Extensions</h4>
+                            <div class="extension-list">
+                                <label><input type="checkbox" checked> mysqli</label>
+                                <label><input type="checkbox" checked> pdo_mysql</label>
+                                <label><input type="checkbox"> pdo_sqlite</label>
+                                <label><input type="checkbox"> pdo_pgsql</label>
+                            </div>
+                        </div>
+                        <div class="extension-card">
+                            <h4>Web Extensions</h4>
+                            <div class="extension-list">
+                                <label><input type="checkbox" checked> curl</label>
+                                <label><input type="checkbox" checked> openssl</label>
+                                <label><input type="checkbox" checked> mbstring</label>
+                                <label><input type="checkbox"> xml</label>
+                            </div>
+                        </div>
+                        <div class="extension-card">
+                            <h4>Image Processing</h4>
+                            <div class="extension-list">
+                                <label><input type="checkbox"> gd</label>
+                                <label><input type="checkbox"> imagick</label>
+                                <label><input type="checkbox"> exif</label>
+                            </div>
+                        </div>
+                        <div class="extension-card">
+                            <h4>Performance</h4>
+                            <div class="extension-list">
+                                <label><input type="checkbox"> opcache</label>
+                                <label><input type="checkbox"> redis</label>
+                                <label><input type="checkbox"> memcached</label>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" id="configureExtensionsBtn">Configure Selected Extensions</button>
+                </div>
+
+                <!-- Additional Tools Tab -->
+                <div class="tab-content" id="tools-tab">
+                    <h3>Additional Development Tools</h3>
+                    <div class="tools-grid">
+                        <div class="tool-card">
+                            <h4>
+                                <img src="assets/icons/wordpress.svg" alt="WordPress" class="tool-icon">
+                                WordPress CLI
+                            </h4>
+                            <p>Command line interface for WordPress</p>
+                            <button class="btn btn-secondary download-btn" data-tool="wp-cli">Download WP-CLI</button>
+                        </div>
+                        <div class="tool-card">
+                            <h4>
+                                <img src="assets/icons/laravel.svg" alt="Laravel" class="tool-icon">
+                                Composer
+                            </h4>
+                            <p>PHP dependency manager</p>
+                            <button class="btn btn-secondary download-btn" data-tool="composer">Download Composer</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p id="loadingText">Loading DevStackBox...</p>
+        </div>
+    </div>
+            </section>
+
+            <!-- Quick Actions Panel -->
+            <section class="panel quick-actions-panel">
+                <h2>
+                    <img src="assets/icons/lightning.svg" alt="Quick Actions" class="section-icon">
+                    Quick Actions
+                </h2>
+                
+                <div class="actions-grid">
+                    <button class="action-btn" id="openPhpMyAdmin">
+                        <img src="assets/icons/phpmyadmin.svg" alt="phpMyAdmin" class="action-icon">
+                        <span class="label">phpMyAdmin</span>
+                    </button>
+                    
+                    <button class="action-btn" id="openWebRoot">
+                        <img src="assets/icons/folder.svg" alt="Folder" class="action-icon">
+                        <span class="label">Web Root</span>
+                    </button>
+                    
+                    <button class="action-btn" id="viewLogs">
+                        <img src="assets/icons/logs.svg" alt="Logs" class="action-icon">
+                        <span class="label">View Logs</span>
+                    </button>
+                    
+                    <button class="action-btn" id="createProject">
+                        <img src="assets/icons/project.svg" alt="Project" class="action-icon">
+                        <span class="label">New Project</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Project Management Panel -->
+            <section class="panel projects-panel">
+                <h2>
+                    <img src="assets/icons/projects.svg" alt="Projects" class="section-icon">
+                    Project Management
+                </h2>
+                
+                <div class="projects-toolbar">
+                    <button class="btn btn-primary" id="newProjectBtn">New Project</button>
+                    <button class="btn btn-secondary" id="refreshProjectsBtn">Refresh</button>
+                    <button class="btn btn-secondary" id="openProjectsFolderBtn">Open Folder</button>
+                </div>
+                
+                <div class="projects-list" id="projectsList">
+                    <div class="projects-placeholder">
+                        <p>No projects found. Create your first project to get started!</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- App Installers Panel -->
+            <section class="panel installers-panel">
+                <h2>
+                    <img src="assets/icons/installer.svg" alt="Installers" class="section-icon">
+                    One-Click Installers
+                </h2>
+                
+                <div class="installers-grid">
+                    <div class="installer-card">
+                        <div class="installer-header">
+                            <img src="assets/icons/wordpress.svg" alt="WordPress" class="installer-icon">
+                            <h3>WordPress</h3>
+                        </div>
+                        <p>Popular CMS for websites and blogs</p>
+                        <button class="btn btn-primary install-btn" data-app="wordpress">Install WordPress</button>
+                    </div>
+                    
+                    <div class="installer-card">
+                        <div class="installer-header">
+                            <img src="assets/icons/laravel.svg" alt="Laravel" class="installer-icon">
+                            <h3>Laravel</h3>
+                        </div>
+                        <p>PHP framework for web applications</p>
+                        <button class="btn btn-primary install-btn" data-app="laravel">Install Laravel</button>
+                    </div>
+                    
+                    <div class="installer-card">
+                        <div class="installer-header">
+                            <img src="assets/icons/codeigniter.svg" alt="CodeIgniter" class="installer-icon">
+                            <h3>CodeIgniter</h3>
+                        </div>
+                        <p>Lightweight PHP framework</p>
+                        <button class="btn btn-primary install-btn" data-app="codeigniter">Install CodeIgniter</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Download Manager Panel -->
+            <section class="panel download-panel">
+                <h2>
+                    <img src="assets/icons/download.svg" alt="Download" class="section-icon">
+                    Portable Components Manager
+                </h2>
+                
+                <div class="download-content">
+                    <div class="download-header">
+                        <p>Download and configure all required components for DevStackBox to work independently:</p>
+                        <button class="btn btn-primary btn-large" id="downloadAllBtn">
+                            <img src="assets/icons/download.svg" alt="Download" class="btn-icon">
+                            Download All Components
+                        </button>
+                    </div>
+                    
+                    <div class="components-grid">
+                        <!-- Apache Component -->
+                        <div class="component-card" data-component="apache">
+                            <div class="component-header">
+                                <img src="assets/icons/apache.svg" alt="Apache" class="component-icon">
+                                <div class="component-info">
+                                    <h4>Apache HTTP Server</h4>
+                                    <span class="component-status" id="apache-component-status">Not Installed</span>
+                                </div>
+                            </div>
+                            <div class="component-details">
+                                <p>Web server for hosting PHP applications</p>
+                                <span class="component-version">Version: 2.4.x</span>
+                            </div>
+                            <button class="btn btn-secondary component-btn" data-component="apache">
+                                Download Apache
+                            </button>
+                        </div>
+
+                        <!-- MySQL Component -->
+                        <div class="component-card" data-component="mysql">
+                            <div class="component-header">
+                                <img src="assets/icons/mysql.svg" alt="MySQL" class="component-icon">
+                                <div class="component-info">
+                                    <h4>MySQL Database</h4>
+                                    <span class="component-status" id="mysql-component-status">Not Installed</span>
+                                </div>
+                            </div>
+                            <div class="component-details">
+                                <p>Database server for data storage</p>
+                                <span class="component-version">Version: 8.0.x</span>
+                            </div>
+                            <button class="btn btn-secondary component-btn" data-component="mysql">
+                                Download MySQL
+                            </button>
+                        </div>
+
+                        <!-- PHP Versions -->
+                        <div class="component-card" data-component="php">
+                            <div class="component-header">
+                                <img src="assets/icons/php.svg" alt="PHP" class="component-icon">
+                                <div class="component-info">
+                                    <h4>PHP Versions</h4>
+                                    <span class="component-status" id="php-component-status">Not Installed</span>
+                                </div>
+                            </div>
+                            <div class="component-details">
+                                <p>PHP 8.1, 8.2, and 8.3 with extensions</p>
+                                <div class="php-versions">
+                                    <span class="version-tag">PHP 8.1</span>
+                                    <span class="version-tag">PHP 8.2</span>
+                                    <span class="version-tag">PHP 8.3</span>
+                                </div>
+                            </div>
+                            <button class="btn btn-secondary component-btn" data-component="php">
+                                Download PHP
+                            </button>
+                        </div>
+
+                        <!-- phpMyAdmin Component -->
+                        <div class="component-card" data-component="phpmyadmin">
+                            <div class="component-header">
+                                <img src="assets/icons/phpmyadmin.svg" alt="phpMyAdmin" class="component-icon">
+                                <div class="component-info">
+                                    <h4>phpMyAdmin</h4>
+                                    <span class="component-status" id="phpmyadmin-component-status">Not Installed</span>
+                                </div>
+                            </div>
+                            <div class="component-details">
+                                <p>Web-based MySQL administration tool</p>
+                                <span class="component-version">Version: Latest</span>
+                            </div>
+                            <button class="btn btn-secondary component-btn" data-component="phpmyadmin">
+                                Download phpMyAdmin
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- PHP Extensions Manager -->
+                    <div class="extensions-section">
+                        <h3>
+                            <img src="assets/icons/php.svg" alt="PHP Extensions" class="section-icon-small">
+                            PHP Extensions Manager
+                        </h3>
+                        <div class="extensions-grid">
+                            <div class="extension-item">
+                                <label class="extension-label">
+                                    <input type="checkbox" name="php-ext" value="curl" checked>
+                                    <span class="extension-name">cURL</span>
+                                    <span class="extension-desc">HTTP requests</span>
+                                </label>
+                            </div>
+                            <div class="extension-item">
+                                <label class="extension-label">
+                                    <input type="checkbox" name="php-ext" value="gd" checked>
+                                    <span class="extension-name">GD</span>
+                                    <span class="extension-desc">Image processing</span>
+                                </label>
+                            </div>
+                            <div class="extension-item">
+                                <label class="extension-label">
+                                    <input type="checkbox" name="php-ext" value="mbstring" checked>
+                                    <span class="extension-name">mbstring</span>
+                                    <span class="extension-desc">Multibyte strings</span>
+                                </label>
+                            </div>
+                            <div class="extension-item">
+                                <label class="extension-label">
+                                    <input type="checkbox" name="php-ext" value="mysqli" checked>
+                                    <span class="extension-name">MySQLi</span>
+                                    <span class="extension-desc">MySQL database</span>
+                                </label>
+                            </div>
+                            <div class="extension-item">
+                                <label class="extension-label">
+                                    <input type="checkbox" name="php-ext" value="pdo_mysql" checked>
+                                    <span class="extension-name">PDO MySQL</span>
+                                    <span class="extension-desc">PDO MySQL driver</span>
+                                </label>
+                            </div>
+                            <div class="extension-item">
+                                <label class="extension-label">
+                                    <input type="checkbox" name="php-ext" value="openssl" checked>
+                                    <span class="extension-name">OpenSSL</span>
+                                    <span class="extension-desc">Encryption</span>
+                                </label>
+                            </div>
+                            <div class="extension-item">
+                                <label class="extension-label">
+                                    <input type="checkbox" name="php-ext" value="zip" checked>
+                                    <span class="extension-name">ZIP</span>
+                                    <span class="extension-desc">Archive handling</span>
+                                </label>
+                            </div>
+                            <div class="extension-item">
+                                <label class="extension-label">
+                                    <input type="checkbox" name="php-ext" value="xml" checked>
+                                    <span class="extension-name">XML</span>
+                                    <span class="extension-desc">XML processing</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="extensions-actions">
+                            <button class="btn btn-primary" id="configureExtensionsBtn">Configure Extensions</button>
+                            <button class="btn btn-secondary" id="resetExtensionsBtn">Reset to Default</button>
+                        </div>
+                    </div>
+
+                    <!-- Download Progress -->
+                    <div class="download-progress" id="downloadProgress" style="display: none;">
+                        <div class="progress-header">
+                            <h4>Downloading Components...</h4>
+                            <span class="progress-status" id="progressStatus">Preparing...</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                        </div>
+                        <div class="progress-details" id="progressDetails">
+                            <span class="current-item">Initializing download...</span>
+                            <span class="progress-percent">0%</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- System Information Panel -->
+            <section class="panel system-panel">
+                <h2>
+                    <img src="assets/icons/system.svg" alt="System" class="section-icon">
+                    System Information
+                </h2>
+                
+                <div class="system-info">
+                    <div class="info-row">
+                        <span class="info-label">DevStackBox Version:</span>
+                        <span class="info-value">1.0.0</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Installation Type:</span>
+                        <span class="info-value" id="installationType">Portable</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Apache Status:</span>
+                        <span class="info-value" id="systemApacheStatus">Not Installed</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">MySQL Status:</span>
+                        <span class="info-value" id="systemMysqlStatus">Not Installed</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">PHP Status:</span>
+                        <span class="info-value" id="systemPhpStatus">Not Installed</span>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Status Bar -->
+        <footer class="status-bar">
+            <div class="status-info">
+                <span id="systemInfo">DevStackBox Ready</span>
+            </div>
+            <div class="status-actions">
+                <span class="status-item">Apache: <span id="footer-apache-status" class="status-stopped">Stopped</span></span>
+                <span class="status-item">MySQL: <span id="footer-mysql-status" class="status-stopped">Stopped</span></span>
+                <span class="status-item">PHP: <span id="footer-php-status">Not Set</span></span>
+            </div>
+        </footer>
+    </div>
+
     <!-- Loading Overlay -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="loading-content">
@@ -270,6 +857,6 @@
     </div>
 
     <!-- Scripts -->
-    <script src="scripts/main.js"></script>
+    <script src="scripts/app.js"></script>
 </body>
 </html>

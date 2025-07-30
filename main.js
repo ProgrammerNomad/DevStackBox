@@ -86,6 +86,65 @@ function createApplicationMenu() {
         },
         { type: 'separator' },
         {
+          label: 'Download Portable Servers',
+          accelerator: 'CmdOrCtrl+D',
+          click: async () => {
+            try {
+              const result = await portableServerManager.installAll((progress) => {
+                if (mainWindow) {
+                  mainWindow.webContents.send('download-progress', progress);
+                }
+              });
+              
+              if (result.success) {
+                // Configure servers after download
+                await configurePortableServers();
+                
+                mainWindow.webContents.send('show-notification', {
+                  message: '🎉 All portable servers installed and configured! DevStackBox is now fully independent.',
+                  type: 'success'
+                });
+              } else {
+                throw new Error(result.error);
+              }
+            } catch (error) {
+              console.error('Download failed:', error);
+              mainWindow.webContents.send('show-notification', {
+                message: `Download failed: ${error.message}`,
+                type: 'error'
+              });
+            }
+          }
+        },
+        {
+          label: 'Check Installation Status',
+          click: async () => {
+            try {
+              const status = await portableServerManager.checkInstallation();
+              const statusMessage = `Installation Status:
+Apache: ${status.apache ? '✅ Installed' : '❌ Not Installed'}
+MySQL: ${status.mysql ? '✅ Installed' : '❌ Not Installed'}
+PHP: ${status.php ? '✅ Installed' : '❌ Not Installed'}
+phpMyAdmin: ${status.phpmyadmin ? '✅ Installed' : '❌ Not Installed'}`;
+              
+              const { dialog } = require('electron');
+              dialog.showMessageBox(mainWindow, {
+                type: 'info',
+                title: 'DevStackBox Installation Status',
+                message: 'Component Installation Status',
+                detail: statusMessage,
+                buttons: ['OK']
+              });
+            } catch (error) {
+              mainWindow.webContents.send('show-notification', {
+                message: `Error checking status: ${error.message}`,
+                type: 'error'
+              });
+            }
+          }
+        },
+        { type: 'separator' },
+        {
           label: 'Exit',
           accelerator: process.platform === 'darwin' ? 'Cmd+Q' : 'Ctrl+Q',
           click: () => app.quit()
@@ -148,6 +207,23 @@ function createApplicationMenu() {
         {
           label: 'PHP Config',
           click: () => openConfig('php')
+        },
+        { type: 'separator' },
+        {
+          label: 'PHP Extensions Manager',
+          click: () => {
+            if (mainWindow) {
+              mainWindow.webContents.send('show-php-extensions-dialog');
+            }
+          }
+        },
+        {
+          label: 'Download Manager',
+          click: () => {
+            if (mainWindow) {
+              mainWindow.webContents.send('focus-download-panel');
+            }
+          }
         },
         { type: 'separator' },
         {

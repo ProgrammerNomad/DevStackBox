@@ -74,6 +74,12 @@ contextBridge.exposeInMainWorld('electronAPI', {
   openPath: (path) => ipcRenderer.invoke('open-path', path),
   showInFolder: (path) => ipcRenderer.invoke('show-in-folder', path),
   
+  // Event listeners for main process communication
+  onShowNotification: (callback) => ipcRenderer.on('show-notification', (event, data) => callback(data)),
+  onShowPhpExtensionsDialog: (callback) => ipcRenderer.on('show-php-extensions-dialog', callback),
+  onFocusDownloadPanel: (callback) => ipcRenderer.on('focus-download-panel', callback),
+  onDownloadProgress: (callback) => ipcRenderer.on('download-progress', (event, progress) => callback(progress)),
+  
   // Utility functions
   platform: process.platform,
   versions: process.versions
