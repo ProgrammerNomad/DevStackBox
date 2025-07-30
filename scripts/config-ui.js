@@ -1,5 +1,8 @@
 /**
- * ConfigurationUI - Advanced Configuration Management for DevStackBox
+ * ConfigurationUI - Advanced Config  createConfigurationModal() {
+    const modalHTML = `
+    <div class="modal-overlay" id="configModal">
+        <div class="modal-content">`ion Management for DevStackBox
  * Uses the same design as Downloads & Settings modal
  */
 
@@ -41,7 +44,7 @@ class ConfigurationUI {
    */
   createConfigurationModal() {
     const modalHTML = `
-    <div class="modal-overlay" id="configModal" style="display: none;">
+    <div class="modal-overlay" id="configModal">
         <div class="modal-content">
             <div class="modal-header">
                 <h2>
@@ -230,26 +233,45 @@ class ConfigurationUI {
     </div>`;
 
     document.body.insertAdjacentHTML('beforeend', modalHTML);
-    this.bindModalEvents();
+    
+    // Wait for next tick to ensure DOM elements are available
+    setTimeout(() => {
+      this.bindModalEvents();
+      console.log('Configuration modal created and events bound');
+      console.log('Modal element:', document.getElementById('configModal'));
+    }, 0);
   }
 
   /**
    * Bind configuration button events
    */
   bindConfigurationButtons() {
-    // Bind all config buttons with data-config attribute
-    const configButtons = document.querySelectorAll('.config-btn[data-config]');
-    
-    configButtons.forEach(button => {
-      const configType = button.getAttribute('data-config');
-      button.addEventListener('click', (e) => {
-        e.preventDefault();
-        console.log(`Opening ${configType} configuration...`);
-        this.openConfigModal(configType);
+    // Wait for DOM to be ready if needed
+    const bindButtons = () => {
+      // Bind all config buttons with data-config attribute
+      const configButtons = document.querySelectorAll('.config-btn[data-config]');
+      
+      console.log(`Found ${configButtons.length} configuration buttons to bind`);
+      
+      configButtons.forEach(button => {
+        const configType = button.getAttribute('data-config');
+        console.log(`Binding ${configType} configuration button`);
+        button.addEventListener('click', (e) => {
+          e.preventDefault();
+          console.log(`Opening ${configType} configuration...`);
+          this.openConfigModal(configType);
+        });
       });
-    });
-    
-    console.log(`Bound ${configButtons.length} configuration buttons`);
+      
+      console.log(`Bound ${configButtons.length} configuration buttons`);
+    };
+
+    // If DOM is ready, bind immediately, otherwise wait
+    if (document.readyState !== 'loading') {
+      bindButtons();
+    } else {
+      document.addEventListener('DOMContentLoaded', bindButtons);
+    }
   }
 
   /**
@@ -266,7 +288,7 @@ class ConfigurationUI {
     // Close modal
     if (closeBtn) {
       closeBtn.addEventListener('click', () => {
-        modal.style.display = 'none';
+        modal.classList.remove('active');
       });
     }
 
@@ -302,7 +324,7 @@ class ConfigurationUI {
     // Close modal when clicking outside
     modal.addEventListener('click', (e) => {
       if (e.target === modal) {
-        modal.style.display = 'none';
+        modal.classList.remove('active');
       }
     });
   }
@@ -313,19 +335,36 @@ class ConfigurationUI {
   openConfigModal(service = 'apache') {
     console.log(`Opening ${service} configuration modal...`);
     
-    const modal = document.getElementById('configModal');
-    if (!modal) {
-      console.error('Configuration modal not found! Creating it now...');
-      this.createConfigurationModal();
-    }
-    
-    const finalModal = document.getElementById('configModal');
-    if (finalModal) {
-      console.log('Modal found, showing...');
-      finalModal.style.display = 'block';
-      this.switchConfigTab(service);
-    } else {
-      console.error('Failed to create/find configuration modal');
+    try {
+      let modal = document.getElementById('configModal');
+      if (!modal) {
+        console.error('Configuration modal not found! Creating it now...');
+        this.createConfigurationModal();
+        
+        // Wait a bit for modal to be created
+        setTimeout(() => {
+          modal = document.getElementById('configModal');
+          if (modal) {
+            console.log('Modal created, showing...');
+            console.log('Modal classes before:', modal.className);
+            modal.classList.add('active');
+            console.log('Modal classes after:', modal.className);
+            this.switchConfigTab(service);
+          } else {
+            console.error('Failed to create configuration modal');
+            alert('Unable to open configuration modal. Please refresh the page and try again.');
+          }
+        }, 100);
+      } else {
+        console.log('Modal found, showing...');
+        console.log('Modal classes before:', modal.className);
+        modal.classList.add('active');
+        console.log('Modal classes after:', modal.className);
+        this.switchConfigTab(service);
+      }
+    } catch (error) {
+      console.error('Error opening configuration modal:', error);
+      alert('Error opening configuration modal: ' + error.message);
     }
   }
 
@@ -335,22 +374,67 @@ class ConfigurationUI {
   switchConfigTab(tabName) {
     console.log(`Switching to ${tabName} tab`);
     
-    // Update tab buttons
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-      btn.classList.remove('active');
-      if (btn.dataset.tab === tabName) {
-        btn.classList.add('active');
-      }
-    });
+    try {
+      // Update tab buttons
+      const tabButtons = document.querySelectorAll('.tab-btn');
+      console.log(`Found ${tabButtons.length} tab buttons`);
+      
+      tabButtons.forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.dataset.tab === tabName) {
+          btn.classList.add('active');
+          console.log(`Activated ${tabName} tab button`);
+        }
+      });
 
-    // Update tab content
-    document.querySelectorAll('.tab-content').forEach(content => {
-      content.classList.remove('active');
-    });
+      // Update tab content
+      const tabContents = document.querySelectorAll('.tab-content');
+      console.log(`Found ${tabContents.length} tab contents`);
+      
+      tabContents.forEach(content => {
+        content.classList.remove('active');
+      });
+      
+      const targetTab = document.getElementById(`${tabName}-tab`);
+      if (targetTab) {
+        targetTab.classList.add('active');
+        console.log(`Activated ${tabName} tab content`);
+      } else {
+        console.error(`Tab content for ${tabName} not found`);
+      }
+
+      // Load current configuration for this service
+      this.loadConfigurationForService(tabName);
+    } catch (error) {
+      console.error('Error switching tabs:', error);
+    }
+  }
+
+  /**
+   * Load configuration for a specific service
+   */
+  async loadConfigurationForService(service) {
+    console.log(`Loading configuration for ${service}`);
     
-    const targetTab = document.getElementById(`${tabName}-tab`);
-    if (targetTab) {
-      targetTab.classList.add('active');
+    try {
+      if (service === 'apache') {
+        const apacheConfig = await window.electronAPI.getApacheConfig();
+        if (apacheConfig && !apacheConfig.error) {
+          this.populateApacheConfig(apacheConfig);
+        }
+      } else if (service === 'mysql') {
+        const mysqlConfig = await window.electronAPI.getMySQLConfig();
+        if (mysqlConfig && !mysqlConfig.error) {
+          this.populateMySQLConfig(mysqlConfig);
+        }
+      } else if (service === 'php') {
+        const phpConfig = await window.electronAPI.getPHPConfig();
+        if (phpConfig && !phpConfig.error) {
+          this.populatePHPConfig(phpConfig);
+        }
+      }
+    } catch (error) {
+      console.error(`Error loading ${service} configuration:`, error);
     }
   }
 

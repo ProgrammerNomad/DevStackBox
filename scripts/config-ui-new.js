@@ -41,7 +41,7 @@ class ConfigurationUI {
    */
   createConfigurationModal() {
     const modalHTML = `
-    <div class="modal-overlay" id="configModal" style="display: none;">
+    <div class="modal-overlay" id="configModal">
         <div class="modal-content">
             <div class="modal-header">
                 <h2>
@@ -266,7 +266,7 @@ class ConfigurationUI {
     // Close modal
     if (closeBtn) {
       closeBtn.addEventListener('click', () => {
-        modal.style.display = 'none';
+        modal.classList.remove('active');
       });
     }
 
@@ -302,7 +302,7 @@ class ConfigurationUI {
     // Close modal when clicking outside
     modal.addEventListener('click', (e) => {
       if (e.target === modal) {
-        modal.style.display = 'none';
+        modal.classList.remove('active');
       }
     });
   }
@@ -322,7 +322,7 @@ class ConfigurationUI {
     const finalModal = document.getElementById('configModal');
     if (finalModal) {
       console.log('Modal found, showing...');
-      finalModal.style.display = 'block';
+      finalModal.classList.add('active');
       this.switchConfigTab(service);
     } else {
       console.error('Failed to create/find configuration modal');

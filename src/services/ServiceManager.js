@@ -246,10 +246,18 @@ class ServiceManager {
       if (fs.existsSync(configPath)) {
         const existingConfig = fs.readFileSync(configPath, 'utf8');
         
+        // Check for manual preserve marker first
+        if (existingConfig.includes("MANUAL_CONFIG_PRESERVE")) {
+          console.log('✅ phpMyAdmin config marked as MANUAL_CONFIG_PRESERVE - skipping overwrite');
+          return;
+        }
+        
         // If it already has cookie auth and proper connection settings, don't overwrite
+        // Also check for 127.0.0.1 host to ensure it's a working configuration
         if (existingConfig.includes("auth_type'] = 'cookie'") && 
             existingConfig.includes("AllowNoPassword'] = true") &&
-            existingConfig.includes("AllowRoot'] = true")) {
+            existingConfig.includes("AllowRoot'] = true") &&
+            (existingConfig.includes("host'] = '127.0.0.1'") || existingConfig.includes("host'] = 'localhost'"))) {
           console.log('✅ phpMyAdmin config already configured with working settings - skipping overwrite');
           return;
         }

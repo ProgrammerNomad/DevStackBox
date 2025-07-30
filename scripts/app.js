@@ -24,6 +24,10 @@ class DevStackBox {
     }
     
     try {
+      // Initialize Configuration UI
+      console.log('Initializing Configuration UI...');
+      this.configUI = new ConfigurationUI();
+      
       // Setup event listeners
       this.setupEventListeners();
       
