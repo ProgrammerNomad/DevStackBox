@@ -301,7 +301,6 @@
             <div class="modal-body">
                 <div class="settings-tabs">
                     <button class="tab-btn active" data-tab="servers">Server Downloads</button>
-                    <button class="tab-btn" data-tab="php-extensions">PHP Extensions</button>
                     <button class="tab-btn" data-tab="tools">Additional Tools</button>
                 </div>
 
@@ -412,48 +411,6 @@
                             Download All Server Components
                         </button>
                     </div>
-                </div>
-
-                <!-- PHP Extensions Tab -->
-                <div class="tab-content" id="php-extensions-tab">
-                    <h3>PHP Extensions</h3>
-                    <div class="extensions-grid">
-                        <div class="extension-card">
-                            <h4>Database Extensions</h4>
-                            <div class="extension-list">
-                                <label><input type="checkbox" checked> mysqli</label>
-                                <label><input type="checkbox" checked> pdo_mysql</label>
-                                <label><input type="checkbox"> pdo_sqlite</label>
-                                <label><input type="checkbox"> pdo_pgsql</label>
-                            </div>
-                        </div>
-                        <div class="extension-card">
-                            <h4>Web Extensions</h4>
-                            <div class="extension-list">
-                                <label><input type="checkbox" checked> curl</label>
-                                <label><input type="checkbox" checked> openssl</label>
-                                <label><input type="checkbox" checked> mbstring</label>
-                                <label><input type="checkbox"> xml</label>
-                            </div>
-                        </div>
-                        <div class="extension-card">
-                            <h4>Image Processing</h4>
-                            <div class="extension-list">
-                                <label><input type="checkbox"> gd</label>
-                                <label><input type="checkbox"> imagick</label>
-                                <label><input type="checkbox"> exif</label>
-                            </div>
-                        </div>
-                        <div class="extension-card">
-                            <h4>Performance</h4>
-                            <div class="extension-list">
-                                <label><input type="checkbox"> opcache</label>
-                                <label><input type="checkbox"> redis</label>
-                                <label><input type="checkbox"> memcached</label>
-                            </div>
-                        </div>
-                    </div>
-                    <button class="btn btn-primary" id="configureExtensionsBtn">Configure Selected Extensions</button>
                 </div>
 
                 <!-- Additional Tools Tab -->
@@ -672,63 +629,22 @@
                             <img src="assets/icons/php.svg" alt="PHP Extensions" class="section-icon-small">
                             PHP Extensions Manager
                         </h3>
+                        
+                        <div class="extensions-controls" style="margin-bottom: 1rem;">
+                            <div class="form-group" style="display: inline-block; margin-right: 1rem;">
+                                <label for="php-version-extensions">PHP Version:</label>
+                                <select id="php-version-extensions" class="form-select" style="width: auto; display: inline-block;">
+                                    <option value="8.1">PHP 8.1</option>
+                                    <option value="8.2" selected>PHP 8.2</option>
+                                    <option value="8.3">PHP 8.3</option>
+                                    <option value="8.4">PHP 8.4</option>
+                                </select>
+                            </div>
+                            <button class="btn btn-sm btn-secondary" id="refresh-extensions-btn">Refresh Extensions</button>
+                        </div>
+                        
                         <div class="extensions-grid">
-                            <div class="extension-item">
-                                <label class="extension-label">
-                                    <input type="checkbox" name="php-ext" value="curl" checked>
-                                    <span class="extension-name">cURL</span>
-                                    <span class="extension-desc">HTTP requests</span>
-                                </label>
-                            </div>
-                            <div class="extension-item">
-                                <label class="extension-label">
-                                    <input type="checkbox" name="php-ext" value="gd" checked>
-                                    <span class="extension-name">GD</span>
-                                    <span class="extension-desc">Image processing</span>
-                                </label>
-                            </div>
-                            <div class="extension-item">
-                                <label class="extension-label">
-                                    <input type="checkbox" name="php-ext" value="mbstring" checked>
-                                    <span class="extension-name">mbstring</span>
-                                    <span class="extension-desc">Multibyte strings</span>
-                                </label>
-                            </div>
-                            <div class="extension-item">
-                                <label class="extension-label">
-                                    <input type="checkbox" name="php-ext" value="mysqli" checked>
-                                    <span class="extension-name">MySQLi</span>
-                                    <span class="extension-desc">MySQL database</span>
-                                </label>
-                            </div>
-                            <div class="extension-item">
-                                <label class="extension-label">
-                                    <input type="checkbox" name="php-ext" value="pdo_mysql" checked>
-                                    <span class="extension-name">PDO MySQL</span>
-                                    <span class="extension-desc">PDO MySQL driver</span>
-                                </label>
-                            </div>
-                            <div class="extension-item">
-                                <label class="extension-label">
-                                    <input type="checkbox" name="php-ext" value="openssl" checked>
-                                    <span class="extension-name">OpenSSL</span>
-                                    <span class="extension-desc">Encryption</span>
-                                </label>
-                            </div>
-                            <div class="extension-item">
-                                <label class="extension-label">
-                                    <input type="checkbox" name="php-ext" value="zip" checked>
-                                    <span class="extension-name">ZIP</span>
-                                    <span class="extension-desc">Archive handling</span>
-                                </label>
-                            </div>
-                            <div class="extension-item">
-                                <label class="extension-label">
-                                    <input type="checkbox" name="php-ext" value="xml" checked>
-                                    <span class="extension-name">XML</span>
-                                    <span class="extension-desc">XML processing</span>
-                                </label>
-                            </div>
+                            <!-- Extensions will be dynamically loaded here -->
                         </div>
                         <div class="extensions-actions">
                             <button class="btn btn-primary" id="configureExtensionsBtn">Configure Extensions</button>

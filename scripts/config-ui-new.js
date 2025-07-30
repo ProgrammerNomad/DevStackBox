@@ -56,6 +56,7 @@ class ConfigurationUI {
                     <button class="tab-btn active" data-tab="apache">Apache HTTP Server</button>
                     <button class="tab-btn" data-tab="mysql">MySQL Database</button>
                     <button class="tab-btn" data-tab="php">PHP Settings</button>
+                    <button class="tab-btn" data-tab="extensions">PHP Extensions</button>
                 </div>
 
                 <!-- Apache Configuration Tab -->
@@ -206,6 +207,50 @@ class ConfigurationUI {
                                     <option value="E_ERROR | E_WARNING | E_PARSE">Errors, Warnings, Parse</option>
                                 </select>
                                 <small class="form-help">Types of errors to report</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PHP Extensions Configuration Tab -->
+                <div class="tab-content" id="extensions-tab">
+                    <h3>PHP Extensions Manager</h3>
+                    
+                    <div class="download-section">
+                        <div class="section-header">
+                            <h4>
+                                <img src="assets/icons/php.svg" alt="PHP Extensions" class="section-icon-small">
+                                PHP Version & Extensions
+                            </h4>
+                        </div>
+                        <div class="config-form">
+                            <div class="form-group">
+                                <label for="php-version-extensions">PHP Version:</label>
+                                <select id="php-version-extensions">
+                                    <!-- Options will be populated dynamically -->
+                                </select>
+                                <small class="form-help">Select PHP version to manage extensions</small>
+                            </div>
+                            <div class="form-group">
+                                <button type="button" id="refresh-extensions-btn" class="btn btn-secondary">
+                                    <img src="assets/icons/refresh.svg" alt="Refresh" class="btn-icon">
+                                    Refresh Extensions
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="download-section">
+                        <div class="section-header">
+                            <h4>
+                                <img src="assets/icons/extension.svg" alt="Extensions" class="section-icon-small">
+                                Available Extensions
+                            </h4>
+                        </div>
+                        <div class="extensions-container">
+                            <div class="extensions-grid">
+                                <!-- Extensions will be dynamically loaded here -->
+                                <div class="loading-message">Loading PHP extensions... Please wait.</div>
                             </div>
                         </div>
                     </div>
@@ -541,6 +586,217 @@ class ConfigurationUI {
       statusEl.textContent = message;
       statusEl.className = `config-status ${type}`;
     }
+  }
+
+  /**
+   * Populate PHP version selectors with available versions
+   */
+  async populatePhpVersionSelectors() {
+    try {
+      console.log('Populating PHP version selectors...');
+      
+      let phpVersions = [];
+      
+      // Try to get versions from backend
+      if (window.electronAPI && window.electronAPI.getPHPVersions) {
+        const result = await window.electronAPI.getPHPVersions();
+        if (result && result.success && result.versions) {
+          phpVersions = result.versions;
+          console.log('PHP versions from backend:', phpVersions);
+        }
+      }
+      
+      // Fallback to default versions if none found
+      if (phpVersions.length === 0) {
+        console.log('Using fallback PHP versions');
+        phpVersions = ['8.2', '8.1', '8.0', '7.4'];
+      }
+      
+      // Populate main PHP version selector
+      const phpVersionSelect = document.getElementById('phpVersion');
+      if (phpVersionSelect) {
+        phpVersionSelect.innerHTML = '';
+        phpVersions.forEach(version => {
+          const option = document.createElement('option');
+          option.value = version;
+          option.textContent = `PHP ${version}`;
+          phpVersionSelect.appendChild(option);
+        });
+      }
+      
+      // Update PHP Extensions modal selector
+      const phpExtensionsSelector = document.getElementById('php-version-extensions');
+      if (phpExtensionsSelector) {
+        phpExtensionsSelector.innerHTML = '';
+        phpVersions.forEach(version => {
+          const option = document.createElement('option');
+          option.value = version;
+          option.textContent = `PHP ${version}`;
+          if (version === '8.2') option.selected = true; // Default to 8.2
+          phpExtensionsSelector.appendChild(option);
+        });
+        
+        // Add change event listener to reload extensions when version changes
+        phpExtensionsSelector.addEventListener('change', () => {
+          this.loadPhpExtensions();
+        });
+      }
+      
+      console.log('PHP version selectors populated successfully');
+      
+    } catch (error) {
+      console.error('Error populating PHP version selectors:', error);
+      this.populateFallbackPhpVersions();
+    }
+  }
+
+  /**
+   * Populate fallback PHP versions
+   */
+  populateFallbackPhpVersions() {
+    const fallbackVersions = ['8.2', '8.1', '8.0', '7.4'];
+    
+    // Populate PHP Extensions selector with fallback
+    const phpExtensionsSelector = document.getElementById('php-version-extensions');
+    if (phpExtensionsSelector) {
+      phpExtensionsSelector.innerHTML = '';
+      fallbackVersions.forEach(version => {
+        const option = document.createElement('option');
+        option.value = version;
+        option.textContent = `PHP ${version}`;
+        phpExtensionsSelector.appendChild(option);
+      });
+    }
+  }
+
+  /**
+   * Load PHP Extensions status
+   */
+  async loadPhpExtensions() {
+    console.log('Loading PHP extensions status...');
+    
+    try {
+      // Try to get current PHP version from extensions tab selector
+      let version = '8.2'; // Default fallback
+      
+      // Check the PHP version selector in extensions tab first
+      const phpVersionExtensions = document.getElementById('php-version-extensions');
+      if (phpVersionExtensions && phpVersionExtensions.value) {
+        version = phpVersionExtensions.value;
+        console.log('Found PHP version from extensions selector:', version);
+      } else {
+        // Fallback to main PHP version selector
+        const phpVersionSelect = document.getElementById('phpVersion');
+        if (phpVersionSelect && phpVersionSelect.value) {
+          version = phpVersionSelect.value;
+          console.log('Found PHP version from main selector:', version);
+        } else {
+          console.log('Using default PHP version:', version);
+        }
+      }
+      
+      // Get extensions status from backend
+      if (window.electronAPI && window.electronAPI.getPHPExtensions) {
+        console.log(`Requesting PHP extensions for version ${version}...`);
+        const result = await window.electronAPI.getPHPExtensions(version);
+        
+        if (result.success) {
+          console.log('Successfully loaded PHP extensions:', result.extensions);
+          this.renderPhpExtensions(result.extensions);
+          return;
+        } else {
+          console.error('Failed to load PHP extensions:', result.error);
+        }
+      } else {
+        console.error('electronAPI.getPHPExtensions not available');
+      }
+      
+      // Fallback to default extensions
+      console.log('Using default extensions configuration');
+      this.renderPhpExtensions(this.getDefaultExtensions());
+      
+    } catch (error) {
+      console.error('Error loading PHP extensions:', error);
+      // Fallback to default extensions
+      this.renderPhpExtensions(this.getDefaultExtensions());
+    }
+  }
+
+  /**
+   * Render PHP extensions interface
+   */
+  renderPhpExtensions(extensions) {
+    console.log('Rendering PHP extensions:', extensions);
+    
+    // Find the extensions grid container in the extensions tab
+    let extensionsGrid = document.querySelector('#extensions-tab .extensions-grid');
+    
+    if (!extensionsGrid) {
+      console.error('Extensions grid container not found in extensions tab');
+      return;
+    }
+
+    console.log('Found extensions grid container:', extensionsGrid);
+
+    // Clear existing content
+    extensionsGrid.innerHTML = '';
+    
+    // Create extension items
+    Object.entries(extensions).forEach(([name, config]) => {
+      const extensionItem = document.createElement('div');
+      extensionItem.className = 'extension-item';
+      
+      const extensionLabel = document.createElement('label');
+      extensionLabel.className = 'extension-label';
+      
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.name = 'php-ext';
+      checkbox.value = name;
+      checkbox.checked = config.enabled;
+      checkbox.setAttribute('data-extension', name);
+      
+      const extensionName = document.createElement('span');
+      extensionName.className = 'extension-name';
+      extensionName.textContent = name;
+      
+      const extensionDesc = document.createElement('span');
+      extensionDesc.className = 'extension-desc';
+      extensionDesc.textContent = config.description || 'PHP Extension';
+      
+      // Build the structure
+      extensionLabel.appendChild(checkbox);
+      extensionLabel.appendChild(extensionName);
+      extensionLabel.appendChild(extensionDesc);
+      extensionItem.appendChild(extensionLabel);
+      
+      extensionsGrid.appendChild(extensionItem);
+    });
+
+    console.log('PHP extensions rendered successfully');
+  }
+
+  /**
+   * Get default extensions for fallback
+   */
+  getDefaultExtensions() {
+    return {
+      'curl': { enabled: true, description: 'Client URL Library' },
+      'gd': { enabled: true, description: 'Image Processing and GD' },
+      'mbstring': { enabled: true, description: 'Multibyte String' },
+      'mysqli': { enabled: true, description: 'MySQL Improved Extension' },
+      'pdo_mysql': { enabled: true, description: 'PDO Driver for MySQL' },
+      'openssl': { enabled: true, description: 'OpenSSL Support' },
+      'zip': { enabled: true, description: 'Zip Archive Support' },
+      'xml': { enabled: true, description: 'XML Parser' },
+      'json': { enabled: true, description: 'JavaScript Object Notation' },
+      'fileinfo': { enabled: true, description: 'File Information' },
+      'intl': { enabled: false, description: 'Internationalization Functions' },
+      'imap': { enabled: false, description: 'IMAP, POP3 and NNTP' },
+      'ldap': { enabled: false, description: 'LDAP Protocol Support' },
+      'soap': { enabled: false, description: 'SOAP Protocol Support' },
+      'xdebug': { enabled: false, description: 'Debugging and Profiling Tool' }
+    };
   }
 }
 

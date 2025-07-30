@@ -69,7 +69,7 @@ class ConfigurationUI {
           });
         }
 
-        // Update PHP Extensions tab selector
+        // Update PHP Extensions modal selector
         const phpExtensionsSelector = document.getElementById('php-version-extensions');
         if (phpExtensionsSelector) {
           phpExtensionsSelector.innerHTML = '';
@@ -263,7 +263,7 @@ class ConfigurationUI {
                     </div>
                 </div>
 
-                <!-- PHP Extensions Tab -->
+                <!-- PHP Extensions Configuration Tab -->
                 <div class="tab-content" id="php-extensions-tab">
                     <div class="config-section-compact">
                         <h4>PHP Version & Extensions Management</h4>
@@ -271,7 +271,10 @@ class ConfigurationUI {
                             <div class="form-group">
                                 <label for="php-version-extensions">PHP Version:</label>
                                 <select id="php-version-extensions">
-                                    <!-- Options will be populated dynamically -->
+                                    <option value="8.1">PHP 8.1</option>
+                                    <option value="8.2" selected>PHP 8.2</option>
+                                    <option value="8.3">PHP 8.3</option>
+                                    <option value="8.4">PHP 8.4</option>
                                 </select>
                             </div>
                             <div class="form-group">
@@ -282,32 +285,11 @@ class ConfigurationUI {
                         </div>
                     </div>
 
-                    <div class="extensions-container">
-                        <div class="config-section-compact">
-                            <h4>Database Extensions</h4>  
-                            <div class="extensions-grid" id="database-extensions">
-                                <!-- Dynamic content will be loaded here -->
-                            </div>
-                        </div>
-
-                        <div class="config-section-compact">
-                            <h4>Common Extensions</h4>
-                            <div class="extensions-grid" id="common-extensions">
-                                <!-- Dynamic content will be loaded here -->
-                            </div>
-                        </div>
-
-                        <div class="config-section-compact">
-                            <h4>Web Development Extensions</h4>
-                            <div class="extensions-grid" id="web-extensions">
-                                <!-- Dynamic content will be loaded here -->
-                            </div>
-                        </div>
-
-                        <div class="config-section-compact">
-                            <h4>Additional Extensions</h4>
-                            <div class="extensions-grid" id="additional-extensions">
-                                <!-- Dynamic content will be loaded here -->
+                    <div class="config-section-compact">
+                        <h4>Available Extensions</h4>
+                        <div class="extensions-container">
+                            <div class="extensions-grid">
+                                <!-- Extensions will be dynamically loaded here -->
                             </div>
                         </div>
                     </div>
@@ -320,6 +302,8 @@ class ConfigurationUI {
                     <button class="btn btn-secondary" id="configValidateBtn">Validate</button>
                     <button class="btn btn-primary" id="configSaveBtn">Save & Apply</button>
                     <button class="btn btn-secondary" id="configResetBtn">Reset</button>
+                    <button class="btn btn-info" id="savePhpExtensionsBtn" style="display:none;">Save Extensions</button>
+                    <button class="btn btn-warning" id="resetPhpExtensionsBtn" style="display:none;">Reset Extensions</button>
                 </div>
             </div>
         </div>
@@ -356,6 +340,61 @@ class ConfigurationUI {
         });
       });
       
+      // Bind the Configure Extensions button
+      const configureExtensionsBtn = document.getElementById('configureExtensionsBtn');
+      if (configureExtensionsBtn) {
+        console.log('Binding Configure Extensions button');
+        configureExtensionsBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          console.log('Opening PHP Extensions modal...');
+          this.openPhpExtensionsModal();
+        });
+      }
+      
+      // Bind the Load Extensions button (from main interface)
+      const loadExtensionsBtn = document.getElementById('loadExtensionsBtn');
+      if (loadExtensionsBtn) {
+        console.log('Binding Load Extensions button');
+        loadExtensionsBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          console.log('Opening PHP Extensions modal...');
+          this.openPhpExtensionsModal();
+        });
+      }
+      
+      // Bind the Reset Extensions button
+      const resetExtensionsBtn = document.getElementById('resetExtensionsBtn');
+      if (resetExtensionsBtn) {
+        console.log('Binding Reset Extensions button');
+        resetExtensionsBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          console.log('Resetting PHP extensions to defaults...');
+          this.resetPhpExtensions();
+        });
+      }
+      
+      // Bind the Refresh Extensions button
+      const refreshExtensionsBtn = document.getElementById('refresh-extensions-btn');
+      if (refreshExtensionsBtn) {
+        console.log('Binding Refresh Extensions button');
+        refreshExtensionsBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          console.log('Refreshing PHP extensions...');
+          this.loadPhpExtensions();
+        });
+      }
+      
+      // Bind the PHP version selector
+      const phpVersionExtensions = document.getElementById('php-version-extensions');
+      if (phpVersionExtensions) {
+        console.log('Binding PHP version extensions selector');
+        phpVersionExtensions.addEventListener('change', (e) => {
+          const version = e.target.value;
+          console.log(`PHP extensions version changed to: ${version}`);
+          this.loadPhpExtensions();
+        });
+      }
+      
       console.log(`Bound ${configButtons.length} configuration buttons`);
     };
 
@@ -364,6 +403,21 @@ class ConfigurationUI {
       bindButtons();
     } else {
       document.addEventListener('DOMContentLoaded', bindButtons);
+    }
+  }
+
+  /**
+   * Open PHP Extensions modal
+   */
+  openPhpExtensionsModal() {
+    console.log('Opening PHP Extensions configuration...');
+    
+    try {
+      // Open the main configuration modal with PHP Extensions tab
+      this.openConfigModal('php-extensions');
+    } catch (error) {
+      console.error('Error opening PHP Extensions configuration:', error);
+      alert('Error opening PHP Extensions configuration: ' + error.message);
     }
   }
 
@@ -377,9 +431,12 @@ class ConfigurationUI {
     const validateBtn = document.getElementById('configValidateBtn');
     const saveBtn = document.getElementById('configSaveBtn');
     const resetBtn = document.getElementById('configResetBtn');
-    const phpVersionConfig = document.getElementById('php-version-config');
-    const phpVersionExtensions = document.getElementById('php-version-extensions');
+    
+    // PHP Extensions specific buttons
+    const savePhpExtensionsBtn = document.getElementById('savePhpExtensionsBtn');
+    const resetPhpExtensionsBtn = document.getElementById('resetPhpExtensionsBtn');
     const refreshExtensionsBtn = document.getElementById('refresh-extensions-btn');
+    const phpVersionExtensions = document.getElementById('php-version-extensions');
 
     // Close modal
     if (closeBtn) {
@@ -395,42 +452,6 @@ class ConfigurationUI {
         this.switchConfigTab(tabName);
       });
     });
-
-    // PHP version change in config tab
-    if (phpVersionConfig) {
-      phpVersionConfig.addEventListener('change', (e) => {
-        const version = e.target.value;
-        console.log(`PHP config version changed to: ${version}`);
-        // Sync with extensions tab
-        if (phpVersionExtensions) {
-          phpVersionExtensions.value = version;
-        }
-        // Load configuration for this version
-        this.loadConfigurationForService('php');
-      });
-    }
-
-    // PHP version change in extensions tab
-    if (phpVersionExtensions) {
-      phpVersionExtensions.addEventListener('change', (e) => {
-        const version = e.target.value;
-        console.log(`PHP extensions version changed to: ${version}`);
-        // Sync with config tab
-        if (phpVersionConfig) {
-          phpVersionConfig.value = version;
-        }
-        // Reload extensions for this version
-        this.loadPhpExtensions();
-      });
-    }
-
-    // Refresh extensions button
-    if (refreshExtensionsBtn) {
-      refreshExtensionsBtn.addEventListener('click', () => {
-        console.log('Refreshing PHP extensions...');
-        this.loadPhpExtensions();
-      });
-    }
 
     // Validate configuration
     if (validateBtn) {
@@ -450,6 +471,33 @@ class ConfigurationUI {
     if (resetBtn) {
       resetBtn.addEventListener('click', () => {
         this.resetToDefaults();
+      });
+    }
+
+    // PHP Extensions specific event handlers
+    if (savePhpExtensionsBtn) {
+      savePhpExtensionsBtn.addEventListener('click', () => {
+        this.savePhpExtensions();
+      });
+    }
+
+    if (resetPhpExtensionsBtn) {
+      resetPhpExtensionsBtn.addEventListener('click', () => {
+        this.resetPhpExtensions();
+      });
+    }
+
+    if (refreshExtensionsBtn) {
+      refreshExtensionsBtn.addEventListener('click', () => {
+        this.loadPhpExtensions();
+      });
+    }
+
+    if (phpVersionExtensions) {
+      phpVersionExtensions.addEventListener('change', (e) => {
+        const version = e.target.value;
+        console.log(`PHP extensions version changed to: ${version}`);
+        this.loadPhpExtensions();
       });
     }
 
@@ -537,12 +585,35 @@ class ConfigurationUI {
         console.error(`Tab content for ${tabName} not found`);
       }
 
-      // Load current configuration for this service (skip for php-extensions as it's managed separately)
-      if (tabName !== 'php-extensions') {
-        this.loadConfigurationForService(tabName);
-      } else {
-        // Load current PHP extensions status
+      // Show/hide appropriate buttons based on tab
+      const savePhpExtensionsBtn = document.getElementById('savePhpExtensionsBtn');
+      const resetPhpExtensionsBtn = document.getElementById('resetPhpExtensionsBtn');
+      const configValidateBtn = document.getElementById('configValidateBtn');
+      const configSaveBtn = document.getElementById('configSaveBtn');
+      const configResetBtn = document.getElementById('configResetBtn');
+
+      if (tabName === 'php-extensions') {
+        // Show PHP Extensions buttons
+        if (savePhpExtensionsBtn) savePhpExtensionsBtn.style.display = 'inline-block';
+        if (resetPhpExtensionsBtn) resetPhpExtensionsBtn.style.display = 'inline-block';
+        // Hide general buttons
+        if (configValidateBtn) configValidateBtn.style.display = 'none';
+        if (configSaveBtn) configSaveBtn.style.display = 'none';
+        if (configResetBtn) configResetBtn.style.display = 'none';
+        
+        // Load PHP extensions
         this.loadPhpExtensions();
+      } else {
+        // Hide PHP Extensions buttons
+        if (savePhpExtensionsBtn) savePhpExtensionsBtn.style.display = 'none';
+        if (resetPhpExtensionsBtn) resetPhpExtensionsBtn.style.display = 'none';
+        // Show general buttons
+        if (configValidateBtn) configValidateBtn.style.display = 'inline-block';
+        if (configSaveBtn) configSaveBtn.style.display = 'inline-block';
+        if (configResetBtn) configResetBtn.style.display = 'inline-block';
+        
+        // Load current configuration for this service
+        this.loadConfigurationForService(tabName);
       }
     } catch (error) {
       console.error('Error switching tabs:', error);
@@ -635,59 +706,71 @@ class ConfigurationUI {
   renderPhpExtensions(extensions) {
     console.log('Rendering PHP extensions:', extensions);
     
-    // Map categories to their container IDs with comprehensive category support
-    const categoryContainers = {
-      'Database': 'database-extensions',
-      'Security': 'common-extensions',
-      'Core': 'common-extensions',
-      'Media': 'web-extensions',
-      'Web Development': 'web-extensions',
-      'Development': 'additional-extensions',
-      'Caching': 'additional-extensions',
-      'Other': 'additional-extensions'
-    };
-
-    // Initialize containers - clear existing content
-    Object.values(categoryContainers).forEach(containerId => {
-      const container = document.getElementById(containerId);
-      if (container) {
-        container.innerHTML = ''; // Clear existing content
-      }
-    });
+    // Find the extensions grid container in PHP Extensions tab
+    let extensionsGrid = document.querySelector('#php-extensions-tab .extensions-grid');
     
-    // Group extensions by category first
-    const extensionsByCategory = {};
+    // Fallback to main interface extensions grid if tab not found
+    if (!extensionsGrid) {
+      extensionsGrid = document.querySelector('.extensions-section .extensions-grid');
+    }
+    
+    // Another fallback: try to find any extensions grid
+    if (!extensionsGrid) {
+      extensionsGrid = document.querySelector('.extensions-grid');
+    }
+    
+    if (!extensionsGrid) {
+      console.error('Extensions grid container not found');
+      console.log('Available elements with .extensions-grid:', document.querySelectorAll('.extensions-grid'));
+      console.log('Available elements with .extensions-section:', document.querySelectorAll('.extensions-section'));
+      return;
+    }
+
+    console.log('Found extensions grid container:', extensionsGrid);
+
+    // Clear existing content
+    extensionsGrid.innerHTML = '';
+    
+    // Add a temporary loading message to verify container is working
+    const loadingDiv = document.createElement('div');
+    loadingDiv.textContent = 'Loading PHP extensions...';
+    loadingDiv.style.padding = '1rem';
+    loadingDiv.style.textAlign = 'center';
+    extensionsGrid.appendChild(loadingDiv);
+    
+    // Remove loading message
+    extensionsGrid.innerHTML = '';
+    
+    // Create a simple grid of extensions instead of categories
     Object.entries(extensions).forEach(([name, config]) => {
-      const category = config.category || 'Other';
-      if (!extensionsByCategory[category]) {
-        extensionsByCategory[category] = [];
-      }
-      extensionsByCategory[category].push({ name, ...config });
-    });
-    
-    // Render extensions by category
-    Object.entries(extensionsByCategory).forEach(([category, exts]) => {
-      const containerId = categoryContainers[category] || 'additional-extensions';
-      const container = document.getElementById(containerId);
+      const extensionItem = document.createElement('div');
+      extensionItem.className = 'extension-item';
       
-      if (!container) {
-        console.warn(`Container not found for category: ${category} (${containerId})`);
-        return;
-      }
-
-      // Add extensions to container
-      exts.forEach(ext => {
-        const extensionHTML = `
-          <label class="extension-label">
-            <input type="checkbox" 
-                   data-extension="${ext.name}" 
-                   ${ext.enabled ? 'checked' : ''}>
-            <span class="extension-name">${ext.name}</span>
-            <p class="extension-desc">${ext.description}</p>
-          </label>
-        `;
-        container.insertAdjacentHTML('beforeend', extensionHTML);
-      });
+      const extensionLabel = document.createElement('label');
+      extensionLabel.className = 'extension-label';
+      
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.name = 'php-ext';
+      checkbox.value = name;
+      checkbox.checked = config.enabled;
+      checkbox.setAttribute('data-extension', name);
+      
+      const extensionName = document.createElement('span');
+      extensionName.className = 'extension-name';
+      extensionName.textContent = name;
+      
+      const extensionDesc = document.createElement('span');
+      extensionDesc.className = 'extension-desc';
+      extensionDesc.textContent = config.description || 'PHP Extension';
+      
+      // Build the structure
+      extensionLabel.appendChild(checkbox);
+      extensionLabel.appendChild(extensionName);
+      extensionLabel.appendChild(extensionDesc);
+      extensionItem.appendChild(extensionLabel);
+      
+      extensionsGrid.appendChild(extensionItem);
     });
 
     console.log('PHP extensions rendered successfully');
@@ -940,6 +1023,194 @@ class ConfigurationUI {
       statusEl.textContent = message;
       statusEl.className = `config-status ${type}`;
     }
+  }
+
+  /**
+   * Save PHP Extensions Configuration
+   */
+  async savePhpExtensions() {
+    try {
+      console.log('Saving PHP extensions configuration...');
+      
+      // Get selected PHP version
+      const phpVersionExtensions = document.getElementById('php-version-extensions');
+      const version = phpVersionExtensions ? phpVersionExtensions.value : '8.2';
+      
+      // Collect enabled extensions from the main interface
+      const extensionCheckboxes = document.querySelectorAll('.extensions-section input[type="checkbox"]');
+      const enabledExtensions = {};
+      
+      extensionCheckboxes.forEach(checkbox => {
+        const extensionName = checkbox.getAttribute('data-extension') || checkbox.value;
+        if (extensionName) {
+          enabledExtensions[extensionName] = checkbox.checked;
+        }
+      });
+      
+      console.log('Extensions to save:', enabledExtensions);
+      
+      // Send to backend
+      if (window.electronAPI && window.electronAPI.savePHPExtensions) {
+        const result = await window.electronAPI.savePHPExtensions(version, enabledExtensions);
+        
+        if (result.success) {
+          this.updateStatus('PHP extensions configuration saved successfully!', 'success');
+          alert('PHP extensions configuration saved! You may need to restart Apache for changes to take effect.');
+        } else {
+          this.updateStatus('Failed to save PHP extensions configuration', 'error');
+          alert('Error saving PHP extensions: ' + (result.error || 'Unknown error'));
+        }
+      } else {
+        console.warn('electronAPI.savePHPExtensions not available');
+        alert('PHP extensions saving functionality is not available yet.');
+      }
+      
+    } catch (error) {
+      console.error('Error saving PHP extensions:', error);
+      this.updateStatus('Error saving PHP extensions configuration', 'error');
+      alert('Error saving PHP extensions: ' + error.message);
+    }
+  }
+
+  /**
+   * Reset PHP Extensions to Defaults
+   */
+  async resetPhpExtensions() {
+    if (!confirm('Are you sure you want to reset PHP extensions to default configuration?')) {
+      return;
+    }
+    
+    try {
+      console.log('Resetting PHP extensions to defaults...');
+      
+      // Load default extensions
+      const defaultExtensions = this.getDefaultExtensions();
+      
+      // Re-render with defaults
+      this.renderPhpExtensions(defaultExtensions);
+      
+      this.updateStatus('PHP extensions reset to defaults', 'success');
+      
+    } catch (error) {
+      console.error('Error resetting PHP extensions:', error);
+      this.updateStatus('Error resetting PHP extensions', 'error');
+    }
+  }
+
+  /**
+   * Save PHP extensions configuration
+   */
+  async savePhpExtensions() {
+    console.log('Saving PHP extensions configuration...');
+    
+    try {
+      const checkboxes = document.querySelectorAll('#php-extensions-tab input[type="checkbox"][data-extension]');
+      const extensions = {};
+      
+      checkboxes.forEach(checkbox => {
+        const extensionName = checkbox.getAttribute('data-extension');
+        extensions[extensionName] = {
+          enabled: checkbox.checked
+        };
+      });
+      
+      console.log('Extensions to save:', extensions);
+      
+      // Get current PHP version
+      const phpVersionExtensions = document.getElementById('php-version-extensions');
+      const version = phpVersionExtensions ? phpVersionExtensions.value : '8.2';
+      
+      if (window.electronAPI && window.electronAPI.savePHPExtensions) {
+        const result = await window.electronAPI.savePHPExtensions(version, extensions);
+        if (result.success) {
+          this.updateConfigStatus('PHP extensions saved successfully!', 'success');
+        } else {
+          this.updateConfigStatus('Failed to save PHP extensions: ' + result.error, 'error');
+        }
+      } else {
+        console.log('electronAPI.savePHPExtensions not available - simulating save');
+        this.updateConfigStatus('PHP extensions configuration saved (simulation)', 'success');
+      }
+    } catch (error) {
+      console.error('Error saving PHP extensions:', error);
+      this.updateConfigStatus('Error saving PHP extensions: ' + error.message, 'error');
+    }
+  }
+
+  /**
+   * Reset PHP extensions to defaults
+   */
+  resetPhpExtensions() {
+    console.log('Resetting PHP extensions to defaults...');
+    
+    try {
+      const defaultExtensions = this.getDefaultExtensions();
+      this.renderPhpExtensions(defaultExtensions);
+      this.updateConfigStatus('PHP extensions reset to defaults', 'info');
+    } catch (error) {
+      console.error('Error resetting PHP extensions:', error);
+      this.updateConfigStatus('Error resetting PHP extensions: ' + error.message, 'error');
+    }
+  }
+
+  /**
+   * Update configuration status message
+   */
+  updateConfigStatus(message, type = 'info') {
+    const statusElement = document.getElementById('configStatus');
+    if (statusElement) {
+      statusElement.textContent = message;
+      statusElement.className = `config-status ${type}`;
+      
+      // Clear status after 5 seconds
+      setTimeout(() => {
+        statusElement.textContent = 'Ready to configure';
+        statusElement.className = 'config-status';
+      }, 5000);
+    }
+  }
+
+  /**
+   * Load configuration for a specific service
+   */
+  async loadConfigurationForService(service) {
+    console.log(`Loading configuration for ${service}`);
+    
+    try {
+      if (service === 'php-extensions') {
+        // Already handled in switchConfigTab
+        return;
+      }
+      
+      // Add other service configuration loading here
+      console.log(`Configuration loading for ${service} not implemented yet`);
+    } catch (error) {
+      console.error(`Error loading configuration for ${service}:`, error);
+    }
+  }
+
+  /**
+   * Validate configuration
+   */
+  async validateConfiguration() {
+    console.log('Validating configuration...');
+    this.updateConfigStatus('Validation not implemented yet', 'info');
+  }
+
+  /**
+   * Save configuration
+   */
+  async saveConfiguration() {
+    console.log('Saving configuration...');
+    this.updateConfigStatus('Save not implemented yet', 'info');
+  }
+
+  /**
+   * Reset to defaults
+   */
+  async resetToDefaults() {
+    console.log('Resetting to defaults...');
+    this.updateConfigStatus('Reset not implemented yet', 'info');
   }
 }
 
