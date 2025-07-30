@@ -8,6 +8,8 @@
     "dev": "electron . --dev",
     "build": "electron-builder",
     "dist": "electron-builder --publish=never",
+    "build-win": "electron-builder --win --publish=never",
+    "build-simple": "npx electron-packager . DevStackBox --platform=win32 --arch=x64 --out=dist --overwrite",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },
@@ -25,6 +27,7 @@
   "devDependencies": {
     "electron": "^27.0.0",
     "electron-builder": "^24.6.4",
+    "electron-packager": "^17.1.2",
     "eslint": "^8.50.0"
   },
   "dependencies": {
@@ -44,14 +47,30 @@
       "!.git*"
     ],
     "win": {
-      "target": "portable",
-      "sign": false
+      "target": [
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "assets/icon.png"
     },
     "mac": {
-      "target": "dmg"
+      "target": "dmg",
+      "icon": "assets/icon.png"
     },
     "linux": {
-      "target": "AppImage"
+      "target": "AppImage",
+      "icon": "assets/icon.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    },
+    "portable": {
+      "artifactName": "DevStackBox-Portable.exe"
     }
   }
 }
