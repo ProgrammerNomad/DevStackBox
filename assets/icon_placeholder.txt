@@ -1,0 +1,3 @@
+# DevStackBox Tray Icon Placeholder
+# This file exists to prevent the tray icon error
+# Replace with actual 16x16 or 32x32 PNG icon

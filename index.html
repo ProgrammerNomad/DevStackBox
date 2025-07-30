@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevStackBox - Local Development Environment</title>
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <div class="logo">
+                    <img src="assets/logo.png" alt="DevStackBox" class="logo-img">
+                    <h1>DevStackBox</h1>
+                </div>
+                <div class="header-controls">
+                    <button class="btn btn-secondary" id="settingsBtn">
+                        <span class="icon">⚙️</span>
+                        Settings
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Services Panel -->
+            <section class="panel services-panel">
+                <h2>
+                    <span class="icon">🚀</span>
+                    Services
+                </h2>
+                
+                <div class="services-grid">
+                    <!-- Apache Service -->
+                    <div class="service-card" data-service="apache">
+                        <div class="service-header">
+                            <h3>
+                                <span class="icon">🌐</span>
+                                Apache
+                            </h3>
+                            <span class="status-indicator" id="apache-status">
+                                <span class="status-dot stopped"></span>
+                                Stopped
+                            </span>
+                        </div>
+                        <div class="service-info">
+                            <p>HTTP Server - Port: <span id="apache-port">80</span></p>
+                        </div>
+                        <div class="service-controls">
+                            <button class="btn btn-success start-btn" data-service="apache">Start</button>
+                            <button class="btn btn-danger stop-btn" data-service="apache" disabled>Stop</button>
+                            <button class="btn btn-secondary config-btn" data-config="apache">Config</button>
+                        </div>
+                    </div>
+
+                    <!-- MySQL Service -->
+                    <div class="service-card" data-service="mysql">
+                        <div class="service-header">
+                            <h3>
+                                <span class="icon">🗄️</span>
+                                MySQL
+                            </h3>
+                            <span class="status-indicator" id="mysql-status">
+                                <span class="status-dot stopped"></span>
+                                Stopped
+                            </span>
+                        </div>
+                        <div class="service-info">
+                            <p>Database Server - Port: <span id="mysql-port">3306</span></p>
+                        </div>
+                        <div class="service-controls">
+                            <button class="btn btn-success start-btn" data-service="mysql">Start</button>
+                            <button class="btn btn-danger stop-btn" data-service="mysql" disabled>Stop</button>
+                            <button class="btn btn-secondary config-btn" data-config="mysql">Config</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PHP Management Panel -->
+            <section class="panel php-panel">
+                <h2>
+                    <span class="icon">🐘</span>
+                    PHP Management
+                </h2>
+                
+                <div class="php-content">
+                    <div class="php-version-selector">
+                        <label for="phpVersion">Active PHP Version:</label>
+                        <select id="phpVersion" class="form-select">
+                            <option value="">Loading...</option>
+                        </select>
+                        <button class="btn btn-primary" id="switchPhpBtn">Switch</button>
+                    </div>
+                    
+                    <div class="php-info">
+                        <div class="info-item">
+                            <strong>Current Version:</strong>
+                            <span id="currentPhpVersion">Not set</span>
+                        </div>
+                        <div class="php-actions">
+                            <button class="btn btn-secondary config-btn" data-config="php">Edit php.ini</button>
+                            <button class="btn btn-secondary" id="phpInfoBtn">PHP Info</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Quick Actions Panel -->
+            <section class="panel quick-actions-panel">
+                <h2>
+                    <span class="icon">⚡</span>
+                    Quick Actions
+                </h2>
+                
+                <div class="actions-grid">
+                    <button class="action-btn" id="openPhpMyAdmin">
+                        <span class="icon">📊</span>
+                        <span class="label">phpMyAdmin</span>
+                    </button>
+                    
+                    <button class="action-btn" id="openWebRoot">
+                        <span class="icon">📁</span>
+                        <span class="label">Web Root</span>
+                    </button>
+                    
+                    <button class="action-btn" id="viewLogs">
+                        <span class="icon">📋</span>
+                        <span class="label">View Logs</span>
+                    </button>
+                    
+                    <button class="action-btn" id="installWordPress">
+                        <span class="icon">📝</span>
+                        <span class="label">Install WordPress</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- App Installers Panel -->
+            <section class="panel installers-panel">
+                <h2>
+                    <span class="icon">📦</span>
+                    App Installers
+                </h2>
+                
+                <div class="installers-grid">
+                    <div class="installer-card">
+                        <div class="installer-header">
+                            <h3>WordPress</h3>
+                            <span class="version">Latest</span>
+                        </div>
+                        <p>Popular CMS for websites and blogs</p>
+                        <button class="btn btn-primary install-btn" data-app="wordpress">Install</button>
+                    </div>
+                    
+                    <div class="installer-card">
+                        <div class="installer-header">
+                            <h3>Laravel</h3>
+                            <span class="version">Latest</span>
+                        </div>
+                        <p>PHP framework for web applications</p>
+                        <button class="btn btn-primary install-btn" data-app="laravel">Install</button>
+                    </div>
+                    
+                    <div class="installer-card">
+                        <div class="installer-header">
+                            <h3>CodeIgniter</h3>
+                            <span class="version">4.x</span>
+                        </div>
+                        <p>Lightweight PHP framework</p>
+                        <button class="btn btn-primary install-btn" data-app="codeigniter">Install</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Status Bar -->
+        <footer class="status-bar">
+            <div class="status-info">
+                <span id="systemInfo">Ready</span>
+            </div>
+            <div class="status-actions">
+                <span class="status-item">Apache: <span id="footer-apache-status">Stopped</span></span>
+                <span class="status-item">MySQL: <span id="footer-mysql-status">Stopped</span></span>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p id="loadingText">Loading...</p>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="scripts/main.js"></script>
+</body>
+</html>

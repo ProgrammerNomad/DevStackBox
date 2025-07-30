@@ -1,0 +1,57 @@
+{
+  "name": "devstackbox",
+  "version": "1.0.0",
+  "description": "A lightweight, portable, open-source local development tool for PHP developers",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "build": "electron-builder",
+    "dist": "electron-builder --publish=never",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
+  },
+  "keywords": [
+    "php",
+    "apache",
+    "mysql",
+    "local-development",
+    "electron",
+    "phpmyadmin",
+    "wordpress"
+  ],
+  "author": "ProgrammerNomad",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^27.0.0",
+    "electron-builder": "^24.6.4",
+    "eslint": "^8.50.0"
+  },
+  "dependencies": {
+    "ps-tree": "^1.2.0"
+  },
+  "build": {
+    "appId": "com.devstackbox.app",
+    "productName": "DevStackBox",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "**/*",
+      "!dist/**/*",
+      "!node_modules/**/*",
+      "!*.md",
+      "!.git*"
+    ],
+    "win": {
+      "target": "portable",
+      "sign": false
+    },
+    "mac": {
+      "target": "dmg"
+    },
+    "linux": {
+      "target": "AppImage"
+    }
+  }
+}
