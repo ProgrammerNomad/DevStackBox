@@ -1214,6 +1214,59 @@ ipcMain.handle('uninstall-app', async (event, projectName) => {
   }
 });
 
+// Quick Actions IPC Handlers
+ipcMain.handle('open-url', async (event, url) => {
+  try {
+    const { shell } = require('electron');
+    await shell.openExternal(url);
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle('open-folder', async (event, folderPath) => {
+  try {
+    const { shell } = require('electron');
+    const path = require('path');
+    const fullPath = path.join(__dirname, folderPath);
+    await shell.openPath(fullPath);
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle('create-project', async (event, projectName) => {
+  try {
+    const fs = require('fs');
+    const path = require('path');
+    
+    const projectPath = path.join(__dirname, 'www', 'projects', projectName);
+    
+    // Check if project already exists
+    if (fs.existsSync(projectPath)) {
+      return { success: false, error: 'Project already exists' };
+    }
+    
+    // Create project directory
+    fs.mkdirSync(projectPath, { recursive: true });
+    
+    // Create a basic index.php file
+    const indexContent = `<?php
+echo "<h1>Welcome to ${projectName}</h1>";
+echo "<p>This is your new project!</p>";
+echo "<p>Current time: " . date('Y-m-d H:i:s') . "</p>";
+?>`;
+    
+    fs.writeFileSync(path.join(projectPath, 'index.php'), indexContent);
+    
+    return { success: true, path: projectPath };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+});
+
 // Config Editor Manager IPC Handlers
 ipcMain.handle('get-available-configs', async () => {
   try {

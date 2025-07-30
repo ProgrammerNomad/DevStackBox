@@ -100,6 +100,35 @@ class DevStackBox {
       }
     });
 
+    // Quick Actions
+    const openPhpMyAdminBtn = document.getElementById('openPhpMyAdmin');
+    if (openPhpMyAdminBtn) {
+      openPhpMyAdminBtn.addEventListener('click', () => {
+        this.openPhpMyAdmin();
+      });
+    }
+
+    const openWebRootBtn = document.getElementById('openWebRoot');
+    if (openWebRootBtn) {
+      openWebRootBtn.addEventListener('click', () => {
+        this.openWebRoot();
+      });
+    }
+
+    const viewLogsBtn = document.getElementById('viewLogs');
+    if (viewLogsBtn) {
+      viewLogsBtn.addEventListener('click', () => {
+        this.viewLogs();
+      });
+    }
+
+    const createProjectBtn = document.getElementById('createProject');
+    if (createProjectBtn) {
+      createProjectBtn.addEventListener('click', () => {
+        this.createProject();
+      });
+    }
+
     // Setup notification handler if available
     if (window.electronAPI && window.electronAPI.onShowNotification) {
       window.electronAPI.onShowNotification((message) => {
@@ -608,6 +637,84 @@ DevStackBox/
         btn.className = 'btn btn-success download-btn';
       }
     });
+  }
+
+  // Quick Actions Methods
+  async openPhpMyAdmin() {
+    try {
+      // Check if both Apache and MySQL are running
+      const apacheStatus = await window.electronAPI.getServiceStatus('apache');
+      const mysqlStatus = await window.electronAPI.getServiceStatus('mysql');
+      
+      if (!apacheStatus.running) {
+        this.showError('Apache is not running. Please start Apache first.');
+        return;
+      }
+      
+      if (!mysqlStatus.running) {
+        this.showError('MySQL is not running. Please start MySQL first.');
+        return;
+      }
+      
+      // Open phpMyAdmin in external browser
+      if (window.electronAPI && window.electronAPI.openUrl) {
+        await window.electronAPI.openUrl('http://localhost/phpmyadmin/');
+      } else {
+        // Fallback - show URL to user
+        this.showNotification('Please open http://localhost/phpmyadmin/ in your browser');
+      }
+    } catch (error) {
+      console.error('Error opening phpMyAdmin:', error);
+      this.showError('Failed to open phpMyAdmin: ' + error.message);
+    }
+  }
+
+  async openWebRoot() {
+    try {
+      if (window.electronAPI && window.electronAPI.openFolder) {
+        await window.electronAPI.openFolder('www');
+      } else {
+        this.showNotification('Web root folder: www/');
+      }
+    } catch (error) {
+      console.error('Error opening web root:', error);
+      this.showError('Failed to open web root folder');
+    }
+  }
+
+  async viewLogs() {
+    try {
+      if (window.electronAPI && window.electronAPI.viewLogs) {
+        await window.electronAPI.viewLogs('all');
+      } else {
+        this.showNotification('Logs feature not available');
+      }
+    } catch (error) {
+      console.error('Error viewing logs:', error);
+      this.showError('Failed to open logs viewer');
+    }
+  }
+
+  async createProject() {
+    try {
+      // Show a simple project creation dialog
+      const projectName = prompt('Enter project name:');
+      if (projectName && projectName.trim()) {
+        if (window.electronAPI && window.electronAPI.createProject) {
+          const result = await window.electronAPI.createProject(projectName.trim());
+          if (result.success) {
+            this.showNotification(`Project "${projectName}" created successfully!`);
+          } else {
+            this.showError(result.error || 'Failed to create project');
+          }
+        } else {
+          this.showNotification('Please create the project manually in the www/projects/ folder');
+        }
+      }
+    } catch (error) {
+      console.error('Error creating project:', error);
+      this.showError('Failed to create project: ' + error.message);
+    }
   }
 }
 
