@@ -41,7 +41,7 @@ function createWindow() {
   });
 
   // Load the app
-  mainWindow.loadFile('index_simple.html');
+  mainWindow.loadFile('index.html');
 
   // Show window when ready to prevent visual flash
   mainWindow.once('ready-to-show', () => {
