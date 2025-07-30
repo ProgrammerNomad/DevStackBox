@@ -2,6 +2,7 @@ const { exec, spawn } = require('child_process');
 const path = require('path');
 const fs = require('fs');
 const { promisify } = require('util');
+const process = require('process');
 
 const execAsync = promisify(exec);
 
@@ -197,19 +198,19 @@ class ServiceManager {
       throw new Error(`Unknown service: ${serviceName}`);
     }
 
-    const process = this.runningProcesses.get(serviceName);
-    if (process) {
+    const childProcess = this.runningProcesses.get(serviceName);
+    if (childProcess) {
       try {
         console.log(`Stopping ${service.name}...`);
         
         // Try graceful shutdown first
-        process.kill('SIGTERM');
+        childProcess.kill('SIGTERM');
         
         // Wait for graceful shutdown or force kill after timeout
         await new Promise((resolve) => {
           let resolved = false;
           
-          process.on('exit', () => {
+          childProcess.on('exit', () => {
             if (!resolved) {
               resolved = true;
               resolve();
@@ -221,7 +222,7 @@ class ServiceManager {
             if (!resolved) {
               console.log(`Force killing ${service.name}...`);
               try {
-                process.kill('SIGKILL');
+                childProcess.kill('SIGKILL');
               } catch (err) {
                 console.log(`Process ${service.name} was already terminated`);
               }
