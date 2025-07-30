@@ -114,44 +114,71 @@ class ServiceManager {
     try {
       console.log(`Starting ${service.name} from: ${service.executable}`);
       
-      let process;
+      let childProcess;
       if (serviceName === 'apache') {
-        process = spawn(service.executable, service.startArgs, {
+        // For Apache, we need to specify the config file explicitly and use absolute paths
+        const configPath = path.resolve(service.configPath);
+        const apacheArgs = ['-f', configPath, '-D', 'FOREGROUND'];
+        
+        childProcess = spawn(service.executable, apacheArgs, {
           cwd: path.join(this.appPath, 'apache', 'bin'),
           detached: false,
-          stdio: 'pipe'
+          stdio: 'pipe',
+          env: { ...process.env, APACHE_RUN_DIR: path.join(this.appPath, 'apache', 'logs') }
         });
       } else if (serviceName === 'mysql') {
         await this.initializeMySQLIfNeeded();
-        process = spawn(service.executable, service.startArgs, {
+        childProcess = spawn(service.executable, service.startArgs, {
           cwd: path.join(this.appPath, 'mysql', 'bin'),
           detached: false,
           stdio: 'pipe'
         });
       }
 
-      if (process) {
-        this.runningProcesses.set(serviceName, process);
+      if (childProcess) {
+        this.runningProcesses.set(serviceName, childProcess);
         
-        process.on('error', (error) => {
+        // Capture output for debugging
+        let output = '';
+        let errorOutput = '';
+        
+        if (childProcess.stdout) {
+          childProcess.stdout.on('data', (data) => {
+            output += data.toString();
+            console.log(`${service.name} stdout:`, data.toString());
+          });
+        }
+        
+        if (childProcess.stderr) {
+          childProcess.stderr.on('data', (data) => {
+            errorOutput += data.toString();
+            console.error(`${service.name} stderr:`, data.toString());
+          });
+        }
+        
+        childProcess.on('error', (error) => {
           console.error(`${service.name} process error:`, error);
           this.runningProcesses.delete(serviceName);
         });
 
-        process.on('exit', (code) => {
+        childProcess.on('exit', (code) => {
           console.log(`${service.name} process exited with code: ${code}`);
+          if (code !== 0) {
+            console.error(`${service.name} error output:`, errorOutput);
+          }
           this.runningProcesses.delete(serviceName);
         });
 
-        // Wait for startup
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        // Wait for startup - increase timeout for MySQL
+        const startupTimeout = serviceName === 'mysql' ? 5000 : 2000;
+        await new Promise(resolve => setTimeout(resolve, startupTimeout));
         
         const running = await this.isServiceRunning(serviceName);
         if (running) {
           console.log(`✅ ${service.name} started successfully`);
           return { success: true, message: `${service.name} started successfully` };
         } else {
-          throw new Error(`${service.name} failed to start`);
+          throw new Error(`${service.name} failed to start - check logs for details. Error output: ${errorOutput}`);
         }
       }
 
@@ -174,11 +201,34 @@ class ServiceManager {
     if (process) {
       try {
         console.log(`Stopping ${service.name}...`);
+        
+        // Try graceful shutdown first
         process.kill('SIGTERM');
         
+        // Wait for graceful shutdown or force kill after timeout
         await new Promise((resolve) => {
-          process.on('exit', resolve);
-          setTimeout(resolve, 5000);
+          let resolved = false;
+          
+          process.on('exit', () => {
+            if (!resolved) {
+              resolved = true;
+              resolve();
+            }
+          });
+          
+          // Force kill after 5 seconds if still running
+          setTimeout(() => {
+            if (!resolved) {
+              console.log(`Force killing ${service.name}...`);
+              try {
+                process.kill('SIGKILL');
+              } catch (err) {
+                console.log(`Process ${service.name} was already terminated`);
+              }
+              resolved = true;
+              resolve();
+            }
+          }, 5000);
         });
         
         this.runningProcesses.delete(serviceName);
@@ -187,10 +237,25 @@ class ServiceManager {
         
       } catch (error) {
         console.error(`Failed to stop ${service.name}:`, error);
+        this.runningProcesses.delete(serviceName); // Clean up even on error
         throw new Error(`Failed to stop ${service.name}: ${error.message}`);
       }
     } else {
-      return { success: true, message: `${service.name} is not running` };
+      // Check system processes and kill if found
+      try {
+        const { exec } = require('child_process');
+        await new Promise((resolve, reject) => {
+          exec(`taskkill /F /IM "${service.processName}" 2>nul`, (error) => {
+            // Don't reject if process not found - that's expected
+            resolve();
+          });
+        });
+        
+        console.log(`✅ ${service.name} stopped (system process)`);
+        return { success: true, message: `${service.name} stopped successfully` };
+      } catch (error) {
+        return { success: true, message: `${service.name} is not running` };
+      }
     }
   }
 
@@ -347,6 +412,22 @@ class ServiceManager {
     }
 
     return status;
+  }
+
+  /**
+   * Stop all running services
+   */
+  async stopAllServices() {
+    const results = [];
+    for (const serviceName of Object.keys(this.services)) {
+      try {
+        const result = await this.stopService(serviceName);
+        results.push({ service: serviceName, ...result });
+      } catch (error) {
+        results.push({ service: serviceName, success: false, error: error.message });
+      }
+    }
+    return results;
   }
 }
 

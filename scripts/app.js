@@ -155,6 +155,14 @@ class DevStackBox {
   async startService(service) {
     try {
       this.showLoading(`Starting ${service}...`);
+      
+      // Check if service is installed first
+      const status = await window.electronAPI.getServiceStatus(service);
+      if (!status.installed) {
+        this.showError(`${service} is not installed. Please ensure server binaries are present.`);
+        return;
+      }
+      
       const result = await window.electronAPI.startService(service);
       
       if (result.success) {
@@ -163,10 +171,14 @@ class DevStackBox {
         this.showError(result.error || `Failed to start ${service}`);
       }
     } catch (error) {
+      console.error(`Error starting ${service}:`, error);
       this.showError(`Failed to start ${service}: ${error.message}`);
     } finally {
       this.hideLoading();
-      this.loadServiceStatus();
+      // Wait a moment before refreshing status to allow process to fully start
+      setTimeout(() => {
+        this.loadServiceStatus();
+      }, 1000);
     }
   }
 
@@ -181,10 +193,14 @@ class DevStackBox {
         this.showError(result.error || `Failed to stop ${service}`);
       }
     } catch (error) {
+      console.error(`Error stopping ${service}:`, error);
       this.showError(`Failed to stop ${service}: ${error.message}`);
     } finally {
       this.hideLoading();
-      this.loadServiceStatus();
+      // Wait a moment before refreshing status to allow process to fully stop
+      setTimeout(() => {
+        this.loadServiceStatus();
+      }, 1000);
     }
   }
 
@@ -305,12 +321,18 @@ class DevStackBox {
         this.updatePhpVersionDisplay('8.2');
       }
       
-      // Update services status to show pre-bundled state
-      this.updateServicesStatus(status);
+      // Update services status based on installation status
+      await this.loadServiceStatus();
       
     } catch (error) {
       console.error('Failed to check installation:', error);
     }
+  }
+
+  // Legacy method for compatibility - redirect to loadServiceStatus
+  async updateServicesStatus() {
+    console.warn('updateServicesStatus is deprecated, use loadServiceStatus instead');
+    return await this.loadServiceStatus();
   }
 
   updateSystemInfo(status) {
