@@ -306,7 +306,7 @@ async function openConfig(configType) {
 
 async function fetchRandomJoke() {
   try {
-    // Use fetch API (available in Node.js 18+)
+    // Try to fetch from external API first
     const response = await fetch('https://official-joke-api.appspot.com/random_joke');
     
     if (!response.ok) {
@@ -331,10 +331,63 @@ async function fetchRandomJoke() {
     };
     
   } catch (error) {
-    console.error('Error fetching joke:', error);
+    console.log('External API failed, using built-in jokes:', error.message);
+    
+    // Fallback to built-in jokes
+    const builtInJokes = [
+      {
+        setup: "Why don't scientists trust atoms?",
+        punchline: "Because they make up everything!",
+        type: "science"
+      },
+      {
+        setup: "Why did the developer go broke?",
+        punchline: "Because he used up all his cache!",
+        type: "programming"
+      },
+      {
+        setup: "Why do programmers prefer dark mode?",
+        punchline: "Because light attracts bugs!",
+        type: "programming"
+      },
+      {
+        setup: "How do you comfort a JavaScript bug?",
+        punchline: "You console it!",
+        type: "programming"
+      },
+      {
+        setup: "Why did the programmer quit his job?",
+        punchline: "He didn't get arrays!",
+        type: "programming"
+      },
+      {
+        setup: "What's a computer's favorite snack?",
+        punchline: "Microchips!",
+        type: "technology"
+      },
+      {
+        setup: "Why was the database administrator unexcited?",
+        punchline: "Because he was just doing CRUD work!",
+        type: "programming"
+      },
+      {
+        setup: "What do you call a programmer from Finland?",
+        punchline: "Nerdic!",
+        type: "programming"
+      }
+    ];
+    
+    const randomJoke = builtInJokes[Math.floor(Math.random() * builtInJokes.length)];
+    
     return {
-      success: false,
-      error: error.message || 'Failed to fetch joke'
+      success: true,
+      joke: {
+        setup: randomJoke.setup,
+        punchline: randomJoke.punchline,
+        type: randomJoke.type,
+        id: Date.now(),
+        source: 'built-in'
+      }
     };
   }
 }

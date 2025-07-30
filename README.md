@@ -9,6 +9,7 @@ A lightweight, portable, open-source local development tool for PHP developers
 - **Multiple PHP Versions** - Switch between PHP versions easily
 - **phpMyAdmin** - Built-in database management interface
 - **One-Click App Installers** - Install WordPress, Laravel, and more
+- **Random Joke Generator** - Get programming and tech jokes to brighten your dev day
 - **System Tray Support** - Minimize to system tray like Laragon
 - **Configuration Management** - Easy access to config files
 - **Logs Viewer** - View Apache and MySQL logs in real-time
@@ -36,6 +37,25 @@ A lightweight, portable, open-source local development tool for PHP developers
    ```bash
    npm start
    ```
+
+## 🎮 Usage
+
+### Random Joke Generator
+
+DevStackBox includes a built-in random joke generator to brighten your development sessions! The joke generator features:
+
+- **External API Integration**: Fetches jokes from [Official Joke API](https://official-joke-api.appspot.com/)
+- **Offline Fallback**: Built-in collection of programming and tech jokes for offline use
+- **Clean UI**: Simple interface with setup/punchline display and joke categorization
+- **Error Handling**: Graceful fallback when external API is unavailable
+
+**How to use:**
+1. Open DevStackBox application
+2. Scroll to the "Random Joke Generator" panel
+3. Click the "🎲 Get Random Joke" button
+4. Enjoy developer-friendly humor!
+
+The joke generator will first try to fetch from the external API, and if that fails (due to network issues), it will fall back to a curated collection of built-in programming jokes.
 
 ## 🏗 Project Structure
 
