@@ -16,26 +16,19 @@ class AppConfig {
   }
 
   detectServiceSources() {
-    const xamppPath = 'C:\\xampp';
-    const xamppExists = fs.existsSync(xamppPath);
-    
+    // Only use portable servers - no external dependencies
     this.serviceSources = {
-      xampp: {
-        available: xamppExists,
-        path: xamppPath,
-        priority: 1 // Lower number = higher priority
-      },
       portable: {
         available: this.checkPortableServices(),
         path: this.appPath,
-        priority: 2
+        priority: 1
       }
     };
     
     console.log('DevStackBox Config:', {
       isDev: this.isDev,
-      xamppAvailable: xamppExists,
-      portableAvailable: this.serviceSources.portable.available
+      portableAvailable: this.serviceSources.portable.available,
+      mode: 'portable-only'
     });
   }
 
@@ -49,47 +42,29 @@ class AppConfig {
   }
 
   getServiceConfig(serviceName) {
-    // Use the highest priority available source
-    const availableSources = Object.entries(this.serviceSources)
-      .filter(([_, config]) => config.available)
-      .sort((a, b) => a[1].priority - b[1].priority);
-    
-    if (availableSources.length === 0) {
-      throw new Error('No service sources available');
+    // Use only portable configuration
+    if (!this.serviceSources.portable.available) {
+      throw new Error('Portable servers not installed. Please download server binaries first.');
     }
     
-    const [sourceType, sourceConfig] = availableSources[0];
+    const sourceConfig = this.serviceSources.portable;
     
     const configs = {
       apache: {
-        xampp: {
-          executable: path.join(sourceConfig.path, 'apache', 'bin', 'httpd.exe'),
-          configPath: path.join(sourceConfig.path, 'apache', 'conf', 'httpd.conf'),
-          documentRoot: path.join(sourceConfig.path, 'htdocs')
-        },
-        portable: {
-          executable: path.join(sourceConfig.path, 'apache', 'bin', 'httpd.exe'),
-          configPath: path.join(sourceConfig.path, 'apache', 'conf', 'httpd.conf'),
-          documentRoot: path.join(sourceConfig.path, 'www')
-        }
+        executable: path.join(sourceConfig.path, 'apache', 'bin', 'httpd.exe'),
+        configPath: path.join(sourceConfig.path, 'apache', 'conf', 'httpd.conf'),
+        documentRoot: path.join(sourceConfig.path, 'www')
       },
       mysql: {
-        xampp: {
-          executable: path.join(sourceConfig.path, 'mysql', 'bin', 'mysqld.exe'),
-          configPath: path.join(sourceConfig.path, 'mysql', 'bin', 'my.ini'),
-          dataDir: path.join(sourceConfig.path, 'mysql', 'data')
-        },
-        portable: {
-          executable: path.join(sourceConfig.path, 'mysql', 'bin', 'mysqld.exe'),
-          configPath: path.join(sourceConfig.path, 'mysql', 'my.ini'),
-          dataDir: path.join(sourceConfig.path, 'mysql', 'data')
-        }
+        executable: path.join(sourceConfig.path, 'mysql', 'bin', 'mysqld.exe'),
+        configPath: path.join(sourceConfig.path, 'mysql', 'my.ini'),
+        dataDir: path.join(sourceConfig.path, 'mysql', 'data')
       }
     };
     
     return {
-      ...configs[serviceName][sourceType],
-      source: sourceType,
+      ...configs[serviceName],
+      source: 'portable',
       name: serviceName.charAt(0).toUpperCase() + serviceName.slice(1),
       processName: serviceName === 'apache' ? 'httpd.exe' : 'mysqld.exe',
       defaultPort: serviceName === 'apache' ? 80 : 3306

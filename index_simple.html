@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevStackBox - Local Development Environment</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #ffffff;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ff6b6b;
+        }
+
+        .status-dot.running {
+            background: #51cf66;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            flex: 1;
+            min-width: 80px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-primary {
+            background: #4dabf7;
+            color: white;
+        }
+
+        .btn-success {
+            background: #51cf66;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .installation-status {
+            background: rgba(255, 193, 7, 0.1);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .installation-status h3 {
+            color: #ffc107;
+            margin-bottom: 10px;
+        }
+
+        .component-check {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .component-check:last-child {
+            border-bottom: none;
+        }
+
+        .component-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .quick-actions {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .quick-btn {
+            padding: 15px 25px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .quick-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-3px);
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            background: #51cf66;
+        }
+
+        .notification.error {
+            background: #ff6b6b;
+        }
+
+        .notification.info {
+            background: #4dabf7;
+        }
+
+        .loading {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loading.show {
+            display: flex;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-top: 5px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧰 DevStackBox</h1>
+            <p>Portable Local Development Environment</p>
+        </div>
+
+        <!-- Installation Status -->
+        <div class="installation-status" id="installationStatus" style="display: none;">
+            <h3>⚠️ Portable Servers Not Installed</h3>
+            <p>DevStackBox can download and configure portable server binaries for complete independence from system installations.</p>
+            <div id="componentChecks"></div>
+            <button class="btn btn-primary" id="downloadAllBtn" style="width: 100%; margin-top: 15px;">
+                📦 Download All Portable Servers
+            </button>
+        </div>
+
+        <!-- Services Grid -->
+        <div class="grid">
+            <!-- Apache Service -->
+            <div class="card">
+                <h3>🌐 Apache HTTP Server</h3>
+                <div class="status">
+                    <span>Port: 80</span>
+                    <div class="status-indicator">
+                        <div class="status-dot" id="apache-status"></div>
+                        <span id="apache-text">Stopped</span>
+                    </div>
+                </div>
+                <div class="controls">
+                    <button class="btn btn-success" id="start-apache">Start</button>
+                    <button class="btn btn-danger" id="stop-apache" disabled>Stop</button>
+                    <button class="btn btn-secondary" id="config-apache">Config</button>
+                </div>
+            </div>
+
+            <!-- MySQL Service -->
+            <div class="card">
+                <h3>🗄️ MySQL Database</h3>
+                <div class="status">
+                    <span>Port: 3306</span>
+                    <div class="status-indicator">
+                        <div class="status-dot" id="mysql-status"></div>
+                        <span id="mysql-text">Stopped</span>
+                    </div>
+                </div>
+                <div class="controls">
+                    <button class="btn btn-success" id="start-mysql">Start</button>
+                    <button class="btn btn-danger" id="stop-mysql" disabled>Stop</button>
+                    <button class="btn btn-secondary" id="config-mysql">Config</button>
+                </div>
+            </div>
+
+            <!-- PHP Management -->
+            <div class="card">
+                <h3>🐘 PHP Management</h3>
+                <div class="status">
+                    <span>Version:</span>
+                    <select id="php-version" style="background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.3); border-radius: 4px; padding: 5px;">
+                        <option value="">Loading...</option>
+                    </select>
+                </div>
+                <div class="controls">
+                    <button class="btn btn-primary" id="switch-php">Switch</button>
+                    <button class="btn btn-secondary" id="config-php">php.ini</button>
+                    <button class="btn btn-secondary" id="phpinfo">PHP Info</button>
+                </div>
+            </div>
+
+            <!-- App Installers -->
+            <div class="card">
+                <h3>📦 App Installers</h3>
+                <div class="controls">
+                    <button class="btn btn-primary" id="install-wordpress">WordPress</button>
+                    <button class="btn btn-primary" id="install-laravel">Laravel</button>
+                    <button class="btn btn-primary" id="install-codeigniter">CodeIgniter</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <button class="quick-btn" id="open-localhost">🌐 Open Localhost</button>
+            <button class="quick-btn" id="open-phpmyadmin">📊 phpMyAdmin</button>
+            <button class="quick-btn" id="open-webroot">📁 Web Root</button>
+            <button class="quick-btn" id="view-logs">📋 View Logs</button>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading" id="loading">
+        <div style="text-align: center;">
+            <div class="spinner"></div>
+            <p style="margin-top: 20px;" id="loading-text">Loading...</p>
+        </div>
+    </div>
+
+    <script>
+        class DevStackBox {
+            constructor() {
+                this.init();
+            }
+
+            async init() {
+                console.log('DevStackBox initializing...');
+                
+                if (typeof window.electronAPI === 'undefined') {
+                    this.showNotification('Electron API not available. Please restart the application.', 'error');
+                    return;
+                }
+
+                this.setupEventListeners();
+                await this.checkInstallationStatus();
+                await this.loadPhpVersions();
+                this.startStatusPolling();
+
+                console.log('DevStackBox initialized successfully');
+            }
+
+            setupEventListeners() {
+                // Service controls
+                document.getElementById('start-apache').onclick = () => this.startService('apache');
+                document.getElementById('stop-apache').onclick = () => this.stopService('apache');
+                document.getElementById('start-mysql').onclick = () => this.startService('mysql');
+                document.getElementById('stop-mysql').onclick = () => this.stopService('mysql');
+
+                // Config buttons
+                document.getElementById('config-apache').onclick = () => this.openConfig('apache');
+                document.getElementById('config-mysql').onclick = () => this.openConfig('mysql');
+                document.getElementById('config-php').onclick = () => this.openConfig('php');
+
+                // PHP management
+                document.getElementById('switch-php').onclick = () => this.switchPhpVersion();
+                document.getElementById('phpinfo').onclick = () => this.openPhpInfo();
+
+                // App installers
+                document.getElementById('install-wordpress').onclick = () => this.installApp('wordpress');
+                document.getElementById('install-laravel').onclick = () => this.installApp('laravel');
+                document.getElementById('install-codeigniter').onclick = () => this.installApp('codeigniter');
+
+                // Quick actions
+                document.getElementById('open-localhost').onclick = () => this.openUrl('http://localhost');
+                document.getElementById('open-phpmyadmin').onclick = () => this.openUrl('http://localhost/phpmyadmin');
+                document.getElementById('open-webroot').onclick = () => this.openPath('www');
+                document.getElementById('view-logs').onclick = () => this.viewLogs();
+
+                // Download portable servers
+                document.getElementById('downloadAllBtn').onclick = () => this.downloadPortableServers();
+
+                // Menu event listeners
+                if (window.electronAPI.onCreateNewProject) {
+                    window.electronAPI.onCreateNewProject(() => this.createNewProject());
+                }
+                if (window.electronAPI.onViewLogs) {
+                    window.electronAPI.onViewLogs((event, service) => this.viewServiceLogs(service));
+                }
+                if (window.electronAPI.onInstallApp) {
+                    window.electronAPI.onInstallApp((event, appName) => this.installApp(appName));
+                }
+                if (window.electronAPI.onOpenConfig) {
+                    window.electronAPI.onOpenConfig((event, configType) => this.openConfig(configType));
+                }
+            }
+
+            async checkInstallationStatus() {
+                try {
+                    const status = await window.electronAPI.checkInstallation();
+                    const allInstalled = Object.values(status).every(installed => installed);
+                    
+                    if (!allInstalled) {
+                        document.getElementById('installationStatus').style.display = 'block';
+                        this.showComponentStatus(status);
+                    }
+                } catch (error) {
+                    console.warn('Could not check installation status:', error);
+                }
+            }
+
+            showComponentStatus(status) {
+                const container = document.getElementById('componentChecks');
+                container.innerHTML = '';
+
+                Object.entries(status).forEach(([component, installed]) => {
+                    const check = document.createElement('div');
+                    check.className = 'component-check';
+                    check.innerHTML = `
+                        <span>${component.charAt(0).toUpperCase() + component.slice(1)}</span>
+                        <div class="component-status">
+                            <span style="color: ${installed ? '#51cf66' : '#ff6b6b'}">
+                                ${installed ? '✓ Installed' : '✗ Not Installed'}
+                            </span>
+                        </div>
+                    `;
+                    container.appendChild(check);
+                });
+            }
+
+            async downloadPortableServers() {
+                try {
+                    this.showLoading('Downloading portable servers...');
+                    await window.electronAPI.installAllComponents();
+                    this.hideLoading();
+                    this.showNotification('Started downloading portable servers! Check the menu for progress.', 'success');
+                    
+                    // Hide installation status after starting download
+                    setTimeout(() => {
+                        document.getElementById('installationStatus').style.display = 'none';
+                    }, 2000);
+                } catch (error) {
+                    this.hideLoading();
+                    this.showNotification(`Failed to start download: ${error.message}`, 'error');
+                }
+            }
+
+            async loadPhpVersions() {
+                try {
+                    const versions = await window.electronAPI.getPhpVersions();
+                    const select = document.getElementById('php-version');
+                    select.innerHTML = '';
+                    
+                    if (versions.length === 0) {
+                        select.innerHTML = '<option value="">No PHP versions found</option>';
+                        return;
+                    }
+
+                    versions.forEach(version => {
+                        const option = document.createElement('option');
+                        option.value = version;
+                        option.textContent = `PHP ${version}`;
+                        select.appendChild(option);
+                    });
+
+                    if (versions.length > 0) {
+                        select.value = versions[0];
+                    }
+                } catch (error) {
+                    console.warn('Could not load PHP versions:', error);
+                }
+            }
+
+            async startService(service) {
+                try {
+                    this.showLoading(`Starting ${service}...`);
+                    await window.electronAPI.startService(service);
+                    this.hideLoading();
+                    this.showNotification(`${service} started successfully!`, 'success');
+                    this.updateServiceStatus(service, true);
+                } catch (error) {
+                    this.hideLoading();
+                    this.showNotification(`Failed to start ${service}: ${error.message}`, 'error');
+                }
+            }
+
+            async stopService(service) {
+                try {
+                    this.showLoading(`Stopping ${service}...`);
+                    await window.electronAPI.stopService(service);
+                    this.hideLoading();
+                    this.showNotification(`${service} stopped successfully!`, 'success');
+                    this.updateServiceStatus(service, false);
+                } catch (error) {
+                    this.hideLoading();
+                    this.showNotification(`Failed to stop ${service}: ${error.message}`, 'error');
+                }
+            }
+
+            updateServiceStatus(service, running) {
+                const statusDot = document.getElementById(`${service}-status`);
+                const statusText = document.getElementById(`${service}-text`);
+                const startBtn = document.getElementById(`start-${service}`);
+                const stopBtn = document.getElementById(`stop-${service}`);
+
+                if (running) {
+                    statusDot.classList.add('running');
+                    statusText.textContent = 'Running';
+                    startBtn.disabled = true;
+                    stopBtn.disabled = false;
+                } else {
+                    statusDot.classList.remove('running');
+                    statusText.textContent = 'Stopped';
+                    startBtn.disabled = false;
+                    stopBtn.disabled = true;
+                }
+            }
+
+            async switchPhpVersion() {
+                const version = document.getElementById('php-version').value;
+                if (!version) return;
+
+                try {
+                    this.showLoading(`Switching to PHP ${version}...`);
+                    await window.electronAPI.setPhpVersion(version);
+                    this.hideLoading();
+                    this.showNotification(`Switched to PHP ${version}`, 'success');
+                } catch (error) {
+                    this.hideLoading();
+                    this.showNotification(`Failed to switch PHP version: ${error.message}`, 'error');
+                }
+            }
+
+            async installApp(appName) {
+                const projectName = prompt(`Enter project name for ${appName}:`);
+                if (!projectName) return;
+
+                try {
+                    this.showLoading(`Installing ${appName}...`);
+                    await window.electronAPI.installAppNew(appName, projectName, {});
+                    this.hideLoading();
+                    this.showNotification(`${appName} installed successfully as "${projectName}"!`, 'success');
+                } catch (error) {
+                    this.hideLoading();
+                    this.showNotification(`Failed to install ${appName}: ${error.message}`, 'error');
+                }
+            }
+
+            async openConfig(configType) {
+                try {
+                    await window.electronAPI.openConfig(configType);
+                    this.showNotification(`Opening ${configType} configuration...`, 'info');
+                } catch (error) {
+                    this.showNotification(`Failed to open config: ${error.message}`, 'error');
+                }
+            }
+
+            async openUrl(url) {
+                try {
+                    await window.electronAPI.openUrl(url);
+                } catch (error) {
+                    this.showNotification(`Failed to open URL: ${error.message}`, 'error');
+                }
+            }
+
+            async openPath(relativePath) {
+                try {
+                    await window.electronAPI.openPath(relativePath);
+                } catch (error) {
+                    this.showNotification(`Failed to open path: ${error.message}`, 'error');
+                }
+            }
+
+            openPhpInfo() {
+                this.openUrl('http://localhost/phpinfo.php');
+            }
+
+            async viewLogs() {
+                try {
+                    const logs = await window.electronAPI.getLogs('apache', 50);
+                    alert(`Apache Logs:\n\n${logs}`);
+                } catch (error) {
+                    this.showNotification(`Failed to view logs: ${error.message}`, 'error');
+                }
+            }
+
+            async viewServiceLogs(service) {
+                try {
+                    const logs = await window.electronAPI.getLogs(service, 50);
+                    alert(`${service.toUpperCase()} Logs:\n\n${logs}`);
+                } catch (error) {
+                    this.showNotification(`Failed to view logs: ${error.message}`, 'error');
+                }
+            }
+
+            async createNewProject() {
+                const projectName = prompt('Enter project name:');
+                if (!projectName) return;
+
+                try {
+                    this.showLoading('Creating project...');
+                    await window.electronAPI.createProject(projectName, 'basic');
+                    this.hideLoading();
+                    this.showNotification(`Project "${projectName}" created successfully!`, 'success');
+                } catch (error) {
+                    this.hideLoading();
+                    this.showNotification(`Failed to create project: ${error.message}`, 'error');
+                }
+            }
+
+            startStatusPolling() {
+                setInterval(async () => {
+                    try {
+                        const apacheStatus = await window.electronAPI.getServiceStatus('apache');
+                        const mysqlStatus = await window.electronAPI.getServiceStatus('mysql');
+                        
+                        this.updateServiceStatus('apache', apacheStatus);
+                        this.updateServiceStatus('mysql', mysqlStatus);
+                    } catch (error) {
+                        // Silently fail - polling shouldn't be noisy
+                    }
+                }, 5000);
+            }
+
+            showLoading(text = 'Loading...') {
+                document.getElementById('loading-text').textContent = text;
+                document.getElementById('loading').classList.add('show');
+            }
+
+            hideLoading() {
+                document.getElementById('loading').classList.remove('show');
+            }
+
+            showNotification(message, type = 'info') {
+                // Remove existing notifications
+                document.querySelectorAll('.notification').forEach(n => n.remove());
+
+                const notification = document.createElement('div');
+                notification.className = `notification ${type}`;
+                notification.textContent = message;
+                document.body.appendChild(notification);
+
+                // Show notification
+                setTimeout(() => notification.classList.add('show'), 100);
+
+                // Auto remove after 5 seconds
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                    setTimeout(() => notification.remove(), 300);
+                }, 5000);
+            }
+        }
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            window.devStackBox = new DevStackBox();
+        });
+    </script>
+</body>
+</html>

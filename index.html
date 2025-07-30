@@ -26,6 +26,18 @@
 
         <!-- Main Content -->
         <main class="main-content">
+            <!-- Installation Status Banner -->
+            <div class="installation-banner" id="installationBanner" style="display: none;">
+                <div class="banner-content">
+                    <div class="banner-icon">📦</div>
+                    <div class="banner-text">
+                        <h3>Portable Servers Not Installed</h3>
+                        <p>DevStackBox needs to download Apache, MySQL, and PHP to work independently.</p>
+                        <button class="btn btn-primary" id="downloadServersBtn">Download Portable Servers</button>
+                    </div>
+                </div>
+            </div>
+
             <!-- Services Panel -->
             <section class="panel services-panel">
                 <h2>
@@ -167,6 +179,224 @@
                     
                     <div class="installer-card">
                         <div class="installer-header">
+                            <h3>CodeIgniter</h3>
+                            <span class="version">4.x</span>
+                        </div>
+                        <p>Lightweight PHP framework</p>
+                        <button class="btn btn-primary install-btn" data-app="codeigniter">Install</button>
+            </section>
+
+            <!-- Portable Installation Panel -->
+            <section class="panel installation-panel" id="installationPanel" style="display: none;">
+                <h2>
+                    <span class="icon">📦</span>
+                    Portable Server Installation
+                </h2>
+                
+                <div class="installation-status">
+                    <p>DevStackBox needs to download and install portable server binaries for first-time use.</p>
+                    
+                    <div class="components-grid">
+                        <div class="component-card" data-component="apache">
+                            <h4>Apache HTTP Server</h4>
+                            <div class="component-status">
+                                <span class="status-indicator" id="apache-install-status">Not Installed</span>
+                                <button class="btn btn-primary" id="install-apache">Install</button>
+                            </div>
+                        </div>
+                        
+                        <div class="component-card" data-component="mysql">
+                            <h4>MySQL Database</h4>
+                            <div class="component-status">
+                                <span class="status-indicator" id="mysql-install-status">Not Installed</span>
+                                <button class="btn btn-primary" id="install-mysql">Install</button>
+                            </div>
+                        </div>
+                        
+                        <div class="component-card" data-component="php83">
+                            <h4>PHP 8.3</h4>
+                            <div class="component-status">
+                                <span class="status-indicator" id="php83-install-status">Not Installed</span>
+                                <button class="btn btn-primary" id="install-php83">Install</button>
+                            </div>
+                        </div>
+                        
+                        <div class="component-card" data-component="phpmyadmin">
+                            <h4>phpMyAdmin</h4>
+                            <div class="component-status">
+                                <span class="status-indicator" id="phpmyadmin-install-status">Not Installed</span>
+                                <button class="btn btn-primary" id="install-phpmyadmin">Install</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="install-all-section">
+                        <button class="btn btn-success btn-large" id="installAllBtn">
+                            <span class="icon">⬇️</span>
+                            Install All Components
+                        </button>
+                        <div class="install-progress" id="installProgress" style="display: none;">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="progressFill"></div>
+                            </div>
+                            <p id="progressText">Installing...</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- App Installer Panel -->
+            <section class="panel apps-panel">
+                <h2>
+                    <span class="icon">📱</span>
+                    Application Installer
+                </h2>
+                
+                <div class="apps-tabs">
+                    <button class="tab-btn active" data-tab="available">Available Apps</button>
+                    <button class="tab-btn" data-tab="installed">Installed Projects</button>
+                </div>
+                
+                <div class="tab-content" id="availableApps">
+                    <div class="apps-grid" id="availableAppsGrid">
+                        <!-- Apps will be loaded dynamically -->
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="installedApps" style="display: none;">
+                    <div class="installed-projects" id="installedProjectsList">
+                        <!-- Installed projects will be loaded dynamically -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Configuration Editor Panel -->
+            <section class="panel config-panel">
+                <h2>
+                    <span class="icon">⚙️</span>
+                    Configuration Editor
+                </h2>
+                
+                <div class="config-tabs">
+                    <button class="tab-btn active" data-tab="configs">Edit Configs</button>
+                    <button class="tab-btn" data-tab="backups">Backups</button>
+                </div>
+                
+                <div class="tab-content" id="configsTab">
+                    <div class="config-selector">
+                        <select id="configSelect">
+                            <option value="">Select a configuration file</option>
+                        </select>
+                        <button class="btn btn-secondary" id="reloadConfigs">Reload</button>
+                    </div>
+                    
+                    <div class="config-editor" id="configEditor" style="display: none;">
+                        <div class="config-info">
+                            <h4 id="configName"></h4>
+                            <p id="configDescription"></p>
+                            <div class="config-actions">
+                                <button class="btn btn-primary" id="saveConfig">Save</button>
+                                <button class="btn btn-secondary" id="testConfig">Test</button>
+                                <button class="btn btn-secondary" id="backupConfig">Backup</button>
+                                <button class="btn btn-danger" id="cancelConfig">Cancel</button>
+                            </div>
+                        </div>
+                        <textarea id="configContent" rows="20"></textarea>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="backupsTab" style="display: none;">
+                    <div class="backups-list" id="backupsList">
+                        <!-- Backups will be loaded dynamically -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Log Viewer Panel -->
+            <section class="panel logs-panel">
+                <h2>
+                    <span class="icon">📋</span>
+                    Log Viewer
+                </h2>
+                
+                <div class="logs-toolbar">
+                    <select id="logSelect">
+                        <option value="">Select a log file</option>
+                    </select>
+                    <button class="btn btn-secondary" id="reloadLogs">Reload</button>
+                    <button class="btn btn-secondary" id="watchLog">Watch</button>
+                    <button class="btn btn-secondary" id="clearLog">Clear</button>
+                    <button class="btn btn-secondary" id="archiveLog">Archive</button>
+                </div>
+                
+                <div class="logs-filters">
+                    <select id="logLevel">
+                        <option value="">All Levels</option>
+                        <option value="error">Errors</option>
+                        <option value="warn">Warnings</option>
+                        <option value="info">Info</option>
+                        <option value="debug">Debug</option>
+                    </select>
+                    <input type="text" id="logFilter" placeholder="Filter logs...">
+                    <input type="number" id="logLines" value="100" min="10" max="1000" placeholder="Lines">
+                    <button class="btn btn-secondary" id="filterLogs">Filter</button>
+                </div>
+                
+                <div class="log-content" id="logContent">
+                    <div class="log-viewer" id="logViewer">
+                        <p class="log-placeholder">Select a log file to view its contents</p>
+                    </div>
+                </div>
+                
+                <div class="log-info" id="logInfo">
+                    <span class="log-stats" id="logStats"></span>
+                    <span class="log-watching" id="logWatching" style="display: none;">
+                        <span class="icon">👁️</span>
+                        Watching for changes...
+                    </span>
+                </div>
+            </section>
+
+            <!-- Quick Apps Section (Existing) -->
+            <section class="panel quick-apps-panel">
+                <h2>
+                    <span class="icon">⚡</span>
+                    Quick Install
+                </h2>
+                
+                <div class="quick-apps-grid">
+                    <!-- WordPress -->
+                    <div class="app-card">
+                        <div class="app-icon">
+                            <span class="icon">📝</span>
+                        </div>
+                        <div class="app-info">
+                            <h3>WordPress</h3>
+                            <span class="version">Latest</span>
+                        </div>
+                        <p>Popular CMS platform</p>
+                        <button class="btn btn-primary install-btn" data-app="wordpress">Install</button>
+                    </div>
+
+                    <!-- Laravel -->
+                    <div class="app-card">
+                        <div class="app-icon">
+                            <span class="icon">🎨</span>
+                        </div>
+                        <div class="app-info">
+                            <h3>Laravel</h3>
+                            <span class="version">10.x</span>
+                        </div>
+                        <p>PHP web framework</p>
+                        <button class="btn btn-primary install-btn" data-app="laravel">Install</button>
+                    </div>
+
+                    <!-- CodeIgniter -->
+                    <div class="app-card">
+                        <div class="app-icon">
+                            <span class="icon">🔥</span>
+                        </div>
+                        <div class="app-info">
                             <h3>CodeIgniter</h3>
                             <span class="version">4.x</span>
                         </div>

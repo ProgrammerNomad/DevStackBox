@@ -146,7 +146,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - 🐛 Report bugs: [GitHub Issues](https://github.com/ProgrammerNomad/DevStackBox/issues)
 - 💬 Discussions: [GitHub Discussions](https://github.com/ProgrammerNomad/DevStackBox/discussions)
-- 📧 Email: [support@devstackbox.com](mailto:support@devstackbox.com)
+- 📧 Email: [shiv@srapsware.com](mailto:shiv@srapsware.com)
 
 ---
 

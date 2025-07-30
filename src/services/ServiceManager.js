@@ -6,52 +6,63 @@ const { promisify } = require('util');
 const execAsync = promisify(exec);
 
 /**
- * ServiceManager - Manages Apache, MySQL, and PHP services for DevStackBox
+ * ServiceManager - Manages Apache, MySQL, and PHP services for DevStackBox  
+ * FULLY PORTABLE - NO XAMPP OR EXTERNAL DEPENDENCIES
  */
 class ServiceManager {
   constructor(appPath) {
     this.appPath = appPath;
     
-    // Check if we can use existing XAMPP installation as fallback
-    const xamppPath = 'C:\\xampp';
-    const useXamppFallback = require('fs').existsSync(xamppPath);
-    
+    // Only use OUR portable installations - NO XAMPP!
     this.services = {
       apache: {
         name: 'Apache',
-        executable: useXamppFallback 
-          ? path.join(xamppPath, 'apache', 'bin', 'httpd.exe')
-          : path.join(appPath, 'apache', 'bin', 'httpd.exe'),
-        processName: 'httpd.exe',
+        executable: path.join(appPath, 'apache', 'bin', 'httpd.exe'),
+        processName: 'httpd.exe', 
         defaultPort: 80,
-        configPath: useXamppFallback
-          ? path.join(xamppPath, 'apache', 'conf', 'httpd.conf')
-          : path.join(appPath, 'apache', 'conf', 'httpd.conf'),
-        fallbackMode: useXamppFallback
+        configPath: path.join(appPath, 'apache', 'conf', 'httpd.conf'),
+        startArgs: ['-D', 'FOREGROUND'],
+        installed: false
       },
       mysql: {
         name: 'MySQL',
-        executable: useXamppFallback
-          ? path.join(xamppPath, 'mysql', 'bin', 'mysqld.exe')
-          : path.join(appPath, 'mysql', 'bin', 'mysqld.exe'),
+        executable: path.join(appPath, 'mysql', 'bin', 'mysqld.exe'),
         processName: 'mysqld.exe',
-        defaultPort: 3306,
-        configPath: useXamppFallback
-          ? path.join(xamppPath, 'mysql', 'bin', 'my.ini')
-          : path.join(appPath, 'mysql', 'my.ini'),
-        fallbackMode: useXamppFallback
+        defaultPort: 3306, 
+        configPath: path.join(appPath, 'mysql', 'my.ini'),
+        startArgs: ['--defaults-file=' + path.join(appPath, 'mysql', 'my.ini')],
+        installed: false
       }
     };
     
     this.runningProcesses = new Map();
+    this.phpVersions = ['8.1', '8.2', '8.3'];
+    this.currentPhpVersion = '8.3';
     
-    if (useXamppFallback) {
-      console.log('DevStackBox: Using existing XAMPP installation as fallback');
-    }
+    // Check what's actually installed
+    this.checkInstallations();
+    
+    console.log('DevStackBox: ServiceManager initialized - PORTABLE ONLY, NO XAMPP!');
   }
 
   /**
-   * Start a service
+   * Check which portable services are actually installed
+   */
+  checkInstallations() {
+    Object.keys(this.services).forEach(serviceName => {
+      const service = this.services[serviceName];
+      service.installed = fs.existsSync(service.executable);
+      
+      if (service.installed) {
+        console.log(`✅ ${service.name} portable binary found`);
+      } else {
+        console.log(`❌ ${service.name} portable binary missing: ${service.executable}`);
+      }
+    });
+  }
+
+  /**
+   * Start a service (ONLY if our portable binary exists)
    */
   async startService(serviceName) {
     const service = this.services[serviceName];
@@ -59,53 +70,62 @@ class ServiceManager {
       throw new Error(`Unknown service: ${serviceName}`);
     }
 
+    if (!service.installed) {
+      throw new Error(`${service.name} portable binary not found. Please download portable servers first using the menu: File > Download Portable Servers`);
+    }
+
     // Check if already running
     const isRunning = await this.isServiceRunning(serviceName);
     if (isRunning) {
-      return {
-        success: true,
-        message: `${service.name} is already running`,
-        alreadyRunning: true
-      };
-    }
-
-    // Check if executable exists
-    if (!fs.existsSync(service.executable)) {
-      throw new Error(`Service executable not found: ${service.executable}`);
+      return { success: true, message: `${service.name} is already running` };
     }
 
     try {
-      const args = this.getServiceArgs(serviceName);
-      const options = this.getServiceOptions(serviceName);
+      console.log(`Starting ${service.name} from: ${service.executable}`);
       
-      const childProcess = spawn(service.executable, args, options);
-      
-      // Store process reference
-      this.runningProcesses.set(serviceName, childProcess);
-      
-      // Handle process events
-      childProcess.on('error', (error) => {
-        console.error(`${service.name} process error:`, error);
-        this.runningProcesses.delete(serviceName);
-      });
-      
-      childProcess.on('exit', (code, signal) => {
-        console.log(`${service.name} process exited with code ${code}, signal ${signal}`);
-        this.runningProcesses.delete(serviceName);
-      });
-      
-      // Give the service time to start
-      await this.waitForService(serviceName, 5000);
-      
-      return {
-        success: true,
-        message: `${service.name} started successfully`,
-        pid: childProcess.pid,
-        port: service.defaultPort
-      };
-      
+      let process;
+      if (serviceName === 'apache') {
+        process = spawn(service.executable, service.startArgs, {
+          cwd: path.join(this.appPath, 'apache', 'bin'),
+          detached: false,
+          stdio: 'pipe'
+        });
+      } else if (serviceName === 'mysql') {
+        await this.initializeMySQLIfNeeded();
+        process = spawn(service.executable, service.startArgs, {
+          cwd: path.join(this.appPath, 'mysql', 'bin'),
+          detached: false,
+          stdio: 'pipe'
+        });
+      }
+
+      if (process) {
+        this.runningProcesses.set(serviceName, process);
+        
+        process.on('error', (error) => {
+          console.error(`${service.name} process error:`, error);
+          this.runningProcesses.delete(serviceName);
+        });
+
+        process.on('exit', (code) => {
+          console.log(`${service.name} process exited with code: ${code}`);
+          this.runningProcesses.delete(serviceName);
+        });
+
+        // Wait for startup
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        const running = await this.isServiceRunning(serviceName);
+        if (running) {
+          console.log(`✅ ${service.name} started successfully`);
+          return { success: true, message: `${service.name} started successfully` };
+        } else {
+          throw new Error(`${service.name} failed to start`);
+        }
+      }
+
     } catch (error) {
-      this.runningProcesses.delete(serviceName);
+      console.error(`Failed to start ${service.name}:`, error);
       throw new Error(`Failed to start ${service.name}: ${error.message}`);
     }
   }
@@ -119,64 +139,47 @@ class ServiceManager {
       throw new Error(`Unknown service: ${serviceName}`);
     }
 
-    try {
-      // Try graceful shutdown first
-      const managedProcess = this.runningProcesses.get(serviceName);
-      if (managedProcess && !managedProcess.killed) {
-        managedProcess.kill('SIGTERM');
+    const process = this.runningProcesses.get(serviceName);
+    if (process) {
+      try {
+        console.log(`Stopping ${service.name}...`);
+        process.kill('SIGTERM');
         
-        // Wait a bit for graceful shutdown
-        await new Promise(resolve => setTimeout(resolve, 2000));
-      }
-
-      // Force kill if still running
-      const isRunning = await this.isServiceRunning(serviceName);
-      if (isRunning) {
-        if (process.platform === 'win32') {
-          await execAsync(`taskkill /F /IM ${service.processName}`);
-        } else {
-          await execAsync(`pkill -f ${service.processName}`);
-        }
-      }
-
-      this.runningProcesses.delete(serviceName);
-
-      return {
-        success: true,
-        message: `${service.name} stopped successfully`
-      };
-
-    } catch (error) {
-      // If the error is because the process wasn't found, that's actually success
-      if (error.message.includes('not found') || error.message.includes('No such process')) {
+        await new Promise((resolve) => {
+          process.on('exit', resolve);
+          setTimeout(resolve, 5000);
+        });
+        
         this.runningProcesses.delete(serviceName);
-        return {
-          success: true,
-          message: `${service.name} was not running`
-        };
+        console.log(`✅ ${service.name} stopped successfully`);
+        return { success: true, message: `${service.name} stopped successfully` };
+        
+      } catch (error) {
+        console.error(`Failed to stop ${service.name}:`, error);
+        throw new Error(`Failed to stop ${service.name}: ${error.message}`);
       }
-      
-      throw new Error(`Failed to stop ${service.name}: ${error.message}`);
+    } else {
+      return { success: true, message: `${service.name} is not running` };
     }
   }
 
   /**
-   * Check if a service is running
+   * Check if service is running
    */
   async isServiceRunning(serviceName) {
     const service = this.services[serviceName];
-    if (!service) {
-      return false;
+    if (!service) return false;
+
+    // Check our managed processes first
+    const process = this.runningProcesses.get(serviceName);
+    if (process && !process.killed) {
+      return true;
     }
 
+    // Check system processes
     try {
-      if (process.platform === 'win32') {
-        const { stdout } = await execAsync(`tasklist /FI "IMAGENAME eq ${service.processName}"`);
-        return stdout.includes(service.processName);
-      } else {
-        const { stdout } = await execAsync(`pgrep -f ${service.processName}`);
-        return stdout.trim().length > 0;
-      }
+      const { stdout } = await execAsync(`tasklist /FI "IMAGENAME eq ${service.processName}" /FO CSV`);
+      return stdout.includes(service.processName);
     } catch (error) {
       return false;
     }
@@ -188,140 +191,101 @@ class ServiceManager {
   async getServiceStatus(serviceName) {
     const service = this.services[serviceName];
     if (!service) {
-      return { running: false, error: 'Unknown service' };
+      return { installed: false, running: false, message: 'Unknown service' };
     }
 
-    const isRunning = await this.isServiceRunning(serviceName);
-    const managedProcess = this.runningProcesses.get(serviceName);
-    
+    const running = await this.isServiceRunning(serviceName);
     return {
-      running: isRunning,
-      service: serviceName,
-      name: service.name,
+      installed: service.installed,
+      running: running,
       port: service.defaultPort,
-      pid: managedProcess?.pid || null,
-      managed: !!managedProcess
+      executable: service.executable,
+      message: service.installed ? 
+        (running ? 'Running' : 'Stopped') : 
+        'Not installed - download portable servers first'
     };
   }
 
   /**
-   * Get status of all services
+   * Initialize MySQL data directory if needed
    */
-  async getAllServiceStatus() {
-    const statuses = {};
+  async initializeMySQLIfNeeded() {
+    const dataDir = path.join(this.appPath, 'mysql', 'data');
+    const mysqlDir = path.join(dataDir, 'mysql');
     
-    for (const serviceName of Object.keys(this.services)) {
-      statuses[serviceName] = await this.getServiceStatus(serviceName);
+    if (fs.existsSync(mysqlDir)) {
+      return;
     }
-    
-    return statuses;
-  }
 
-  /**
-   * Stop all services
-   */
-  async stopAllServices() {
-    const results = {};
-    
-    for (const serviceName of Object.keys(this.services)) {
-      try {
-        results[serviceName] = await this.stopService(serviceName);
-      } catch (error) {
-        results[serviceName] = {
-          success: false,
-          error: error.message
-        };
+    console.log('Initializing MySQL data directory...');
+    try {
+      if (!fs.existsSync(dataDir)) {
+        fs.mkdirSync(dataDir, { recursive: true });
       }
-    }
-    
-    return results;
-  }
 
-  /**
-   * Get service-specific arguments
-   */
-  getServiceArgs(serviceName) {
-    switch (serviceName) {
-      case 'apache':
-        return ['-D', 'FOREGROUND'];
-      case 'mysql':
-        return ['--console'];
-      default:
-        return [];
-    }
-  }
-
-  /**
-   * Get service-specific spawn options
-   */
-  getServiceOptions(serviceName) {
-    const baseOptions = {
-      detached: false,
-      stdio: ['ignore', 'pipe', 'pipe']
-    };
-
-    switch (serviceName) {
-      case 'apache':
-        return {
-          ...baseOptions,
-          cwd: path.join(this.appPath, 'apache')
-        };
-      case 'mysql':
-        return {
-          ...baseOptions,
-          cwd: path.join(this.appPath, 'mysql')
-        };
-      default:
-        return baseOptions;
-    }
-  }
-
-  /**
-   * Wait for service to start
-   */
-  async waitForService(serviceName, timeout = 5000) {
-    const startTime = Date.now();
-    
-    while (Date.now() - startTime < timeout) {
-      const isRunning = await this.isServiceRunning(serviceName);
-      if (isRunning) {
-        return true;
-      }
+      const mysqld = path.join(this.appPath, 'mysql', 'bin', 'mysqld.exe');
+      const initCommand = `"${mysqld}" --initialize-insecure --basedir="${path.join(this.appPath, 'mysql')}" --datadir="${dataDir}"`;
       
-      // Wait 500ms before checking again
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await execAsync(initCommand);
+      console.log('✅ MySQL data directory initialized');
+      
+    } catch (error) {
+      console.error('Failed to initialize MySQL:', error);
+      throw new Error(`Failed to initialize MySQL: ${error.message}`);
     }
-    
-    throw new Error(`Service ${serviceName} failed to start within ${timeout}ms`);
   }
 
   /**
-   * Get service configuration path
+   * Get available PHP versions
    */
-  getConfigPath(serviceName) {
-    const service = this.services[serviceName];
-    return service ? service.configPath : null;
+  getPhpVersions() {
+    const versions = [];
+    this.phpVersions.forEach(version => {
+      const phpPath = path.join(this.appPath, 'php', version, 'php.exe');
+      versions.push({
+        version: version,
+        path: phpPath,
+        installed: fs.existsSync(phpPath),
+        current: version === this.currentPhpVersion
+      });
+    });
+    return versions;
   }
 
   /**
-   * Check if service files exist
+   * Set PHP version
    */
-  checkServiceFiles(serviceName) {
-    const service = this.services[serviceName];
-    if (!service) {
-      return { valid: false, error: 'Unknown service' };
+  async setPhpVersion(version) {
+    if (!this.phpVersions.includes(version)) {
+      throw new Error(`Invalid PHP version: ${version}`);
     }
 
-    const checks = {
-      executable: fs.existsSync(service.executable),
-      config: fs.existsSync(service.configPath)
+    const phpPath = path.join(this.appPath, 'php', version, 'php.exe');
+    if (!fs.existsSync(phpPath)) {
+      throw new Error(`PHP ${version} is not installed. Please download portable servers first.`);
+    }
+
+    this.currentPhpVersion = version;
+    console.log(`✅ PHP version set to ${version}`);
+    return { success: true, version: version };
+  }
+
+  /**
+   * Get installation status for all components
+   */
+  getInstallationStatus() {
+    const status = {
+      apache: this.services.apache.installed,
+      mysql: this.services.mysql.installed,
+      php: {}
     };
 
-    return {
-      valid: Object.values(checks).every(Boolean),
-      checks,
-      service: service.name
-    };
+    this.phpVersions.forEach(version => {
+      const phpPath = path.join(this.appPath, 'php', version, 'php.exe');
+      status.php[version] = fs.existsSync(phpPath);
+    });
+
+    return status;
   }
 }
 
