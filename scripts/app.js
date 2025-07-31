@@ -28,6 +28,9 @@ class DevStackBox {
       console.log('Initializing Configuration UI...');
       this.configUI = new ConfigurationUI();
       
+      // Make configUI available globally for cross-component communication
+      window.configUI = this.configUI;
+      
       // Setup event listeners
       this.setupEventListeners();
       
@@ -182,6 +185,11 @@ class DevStackBox {
     if (footerStatus) {
       footerStatus.textContent = status.running ? 'Running' : 'Stopped';
       footerStatus.className = status.running ? 'status-running' : 'status-stopped';
+    }
+
+    // Update PHP Info button when Apache status changes
+    if (service === 'apache' && window.configUI && window.configUI.updatePhpInfoButton) {
+      window.configUI.updatePhpInfoButton();
     }
   }
 

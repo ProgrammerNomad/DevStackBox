@@ -42,6 +42,14 @@ class ConfigurationUI {
     
     // Bind configuration button events
     this.bindConfigurationButtons();
+    
+    // Update PHP Info button state
+    await this.updatePhpInfoButton();
+    
+    // Set up periodic status updates for PHP Info button
+    setInterval(() => {
+      this.updatePhpInfoButton();
+    }, 5000);
   }
 
   /**
@@ -396,6 +404,31 @@ class ConfigurationUI {
         });
       }
       
+      // Bind the PHP Info button
+      const phpInfoBtn = document.getElementById('phpInfoBtn');
+      if (phpInfoBtn) {
+        console.log('Binding PHP Info button');
+        phpInfoBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          
+          // Check if button is disabled and show immediate feedback
+          if (phpInfoBtn.disabled) {
+            console.log('PHP Info button clicked but is disabled');
+            const isApacheRunning = window.electronAPI ? false : null; // Will be checked in openPhpInfo
+            
+            if (isApacheRunning === false) {
+              alert('PHP Info is not available.\n\nApache server must be running to view PHP information.\n\nPlease start Apache first and try again.');
+            } else {
+              alert('PHP Info is not available at the moment.\n\nPlease check that Apache is running and try again.');
+            }
+            return;
+          }
+          
+          console.log('Opening PHP Info...');
+          this.openPhpInfo();
+        });
+      }
+      
       console.log(`Bound ${configButtons.length} configuration buttons`);
     };
 
@@ -438,8 +471,6 @@ class ConfigurationUI {
     const resetPhpExtensionsBtn = document.getElementById('resetPhpExtensionsBtn');
     const refreshExtensionsBtn = document.getElementById('refresh-extensions-btn');
     const phpVersionExtensions = document.getElementById('php-version-extensions');
-    const phpInfoBtn = document.getElementById('php-info-btn');
-
     // Close modal
     if (closeBtn) {
       closeBtn.addEventListener('click', () => {
@@ -500,13 +531,6 @@ class ConfigurationUI {
         const version = e.target.value;
         console.log(`PHP extensions version changed to: ${version}`);
         this.loadPhpExtensions();
-      });
-    }
-
-    // PHP Info button
-    if (phpInfoBtn) {
-      phpInfoBtn.addEventListener('click', () => {
-        this.openPhpInfo();
       });
     }
 
@@ -1480,40 +1504,102 @@ class ConfigurationUI {
   }
 
   /**
-   * Open PHP Info page in a new window
+   * Update PHP Info button state based on Apache status
+   * This method is called:
+   * - During UI initialization
+   * - When Apache service status changes
+   * - Periodically to ensure button state is correct
    */
-  openPhpInfo() {
+  async updatePhpInfoButton() {
+    const phpInfoBtn = document.getElementById('phpInfoBtn');
+    if (!phpInfoBtn) return;
+
+    try {
+      if (window.electronAPI && window.electronAPI.getServiceStatus) {
+        // Use a timeout to prevent hanging
+        const statusPromise = window.electronAPI.getServiceStatus('apache');
+        const timeoutPromise = new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Status check timeout')), 5000)
+        );
+        
+        const status = await Promise.race([statusPromise, timeoutPromise]);
+        
+        if (status && status.running) {
+          // Apache is running - enable button
+          phpInfoBtn.disabled = false;
+          phpInfoBtn.classList.remove('disabled');
+          phpInfoBtn.title = 'View PHP configuration and information';
+          console.log('PHP Info button enabled - Apache is running');
+        } else {
+          // Apache is not running - disable button
+          phpInfoBtn.disabled = true;
+          phpInfoBtn.classList.add('disabled');
+          phpInfoBtn.title = 'Apache must be running to view PHP Info';
+          console.log('PHP Info button disabled - Apache is not running');
+        }
+      } else {
+        // API not available - disable button
+        phpInfoBtn.disabled = true;
+        phpInfoBtn.classList.add('disabled');
+        phpInfoBtn.title = 'Unable to check Apache status';
+        console.log('PHP Info button disabled - API not available');
+      }
+    } catch (error) {
+      console.error('Error updating PHP Info button:', error);
+      // On error, disable button
+      phpInfoBtn.disabled = true;
+      phpInfoBtn.classList.add('disabled');
+      phpInfoBtn.title = 'Error checking Apache status';
+    }
+  }
+
+  /**
+   * Open PHP Info page in a new window
+   * Only works when Apache is running since PHP info requires a web server
+   */
+  async openPhpInfo() {
     console.log('Opening PHP Info page...');
+    
+    const phpInfoBtn = document.getElementById('phpInfoBtn');
+    
+    // Check if button is disabled
+    if (phpInfoBtn && phpInfoBtn.disabled) {
+      console.log('PHP Info button is disabled, showing error message');
+      alert('PHP Info is not available.\n\nApache server must be running to view PHP information.\n\nPlease start Apache first and try again.');
+      return;
+    }
     
     try {
       // Check if Apache is running first
-      if (window.electronAPI && window.electronAPI.getServerStatus) {
-        window.electronAPI.getServerStatus('apache').then(status => {
-          if (status && status.running) {
-            // Apache is running, open phpinfo.php
-            const phpInfoUrl = 'http://localhost/phpinfo.php';
-            window.open(phpInfoUrl, '_blank', 'noopener,noreferrer');
-            this.updateConfigStatus('Opening PHP Info page...', 'info');
-          } else {
-            // Apache is not running
-            this.updateConfigStatus('Apache server is not running. Please start Apache first.', 'error');
-          }
-        }).catch(error => {
-          console.error('Error checking Apache status:', error);
-          // Fallback: try to open anyway
+      if (window.electronAPI && window.electronAPI.getServiceStatus) {
+        const status = await window.electronAPI.getServiceStatus('apache');
+        if (status && status.running) {
+          // Apache is running, open phpinfo.php
           const phpInfoUrl = 'http://localhost/phpinfo.php';
+          console.log(`Opening PHP Info URL: ${phpInfoUrl}`);
           window.open(phpInfoUrl, '_blank', 'noopener,noreferrer');
-          this.updateConfigStatus('Opening PHP Info page... (Apache status unknown)', 'warning');
-        });
+          
+          // Show success feedback if we have updateConfigStatus method
+          if (typeof this.updateConfigStatus === 'function') {
+            this.updateConfigStatus('Opening PHP Info page...', 'info');
+          }
+        } else {
+          // Apache is not running
+          console.log('Apache is not running, cannot open PHP Info');
+          alert('Apache server is not running.\n\nPHP Info requires Apache to be running.\n\nPlease start Apache first and try again.');
+        }
       } else {
-        // No electronAPI available, try to open anyway
+        // No electronAPI available, still try to open the URL
+        console.log('ElectronAPI not available, trying to open PHP Info anyway');
         const phpInfoUrl = 'http://localhost/phpinfo.php';
         window.open(phpInfoUrl, '_blank', 'noopener,noreferrer');
-        this.updateConfigStatus('Opening PHP Info page...', 'info');
+        
+        // Show warning
+        alert('Unable to verify Apache status.\n\nIf the page doesn\'t load, please ensure Apache is running.');
       }
     } catch (error) {
       console.error('Error opening PHP Info:', error);
-      this.updateConfigStatus('Error opening PHP Info: ' + error.message, 'error');
+      alert(`Error opening PHP Info: ${error.message}\n\nPlease ensure Apache is running and try again.`);
     }
   }
 }
