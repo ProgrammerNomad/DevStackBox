@@ -298,7 +298,6 @@ class DevStackBox {
             statusEl.innerHTML = `<span class="w-2 h-2 bg-red-500 rounded-full mr-2"></span>${statusText}`;
           }
         }
-        }
       } else {
         console.warn(`Status element not found for service: ${service}`);
       }
