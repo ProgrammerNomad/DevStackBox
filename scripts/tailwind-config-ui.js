@@ -36,6 +36,56 @@ class ConfigurationUI {
     // Populate PHP version selectors
     await this.populatePhpVersionSelectors();
   }
+  
+  /**
+   * Load current configurations from the system
+   */
+  async loadCurrentConfigurations() {
+    try {
+      // Show loading status
+      this.updateStatus('Loading current configurations...', 'info');
+      
+      // Load Apache config if API is available
+      if (window.electronAPI && window.electronAPI.getApacheConfig) {
+        const apacheConfig = await window.electronAPI.getApacheConfig();
+        if (apacheConfig && !apacheConfig.error) {
+          this.populateApacheConfig(apacheConfig);
+        }
+      }
+
+      // Load MySQL config if API is available
+      if (window.electronAPI && window.electronAPI.getMySQLConfig) {
+        const mysqlConfig = await window.electronAPI.getMySQLConfig();
+        if (mysqlConfig && !mysqlConfig.error) {
+          this.populateMySQLConfig(mysqlConfig);
+        }
+      }
+
+      // Load PHP config if API is available
+      if (window.electronAPI && window.electronAPI.getPHPConfig) {
+        const phpConfig = await window.electronAPI.getPHPConfig();
+        if (phpConfig && !phpConfig.error) {
+          this.populatePHPConfig(phpConfig);
+        }
+      }
+      
+      // Load PHP extensions if API is available
+      if (window.electronAPI && window.electronAPI.getPHPExtensions) {
+        const extensions = await window.electronAPI.getPHPExtensions(this.currentPhpVersion);
+        if (extensions && !extensions.error) {
+          this.phpExtensions = extensions;
+          this.populatePhpExtensions();
+        }
+      }
+
+      this.updateStatus('Configuration loaded successfully', 'success');
+      
+    } catch (error) {
+      console.error('Error loading configurations:', error);
+      this.updateStatus('Failed to load configurations: ' + error.message, 'error');
+      throw error;
+    }
+  }
 
   /**
    * Populate PHP version selectors with available versions
@@ -842,6 +892,10 @@ class ConfigurationUI {
    * Update configuration status message
    */
   updateConfigStatus(message, type = 'info') {
+    // Call the main status update function
+    this.updateStatus(message, type);
+    
+    // Also update the legacy config status element if it exists
     const statusEl = document.getElementById('configStatus');
     if (!statusEl) return;
     
@@ -909,12 +963,170 @@ class ConfigurationUI {
     document.getElementById('php-upload-max-filesize')?.setAttribute('value', config.uploadMaxFilesize || '2M');
     document.getElementById('php-post-max-size')?.setAttribute('value', config.postMaxSize || '8M');
   }
+  
+  /**
+   * Populate PHP extensions in the extensions management UI
+   */
+  populatePhpExtensions() {
+    const extensionsContainer = document.getElementById('php-extensions-container');
+    if (!extensionsContainer || !this.phpExtensions || !this.phpExtensions.length) {
+      return;
+    }
+    
+    // Clear existing content
+    extensionsContainer.innerHTML = '';
+    
+    // Create a responsive grid for extensions
+    const grid = document.createElement('div');
+    grid.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4';
+    extensionsContainer.appendChild(grid);
+    
+    // Sort extensions alphabetically
+    const sortedExtensions = [...this.phpExtensions].sort((a, b) => 
+      a.name.toLowerCase().localeCompare(b.name.toLowerCase())
+    );
+    
+    // Add each extension as a card with toggle switch
+    sortedExtensions.forEach(extension => {
+      const card = document.createElement('div');
+      card.className = 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 shadow-sm hover:shadow-md transition-all duration-200';
+      
+      const header = document.createElement('div');
+      header.className = 'flex items-center justify-between mb-2';
+      
+      const title = document.createElement('h3');
+      title.className = 'text-sm font-medium text-gray-900 dark:text-gray-100';
+      title.textContent = extension.name;
+      
+      const toggle = document.createElement('label');
+      toggle.className = 'relative inline-flex items-center cursor-pointer';
+      
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.className = 'sr-only peer';
+      checkbox.checked = extension.enabled;
+      checkbox.dataset.extension = extension.name;
+      checkbox.addEventListener('change', () => this.togglePhpExtension(extension.name, checkbox.checked));
+      
+      const slider = document.createElement('div');
+      slider.className = 'w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[""] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600';
+      
+      toggle.appendChild(checkbox);
+      toggle.appendChild(slider);
+      
+      header.appendChild(title);
+      header.appendChild(toggle);
+      
+      const description = document.createElement('p');
+      description.className = 'text-xs text-gray-500 dark:text-gray-400';
+      description.textContent = extension.description || 'PHP Extension';
+      
+      card.appendChild(header);
+      card.appendChild(description);
+      
+      grid.appendChild(card);
+    });
+  }
+  
+  /**
+   * Toggle a PHP extension on or off
+   */
+  async togglePhpExtension(extensionName, enabled) {
+    try {
+      this.updateStatus(`${enabled ? 'Enabling' : 'Disabling'} ${extensionName}...`, 'info');
+      
+      if (window.electronAPI && window.electronAPI.togglePhpExtension) {
+        const result = await window.electronAPI.togglePhpExtension(
+          this.currentPhpVersion,
+          extensionName,
+          enabled
+        );
+        
+        if (result && result.success) {
+          this.updateStatus(`${extensionName} ${enabled ? 'enabled' : 'disabled'} successfully`, 'success');
+          
+          // Update our local state
+          if (this.phpExtensions && this.phpExtensions.length) {
+            const extension = this.phpExtensions.find(ext => ext.name === extensionName);
+            if (extension) {
+              extension.enabled = enabled;
+            }
+          }
+        } else {
+          throw new Error(result.error || 'Unknown error');
+        }
+      } else {
+        throw new Error('PHP extension toggle API not available');
+      }
+    } catch (error) {
+      console.error(`Error toggling extension ${extensionName}:`, error);
+      this.updateStatus(`Failed to ${enabled ? 'enable' : 'disable'} ${extensionName}: ${error.message}`, 'error');
+      
+      // Revert the UI change since the operation failed
+      const checkbox = document.querySelector(`input[data-extension="${extensionName}"]`);
+      if (checkbox) {
+        checkbox.checked = !enabled;
+      }
+    }
+  }
+
+  /**
+   * Update status message in the UI
+   */
+  updateStatus(message, type = 'info') {
+    const statusContainer = document.getElementById('config-status-container');
+    if (!statusContainer) return;
+    
+    // Clear previous status
+    statusContainer.innerHTML = '';
+    
+    // Create status element
+    const statusEl = document.createElement('div');
+    
+    // Set appropriate styling based on type
+    let baseClasses = 'px-4 py-2 rounded-md text-sm flex items-center mb-4';
+    let iconHTML = '';
+    
+    switch (type) {
+      case 'success':
+        statusEl.className = `${baseClasses} bg-green-100 text-green-800 border border-green-200`;
+        iconHTML = '<svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>';
+        break;
+      case 'error':
+        statusEl.className = `${baseClasses} bg-red-100 text-red-800 border border-red-200`;
+        iconHTML = '<svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>';
+        break;
+      case 'warning':
+        statusEl.className = `${baseClasses} bg-yellow-100 text-yellow-800 border border-yellow-200`;
+        iconHTML = '<svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>';
+        break;
+      default: // info
+        statusEl.className = `${baseClasses} bg-blue-100 text-blue-800 border border-blue-200`;
+        iconHTML = '<svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zm-1 9a1 1 0 01-1-1v-4a1 1 0 112 0v4a1 1 0 01-1 1z" clip-rule="evenodd"></path></svg>';
+    }
+    
+    // Set content with icon
+    statusEl.innerHTML = `${iconHTML}${message}`;
+    
+    // Add to container
+    statusContainer.appendChild(statusEl);
+    
+    // Auto hide success and info messages after 5 seconds
+    if (type === 'success' || type === 'info') {
+      setTimeout(() => {
+        statusEl.classList.add('opacity-0', 'transition-opacity', 'duration-500');
+        setTimeout(() => {
+          statusEl.remove();
+        }, 500);
+      }, 5000);
+    }
+  }
 
   /**
    * Validate configuration
    */
   async validateConfiguration() {
-    this.updateConfigStatus('Validating configuration...', 'info');
+    this.updateStatus('Validating configuration...', 'info');
     
     try {
       // Get current service
