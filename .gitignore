@@ -133,3 +133,4 @@ phpmyadmin/tmp/*
 !assets/icon.png
 !assets/logo.png
 !assets/tray-icon.png
+tailwindcss.exe

@@ -10,6 +10,8 @@
     "dist": "electron-builder --publish=never",
     "build-win": "electron-builder --win --publish=never",
     "build-simple": "npx electron-packager . DevStackBox --platform=win32 --arch=x64 --out=dist --overwrite",
+    "build-css": "node_modules\\.bin\\tailwindcss -i ./styles/tailwind.css -o ./styles/tailwind-output.css --watch",
+    "build-css-prod": "node_modules\\.bin\\tailwindcss -i ./styles/tailwind.css -o ./styles/tailwind-output.css --minify",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },
@@ -25,10 +27,13 @@
   "author": "ProgrammerNomad",
   "license": "MIT",
   "devDependencies": {
+    "@tailwindcss/forms": "^0.5.8",
+    "@tailwindcss/typography": "^0.5.15",
     "electron": "^27.0.0",
     "electron-builder": "^24.6.4",
     "electron-packager": "^17.1.2",
-    "eslint": "^8.50.0"
+    "eslint": "^8.50.0",
+    "tailwindcss": "^3.4.10"
   },
   "dependencies": {
     "ps-tree": "^1.2.0"

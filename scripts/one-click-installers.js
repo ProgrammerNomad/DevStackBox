@@ -17,6 +17,13 @@ class OneClickInstallers {
    */
   async init() {
     try {
+      // Wait for DOM to be ready
+      if (document.readyState === 'loading') {
+        await new Promise(resolve => {
+          document.addEventListener('DOMContentLoaded', resolve);
+        });
+      }
+      
       await this.loadInstallers();
       this.renderInterface();
       this.bindEvents();

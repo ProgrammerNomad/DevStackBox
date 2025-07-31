@@ -5,202 +5,200 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;">
     <title>DevStackBox - Local Development Environment</title>
-    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/tailwind-output.css">
     <link rel="stylesheet" href="styles/config-ui.css">
     <link rel="stylesheet" href="styles/installers.css">
 </head>
 <body>
-    <div class="app-container">
+    <div class="min-h-screen bg-gray-50">
         <!-- Header -->
-        <header class="app-header">
-            <div class="header-content">
-                <div class="logo">
-                    <img src="assets/logo.png" alt="DevStackBox" class="logo-img">
-                    <h1>DevStackBox</h1>
+        <header class="bg-white border-b border-gray-200 shadow-sm">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <img src="assets/logo.png" alt="DevStackBox" class="h-8 w-8">
+                    <h1 class="text-2xl font-bold text-gray-900">DevStackBox</h1>
                 </div>
-                <div class="header-info">
-                    <div class="header-actions">
-                        <button class="btn btn-settings" id="downloadSettingsBtn" title="Download & Settings">
-                            <img src="assets/icons/installer.svg" alt="Settings" class="btn-icon">
-                            Downloads & Settings
-                        </button>
-                    </div>
+                <div class="flex items-center space-x-4">
+                    <button class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors" id="downloadSettingsBtn" title="Download & Settings">
+                        <img src="assets/icons/installer.svg" alt="Settings" class="w-4 h-4 mr-2">
+                        Downloads & Settings
+                    </button>
                 </div>
             </div>
         </header>
 
         <!-- Main Content -->
-        <main class="main-content">
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <!-- Current UI Status -->
-            <div class="ui-status-banner">
-                <div class="status-content">
-                    <h3>
-                        <img src="assets/icons/system.svg" alt="System" class="status-icon">
-                        DevStackBox Control Panel
-                    </h3>
-                    <p>Complete portable LAMP/WAMP development environment. Start/stop services, manage projects, install apps, and configure your development stack without external dependencies.</p>
-                    <div class="ui-actions">
-                        <button class="btn btn-outline" id="showQuickStartBtn">Quick Start Guide</button>
-                        <button class="btn btn-outline" id="systemStatusBtn">System Status</button>
+            <div class="bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg shadow-lg p-6 mb-6 text-white">
+                <div class="flex items-start space-x-4">
+                    <img src="assets/icons/system.svg" alt="System" class="w-8 h-8 text-white">
+                    <div class="flex-1">
+                        <h3 class="text-xl font-semibold mb-2">DevStackBox Control Panel</h3>
+                        <p class="text-blue-100 mb-4">Complete portable LAMP/WAMP development environment. Start/stop services, manage projects, install apps, and configure your development stack without external dependencies.</p>
+                        <div class="flex flex-wrap gap-3">
+                            <button class="px-4 py-2 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-md text-sm font-medium transition-colors" id="showQuickStartBtn">Quick Start Guide</button>
+                            <button class="px-4 py-2 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-md text-sm font-medium transition-colors" id="systemStatusBtn">System Status</button>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- Installation Status Banner (shown when portable servers not installed) -->
-            <div class="installation-banner" id="installationBanner">
-                <div class="banner-content">
-                    <div class="banner-icon">
-                        <img src="assets/icons/download.svg" alt="Setup" class="banner-svg-icon">
+            <div class="bg-white border border-gray-200 rounded-lg shadow-md p-6 mb-6 hidden" id="installationBanner">
+                <div class="flex items-start space-x-4">
+                    <div class="flex-shrink-0">
+                        <img src="assets/icons/download.svg" alt="Setup" class="w-8 h-8 text-gray-600">
                     </div>
-                    <div class="banner-text">
-                        <h3>Server Binaries Required</h3>
-                        <p>DevStackBox needs Apache, MySQL, and PHP binaries. You can either download them automatically or add offline copies to the project folders.</p>
-                        <div class="banner-actions">
-                            <button class="btn btn-primary" id="downloadServersBtn">
-                                <img src="assets/icons/installer.svg" alt="Install" class="btn-icon">
+                    <div class="flex-1">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Server Binaries Required</h3>
+                        <p class="text-gray-600 mb-4">DevStackBox needs Apache, MySQL, and PHP binaries. You can either download them automatically or add offline copies to the project folders.</p>
+                        <div class="flex flex-wrap gap-3">
+                            <button class="inline-flex items-center px-4 py-2 bg-primary text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors" id="downloadServersBtn">
+                                <img src="assets/icons/installer.svg" alt="Install" class="w-4 h-4 mr-2">
                                 Auto Download All
                             </button>
-                            <button class="btn btn-secondary" id="offlineSetupBtn">
-                                <img src="assets/icons/folder.svg" alt="Offline" class="btn-icon">
+                            <button class="inline-flex items-center px-4 py-2 bg-secondary text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary transition-colors" id="offlineSetupBtn">
+                                <img src="assets/icons/folder.svg" alt="Offline" class="w-4 h-4 mr-2">
                                 Offline Setup Guide
                             </button>
-                            <button class="btn btn-outline" id="customDownloadBtn">Custom Downloads</button>
+                            <button class="px-4 py-2 border border-gray-300 text-gray-700 bg-white rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors" id="customDownloadBtn">Custom Downloads</button>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Services Panel -->
-            <section class="panel services-panel">
-                <h2>
-                    <img src="assets/icons/server.svg" alt="Server" class="section-icon">
+            <section class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <h2 class="flex items-center text-xl font-semibold text-gray-900 mb-6">
+                    <img src="assets/icons/server.svg" alt="Server" class="w-6 h-6 mr-3">
                     Server Services
                 </h2>
                 
-                <div class="services-grid">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Apache Service -->
-                    <div class="service-card" data-service="apache">
-                        <div class="service-header">
-                            <h3>
-                                <img src="assets/icons/apache.svg" alt="Apache" class="service-icon">
+                    <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 hover:shadow-md transition-shadow" data-service="apache">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="flex items-center text-lg font-medium text-gray-900">
+                                <img src="assets/icons/apache.svg" alt="Apache" class="w-5 h-5 mr-2">
                                 Apache HTTP Server
                             </h3>
-                            <span class="status-indicator" id="apache-status">
-                                <span class="status-dot stopped"></span>
+                            <span class="flex items-center text-sm font-medium" id="apache-status">
+                                <span class="w-2 h-2 bg-red-500 rounded-full mr-2"></span>
                                 Stopped
                             </span>
                         </div>
-                        <div class="service-info">
-                            <p>Web Server - Port: <span id="apache-port">80</span></p>
+                        <div class="mb-4">
+                            <p class="text-sm text-gray-600">Web Server - Port: <span id="apache-port" class="font-medium">80</span></p>
                         </div>
-                        <div class="service-controls">
-                            <button class="btn btn-success start-btn" data-service="apache">Start</button>
-                            <button class="btn btn-danger stop-btn" data-service="apache" disabled>Stop</button>
-                            <button class="btn btn-secondary config-btn" data-config="apache">Config</button>
+                        <div class="flex space-x-2">
+                            <button class="px-3 py-2 bg-success hover:bg-green-600 text-white text-sm font-medium rounded-md transition-colors start-btn" data-service="apache">Start</button>
+                            <button class="px-3 py-2 bg-danger hover:bg-red-600 text-white text-sm font-medium rounded-md transition-colors stop-btn disabled:opacity-50 disabled:cursor-not-allowed" data-service="apache" disabled>Stop</button>
+                            <button class="px-3 py-2 bg-secondary hover:bg-gray-600 text-white text-sm font-medium rounded-md transition-colors config-btn" data-config="apache">Config</button>
                         </div>
                     </div>
 
                     <!-- MySQL Service -->
-                    <div class="service-card" data-service="mysql">
-                        <div class="service-header">
-                            <h3>
-                                <img src="assets/icons/mysql.svg" alt="MySQL" class="service-icon">
+                    <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 hover:shadow-md transition-shadow" data-service="mysql">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="flex items-center text-lg font-medium text-gray-900">
+                                <img src="assets/icons/mysql.svg" alt="MySQL" class="w-5 h-5 mr-2">
                                 MySQL Database
                             </h3>
-                            <span class="status-indicator" id="mysql-status">
-                                <span class="status-dot stopped"></span>
+                            <span class="flex items-center text-sm font-medium" id="mysql-status">
+                                <span class="w-2 h-2 bg-red-500 rounded-full mr-2"></span>
                                 Stopped
                             </span>
                         </div>
-                        <div class="service-info">
-                            <p>Database Server - Port: <span id="mysql-port">3306</span></p>
+                        <div class="mb-4">
+                            <p class="text-sm text-gray-600">Database Server - Port: <span id="mysql-port" class="font-medium">3306</span></p>
                         </div>
-                        <div class="service-controls">
-                            <button class="btn btn-success start-btn" data-service="mysql">Start</button>
-                            <button class="btn btn-danger stop-btn" data-service="mysql" disabled>Stop</button>
-                            <button class="btn btn-secondary config-btn" data-config="mysql">Config</button>
+                        <div class="flex space-x-2">
+                            <button class="px-3 py-2 bg-success hover:bg-green-600 text-white text-sm font-medium rounded-md transition-colors start-btn" data-service="mysql">Start</button>
+                            <button class="px-3 py-2 bg-danger hover:bg-red-600 text-white text-sm font-medium rounded-md transition-colors stop-btn disabled:opacity-50 disabled:cursor-not-allowed" data-service="mysql" disabled>Stop</button>
+                            <button class="px-3 py-2 bg-secondary hover:bg-gray-600 text-white text-sm font-medium rounded-md transition-colors config-btn" data-config="mysql">Config</button>
                         </div>
                     </div>
                 </div>
             </section>
 
             <!-- PHP Management Panel -->
-            <section class="panel php-panel">
-                <h2>
-                    <img src="assets/icons/php.svg" alt="PHP" class="section-icon">
+            <section class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <h2 class="flex items-center text-xl font-semibold text-gray-900 mb-6">
+                    <img src="assets/icons/php.svg" alt="PHP" class="w-6 h-6 mr-3">
                     PHP Management
                 </h2>
                 
-                <div class="php-content">
-                    <div class="php-version-selector">
-                        <label for="phpVersion">Active PHP Version:</label>
-                        <div class="php-version-controls">
-                            <select id="phpVersion" class="form-select">
+                <div class="space-y-6">
+                    <div class="space-y-3">
+                        <label for="phpVersion" class="block text-sm font-medium text-gray-700">Active PHP Version:</label>
+                        <div class="flex items-center space-x-3">
+                            <select id="phpVersion" class="flex-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary">
                                 <option value="">Loading...</option>
                             </select>
-                            <button class="btn btn-primary" id="switchPhpBtn">Switch</button>
+                            <button class="inline-flex items-center px-4 py-2 bg-primary text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors" id="switchPhpBtn">Switch</button>
                         </div>
                     </div>
                     
-                    <div class="php-info">
-                        <div class="info-item">
-                            <strong>Current Version:</strong>
-                            <span id="currentPhpVersion">Not detected</span>
+                    <div class="space-y-4">
+                        <div class="text-sm">
+                            <span class="font-medium text-gray-900">Current Version:</span>
+                            <span id="currentPhpVersion" class="text-gray-600 ml-2">Not detected</span>
                         </div>
-                        <div class="php-actions">
-                            <button class="btn btn-secondary config-btn" data-config="php">Edit php.ini</button>
-                            <button class="btn btn-secondary config-btn" data-config="php-extensions">PHP Extensions</button>
-                            <button class="btn btn-secondary" id="phpInfoBtn">PHP Info</button>
+                        <div class="flex flex-wrap gap-2">
+                            <button class="inline-flex items-center px-3 py-2 bg-secondary hover:bg-gray-600 text-white text-sm rounded-md transition-colors config-btn" data-config="php">Edit php.ini</button>
+                            <button class="inline-flex items-center px-3 py-2 bg-secondary hover:bg-gray-600 text-white text-sm rounded-md transition-colors config-btn" data-config="php-extensions">PHP Extensions</button>
+                            <button class="inline-flex items-center px-3 py-2 bg-secondary hover:bg-gray-600 text-white text-sm rounded-md transition-colors" id="phpInfoBtn">PHP Info</button>
                         </div>
                     </div>
                 </div>
             </section>
 
             <!-- Quick Actions Panel -->
-            <section class="panel quick-actions-panel">
-                <h2>
-                    <img src="assets/icons/lightning.svg" alt="Quick Actions" class="section-icon">
+            <section class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <h2 class="flex items-center text-xl font-semibold text-gray-900 mb-6">
+                    <img src="assets/icons/lightning.svg" alt="Quick Actions" class="w-6 h-6 mr-3">
                     Quick Actions
                 </h2>
                 
-                <div class="actions-grid">
-                    <button class="action-btn" id="openPhpMyAdmin">
-                        <img src="assets/icons/phpmyadmin.svg" alt="phpMyAdmin" class="action-icon">
-                        <span class="label">phpMyAdmin</span>
+                <div class="grid grid-cols-2 gap-4">
+                    <button class="flex flex-col items-center p-4 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 hover:shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" id="openPhpMyAdmin">
+                        <img src="assets/icons/phpmyadmin.svg" alt="phpMyAdmin" class="w-8 h-8 mb-2">
+                        <span class="text-sm font-medium text-gray-900">phpMyAdmin</span>
                     </button>
                     
-                    <button class="action-btn" id="openWebRoot">
-                        <img src="assets/icons/folder.svg" alt="Web Root" class="action-icon">
-                        <span class="label">Web Root</span>
+                    <button class="flex flex-col items-center p-4 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 hover:shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" id="openWebRoot">
+                        <img src="assets/icons/folder.svg" alt="Web Root" class="w-8 h-8 mb-2">
+                        <span class="text-sm font-medium text-gray-900">Web Root</span>
                     </button>
                     
-                    <button class="action-btn" id="viewLogs">
-                        <img src="assets/icons/logs.svg" alt="Logs" class="action-icon">
-                        <span class="label">View Logs</span>
+                    <button class="flex flex-col items-center p-4 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 hover:shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" id="viewLogs">
+                        <img src="assets/icons/logs.svg" alt="Logs" class="w-8 h-8 mb-2">
+                        <span class="text-sm font-medium text-gray-900">View Logs</span>
                     </button>
                     
-                    <button class="action-btn" id="createProject">
-                        <img src="assets/icons/project.svg" alt="New Project" class="action-icon">
-                        <span class="label">New Project</span>
+                    <button class="flex flex-col items-center p-4 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 hover:shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" id="createProject">
+                        <img src="assets/icons/project.svg" alt="New Project" class="w-8 h-8 mb-2">
+                        <span class="text-sm font-medium text-gray-900">New Project</span>
                     </button>
                 </div>
             </section>
 
             <!-- Project Management Panel -->
-            <section class="panel projects-panel">
-                <h2>
-                    <img src="assets/icons/projects.svg" alt="Projects" class="section-icon">
+            <section class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <h2 class="flex items-center text-xl font-semibold text-gray-900 mb-6">
+                    <img src="assets/icons/projects.svg" alt="Projects" class="w-6 h-6 mr-3">
                     Project Management
                 </h2>
                 
-                <div class="projects-toolbar">
-                    <button class="btn btn-primary" id="newProjectBtn">New Project</button>
-                    <button class="btn btn-secondary" id="refreshProjectsBtn">Refresh</button>
-                    <button class="btn btn-secondary" id="openProjectsFolderBtn">Open Folder</button>
+                <div class="flex flex-wrap gap-3 mb-6">
+                    <button class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" id="newProjectBtn">New Project</button>
+                    <button class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2" id="refreshProjectsBtn">Refresh</button>
+                    <button class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2" id="openProjectsFolderBtn">Open Folder</button>
                 </div>
                 
-                <div class="projects-list" id="projectsList">
-                    <div class="projects-placeholder">
+                <div class="min-h-[200px] border border-gray-200 rounded-lg" id="projectsList">
+                    <div class="flex items-center justify-center h-48 text-gray-500">
                         <p>No projects found. Create your first project to get started!</p>
                     </div>
                 </div>
@@ -366,26 +364,26 @@
                                 PHP Versions
                             </h4>
                         </div>
-                        <div class="php-versions-grid">
-                            <div class="php-version-card">
-                                <h5>PHP 8.4</h5>
-                                <span class="version-status" id="php84-status">Not Installed</span>
-                                <button class="btn btn-sm btn-primary" data-php-version="8.4">Download</button>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div class="bg-white border border-gray-200 rounded-lg p-4 text-center">
+                                <h5 class="font-semibold text-gray-900 mb-2">PHP 8.4</h5>
+                                <span class="block text-xs text-gray-500 mb-3" id="php84-status">Not Installed</span>
+                                <button class="inline-flex items-center px-3 py-1.5 bg-primary text-white text-sm font-medium rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors" data-php-version="8.4">Download</button>
                             </div>
-                            <div class="php-version-card">
-                                <h5>PHP 8.3</h5>
-                                <span class="version-status" id="php83-status">Not Installed</span>
-                                <button class="btn btn-sm btn-primary" data-php-version="8.3">Download</button>
+                            <div class="bg-white border border-gray-200 rounded-lg p-4 text-center">
+                                <h5 class="font-semibold text-gray-900 mb-2">PHP 8.3</h5>
+                                <span class="block text-xs text-gray-500 mb-3" id="php83-status">Not Installed</span>
+                                <button class="inline-flex items-center px-3 py-1.5 bg-primary text-white text-sm font-medium rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors" data-php-version="8.3">Download</button>
                             </div>
-                            <div class="php-version-card">
-                                <h5>PHP 8.2 (Default)</h5>
-                                <span class="version-status" id="php82-status">Not Installed</span>
-                                <button class="btn btn-sm btn-primary" data-php-version="8.2">Download</button>
+                            <div class="bg-white border border-gray-200 rounded-lg p-4 text-center">
+                                <h5 class="font-semibold text-gray-900 mb-2">PHP 8.2 (Default)</h5>
+                                <span class="block text-xs text-gray-500 mb-3" id="php82-status">Not Installed</span>
+                                <button class="inline-flex items-center px-3 py-1.5 bg-primary text-white text-sm font-medium rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors" data-php-version="8.2">Download</button>
                             </div>
-                            <div class="php-version-card">
-                                <h5>PHP 8.1</h5>
-                                <span class="version-status" id="php81-status">Not Installed</span>
-                                <button class="btn btn-sm btn-primary" data-php-version="8.1">Download</button>
+                            <div class="bg-white border border-gray-200 rounded-lg p-4 text-center">
+                                <h5 class="font-semibold text-gray-900 mb-2">PHP 8.1</h5>
+                                <span class="block text-xs text-gray-500 mb-3" id="php81-status">Not Installed</span>
+                                <button class="inline-flex items-center px-3 py-1.5 bg-primary text-white text-sm font-medium rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors" data-php-version="8.1">Download</button>
                             </div>
                         </div>
                     </div>
