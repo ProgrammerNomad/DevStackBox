@@ -267,7 +267,7 @@ class ConfigurationUI {
                 <div class="tab-content" id="php-extensions-tab">
                     <div class="config-section-compact">
                         <h4>PHP Extensions Manager</h4>
-                        <div class="config-grid" style="grid-template-columns: 1fr auto; gap: 1rem; align-items: end;">
+                        <div class="config-grid" style="grid-template-columns: 1fr auto auto; gap: 1rem; align-items: end;">
                             <div class="form-group" style="margin-bottom: 0;">
                                 <label for="php-version-extensions">PHP Version:</label>
                                 <select id="php-version-extensions" style="width: 100%;">
@@ -288,8 +288,8 @@ class ConfigurationUI {
 
                     <div class="config-section-compact">
                         <h4>Available Extensions</h4>
-                        <div class="extensions-container">
-                            <div class="extensions-categories">
+                        <div class="extensions-container" style="max-height: 400px; overflow-y: auto; border: 1px solid #e9ecef; border-radius: 6px; padding: 0;">
+                            <div class="extensions-categories" style="padding: 1rem;">
                                 <!-- Extension categories will be dynamically loaded here -->
                             </div>
                         </div>
@@ -438,6 +438,7 @@ class ConfigurationUI {
     const resetPhpExtensionsBtn = document.getElementById('resetPhpExtensionsBtn');
     const refreshExtensionsBtn = document.getElementById('refresh-extensions-btn');
     const phpVersionExtensions = document.getElementById('php-version-extensions');
+    const phpInfoBtn = document.getElementById('php-info-btn');
 
     // Close modal
     if (closeBtn) {
@@ -499,6 +500,13 @@ class ConfigurationUI {
         const version = e.target.value;
         console.log(`PHP extensions version changed to: ${version}`);
         this.loadPhpExtensions();
+      });
+    }
+
+    // PHP Info button
+    if (phpInfoBtn) {
+      phpInfoBtn.addEventListener('click', () => {
+        this.openPhpInfo();
       });
     }
 
@@ -889,6 +897,7 @@ class ConfigurationUI {
     // Remove loading message and render categories
     setTimeout(() => {
       extensionsContainer.innerHTML = '';
+      extensionsContainer.style.overflow = 'visible'; // Ensure no inner scroll
       
       // Create categories
       Object.entries(extensions).forEach(([categoryName, categoryExtensions]) => {
@@ -935,6 +944,7 @@ class ConfigurationUI {
           display: grid;
           grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
           gap: 0.75rem;
+          overflow: visible;
         `;
         
         // Add toggle functionality
@@ -1467,6 +1477,44 @@ class ConfigurationUI {
   async resetToDefaults() {
     console.log('Resetting to defaults...');
     this.updateConfigStatus('Reset not implemented yet', 'info');
+  }
+
+  /**
+   * Open PHP Info page in a new window
+   */
+  openPhpInfo() {
+    console.log('Opening PHP Info page...');
+    
+    try {
+      // Check if Apache is running first
+      if (window.electronAPI && window.electronAPI.getServerStatus) {
+        window.electronAPI.getServerStatus('apache').then(status => {
+          if (status && status.running) {
+            // Apache is running, open phpinfo.php
+            const phpInfoUrl = 'http://localhost/phpinfo.php';
+            window.open(phpInfoUrl, '_blank', 'noopener,noreferrer');
+            this.updateConfigStatus('Opening PHP Info page...', 'info');
+          } else {
+            // Apache is not running
+            this.updateConfigStatus('Apache server is not running. Please start Apache first.', 'error');
+          }
+        }).catch(error => {
+          console.error('Error checking Apache status:', error);
+          // Fallback: try to open anyway
+          const phpInfoUrl = 'http://localhost/phpinfo.php';
+          window.open(phpInfoUrl, '_blank', 'noopener,noreferrer');
+          this.updateConfigStatus('Opening PHP Info page... (Apache status unknown)', 'warning');
+        });
+      } else {
+        // No electronAPI available, try to open anyway
+        const phpInfoUrl = 'http://localhost/phpinfo.php';
+        window.open(phpInfoUrl, '_blank', 'noopener,noreferrer');
+        this.updateConfigStatus('Opening PHP Info page...', 'info');
+      }
+    } catch (error) {
+      console.error('Error opening PHP Info:', error);
+      this.updateConfigStatus('Error opening PHP Info: ' + error.message, 'error');
+    }
   }
 }
 

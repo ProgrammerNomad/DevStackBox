@@ -699,7 +699,7 @@ body {
 
 .modal-body {
   padding: 1.5rem;
-  max-height: calc(90vh - 120px);
+  /* max-height: calc(90vh - 120px); */
   overflow-y: auto;
 }
 
