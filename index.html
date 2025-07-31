@@ -45,7 +45,7 @@
             </div>
 
             <!-- Installation Status Banner (shown when portable servers not installed) -->
-            <div class="bg-white border border-gray-200 rounded-lg shadow-md p-6 mb-6 hidden" id="installationBanner">
+            <div class="bg-white border border-gray-200 rounded-lg shadow-md p-6 mb-6 hidden" id="installationBanner" style="display: none;">
                 <div class="flex items-start space-x-4">
                     <div class="flex-shrink-0">
                         <img src="assets/icons/download.svg" alt="Setup" class="w-8 h-8 text-gray-600">
@@ -134,7 +134,10 @@
                         <label for="phpVersion" class="block text-sm font-medium text-gray-700">Active PHP Version:</label>
                         <div class="flex items-center space-x-3">
                             <select id="phpVersion" class="flex-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary">
-                                <option value="">Loading...</option>
+                                <option value="8.1">PHP 8.1</option>
+                                <option value="8.2">PHP 8.2 (Default)</option>
+                                <option value="8.3">PHP 8.3</option>
+                                <option value="8.4">PHP 8.4</option>
                             </select>
                             <button class="inline-flex items-center px-4 py-2 bg-primary text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors" id="switchPhpBtn">Switch</button>
                         </div>
@@ -143,12 +146,12 @@
                     <div class="space-y-4">
                         <div class="text-sm">
                             <span class="font-medium text-gray-900">Current Version:</span>
-                            <span id="currentPhpVersion" class="text-gray-600 ml-2">Not detected</span>
+                            <span id="currentPhpVersion" class="text-gray-600 ml-2">PHP 8.2</span>
                         </div>
                         <div class="flex flex-wrap gap-2">
                             <button class="inline-flex items-center px-3 py-2 bg-secondary hover:bg-gray-600 text-white text-sm rounded-md transition-colors config-btn" data-config="php">Edit php.ini</button>
                             <button class="inline-flex items-center px-3 py-2 bg-secondary hover:bg-gray-600 text-white text-sm rounded-md transition-colors config-btn" data-config="php-extensions">PHP Extensions</button>
-                            <button class="inline-flex items-center px-3 py-2 bg-secondary hover:bg-gray-600 text-white text-sm rounded-md transition-colors" id="phpInfoBtn">PHP Info</button>
+                            <button class="inline-flex items-center px-3 py-2 bg-secondary hover:bg-gray-600 text-white text-sm rounded-md transition-colors disabled" id="phpInfoBtn" disabled title="Apache must be running to view PHP Info">PHP Info</button>
                         </div>
                     </div>
                 </div>
@@ -204,83 +207,91 @@
                 </div>
             </section>
 
-            <!-- App Installers Panel -->
             <!-- One-Click Installers Panel -->
-            <section class="panel installers-panel">
-                <h2>
-                    <img src="assets/icons/installer.svg" alt="Installers" class="section-icon">
+            <section class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <h2 class="flex items-center text-xl font-semibold text-gray-900 mb-6">
+                    <img src="assets/icons/installer.svg" alt="Installers" class="w-6 h-6 mr-3">
                     One-Click Installers
                 </h2>
                 
-                <div class="installers-toolbar">
-                    <div class="search-container">
-                        <input type="text" 
-                               id="installerSearch" 
-                               class="form-input" 
-                               placeholder="Search installers..."
-                               autocomplete="off">
+                <div class="flex flex-col sm:flex-row gap-4 mb-6">
+                    <div class="flex-1">
+                        <input type="text" id="installerSearch" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary" placeholder="Search installers..." autocomplete="off">
                     </div>
-                    <div class="filter-container">
-                        <select id="categoryFilter" class="form-select">
+                    <div class="sm:w-48">
+                        <select id="categoryFilter" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary">
                             <option value="">All Categories</option>
-                            <option value="CMS">CMS</option>
-                            <option value="Framework">Framework</option>
-                            <option value="E-commerce">E-commerce</option>
-                            <option value="Forum">Forum</option>
-                            <option value="Wiki">Wiki</option>
+                            <option value="cms">Content Management</option>
+                            <option value="framework">PHP Frameworks</option>
+                            <option value="ecommerce">E-commerce</option>
+                            <option value="forum">Forum & Community</option>
+                            <option value="wiki">Wiki & Documentation</option>
                         </select>
                     </div>
                 </div>
                 
-                <div id="installersContainer" class="installers-container">
-                    <div class="loading-spinner">
-                        <div class="spinner"></div>
-                        <p>Loading installers...</p>
+                <div id="installersContainer" class="min-h-[300px]">
+                    <div class="flex items-center justify-center h-48">
+                        <div class="text-center">
+                            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+                            <p class="text-gray-500">Loading installers...</p>
+                        </div>
                     </div>
                 </div>
             </section>
 
             <!-- System Information Panel -->
-            <section class="panel system-panel">
-                <h2>
-                    <img src="assets/icons/system.svg" alt="System" class="section-icon">
+            <section class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <h2 class="flex items-center text-xl font-semibold text-gray-900 mb-6">
+                    <img src="assets/icons/system.svg" alt="System" class="w-6 h-6 mr-3">
                     System Information
                 </h2>
                 
-                <div class="system-info">
-                    <div class="info-row">
-                        <span class="info-label">DevStackBox Version:</span>
-                        <span class="info-value">1.0.0</span>
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center py-3 border-b border-gray-200 last:border-b-0">
+                        <span class="text-sm font-medium text-gray-700">DevStackBox Version:</span>
+                        <span class="text-sm text-gray-900 font-semibold">1.0.0</span>
                     </div>
-                    <div class="info-row">
-                        <span class="info-label">Installation Type:</span>
-                        <span class="info-value" id="installationType">Portable</span>
+                    <div class="flex justify-between items-center py-3 border-b border-gray-200 last:border-b-0">
+                        <span class="text-sm font-medium text-gray-700">Installation Type:</span>
+                        <span class="text-sm text-gray-900 font-semibold" id="installationType">Portable</span>
                     </div>
-                    <div class="info-row">
-                        <span class="info-label">Apache Status:</span>
-                        <span class="info-value" id="systemApacheStatus">Not Installed</span>
+                    <div class="flex justify-between items-center py-3 border-b border-gray-200 last:border-b-0">
+                        <span class="text-sm font-medium text-gray-700">Apache Status:</span>
+                        <span class="text-sm font-semibold text-green-600" id="systemApacheStatus">Pre-bundled</span>
                     </div>
-                    <div class="info-row">
-                        <span class="info-label">MySQL Status:</span>
-                        <span class="info-value" id="systemMysqlStatus">Not Installed</span>
+                    <div class="flex justify-between items-center py-3 border-b border-gray-200 last:border-b-0">
+                        <span class="text-sm font-medium text-gray-700">MySQL Status:</span>
+                        <span class="text-sm font-semibold text-green-600" id="systemMysqlStatus">Pre-bundled</span>
                     </div>
-                    <div class="info-row">
-                        <span class="info-label">PHP Status:</span>
-                        <span class="info-value" id="systemPhpStatus">Not Installed</span>
+                    <div class="flex justify-between items-center py-3">
+                        <span class="text-sm font-medium text-gray-700">PHP Status:</span>
+                        <span class="text-sm font-semibold text-green-600" id="systemPhpStatus">PHP 8.2, 8.1, 8.3, 8.4 (8.2 default)</span>
                     </div>
                 </div>
             </section>
         </main>
 
-        <!-- Status Bar -->
-        <footer class="status-bar">
-            <div class="status-info">
-                <span id="systemInfo">DevStackBox Ready</span>
-            </div>
-            <div class="status-actions">
-                <span class="status-item">Apache: <span id="footer-apache-status" class="status-stopped">Stopped</span></span>
-                <span class="status-item">MySQL: <span id="footer-mysql-status" class="status-stopped">Stopped</span></span>
-                <span class="status-item">PHP: <span id="footer-php-status">Not Set</span></span>
+        <!-- Status Bar / Footer -->
+        <footer class="bg-gray-800 text-white px-6 py-3 mt-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <span id="systemInfo" class="text-sm font-medium">DevStackBox Ready</span>
+                </div>
+                <div class="flex items-center space-x-6">
+                    <span class="flex items-center text-sm">
+                        Apache: 
+                        <span id="footer-apache-status" class="ml-1 px-2 py-1 rounded text-xs bg-red-100 text-red-800">Stopped</span>
+                    </span>
+                    <span class="flex items-center text-sm">
+                        MySQL: 
+                        <span id="footer-mysql-status" class="ml-1 px-2 py-1 rounded text-xs bg-red-100 text-red-800">Stopped</span>
+                    </span>
+                    <span class="flex items-center text-sm">
+                        PHP: 
+                        <span id="footer-php-status" class="ml-1 px-2 py-1 rounded text-xs bg-green-100 text-green-800">PHP 8.2</span>
+                    </span>
+                </div>
             </div>
         </footer>
     </div>
@@ -298,8 +309,8 @@
             
             <div class="modal-body">
                 <div class="settings-tabs">
-                    <button class="tab-btn active" data-tab="servers">Server Downloads</button>
-                    <button class="tab-btn" data-tab="tools">Additional Tools</button>
+                    <button class="px-4 py-2 border-b-2 border-blue-500 text-blue-600 font-medium tab-btn active" data-tab="servers">Server Downloads</button>
+                    <button class="px-4 py-2 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium tab-btn" data-tab="tools">Additional Tools</button>
                 </div>
 
                 <!-- Server Downloads Tab -->
@@ -350,8 +361,8 @@
                                 MySQL 5.7.44 (Legacy)
                             </label>
                         </div>
-                        <button class="btn btn-primary download-btn" data-component="mysql">
-                            <img src="assets/icons/download.svg" alt="Download" class="btn-icon">
+                        <button class="inline-flex items-center px-4 py-2 bg-primary text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors download-btn" data-component="mysql">
+                            <img src="assets/icons/download.svg" alt="Download" class="w-4 h-4 mr-2">
                             Download MySQL
                         </button>
                     </div>
@@ -397,15 +408,15 @@
                             </h4>
                             <span class="status-badge" id="phpmyadmin-download-status">Not Installed</span>
                         </div>
-                        <button class="btn btn-primary download-btn" data-component="phpmyadmin">
-                            <img src="assets/icons/download.svg" alt="Download" class="btn-icon">
+                        <button class="inline-flex items-center px-4 py-2 bg-primary text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors download-btn" data-component="phpmyadmin">
+                            <img src="assets/icons/download.svg" alt="Download" class="w-4 h-4 mr-2">
                             Download phpMyAdmin
                         </button>
                     </div>
 
                     <div class="download-all-section">
-                        <button class="btn btn-success btn-large" id="downloadAllServersBtn">
-                            <img src="assets/icons/installer.svg" alt="Download All" class="btn-icon">
+                        <button class="inline-flex items-center px-6 py-3 bg-green-600 text-white text-lg font-medium rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors" id="downloadAllServersBtn">
+                            <img src="assets/icons/installer.svg" alt="Download All" class="w-5 h-5 mr-2">
                             Download All Server Components
                         </button>
                     </div>
@@ -421,7 +432,7 @@
                                 WordPress CLI
                             </h4>
                             <p>Command line interface for WordPress</p>
-                            <button class="btn btn-secondary download-btn" data-tool="wp-cli">Download WP-CLI</button>
+                            <button class="inline-flex items-center px-4 py-2 bg-secondary hover:bg-gray-600 text-white text-sm font-medium rounded-md transition-colors download-btn" data-tool="wp-cli">Download WP-CLI</button>
                         </div>
                         <div class="tool-card">
                             <h4>
@@ -429,7 +440,7 @@
                                 Composer
                             </h4>
                             <p>PHP dependency manager</p>
-                            <button class="btn btn-secondary download-btn" data-tool="composer">Download Composer</button>
+                            <button class="inline-flex items-center px-4 py-2 bg-secondary hover:bg-gray-600 text-white text-sm font-medium rounded-md transition-colors download-btn" data-tool="composer">Download Composer</button>
                         </div>
                     </div>
                 </div>
@@ -437,283 +448,8 @@
         </div>
     </div>
 
-            </section>
-
-            <!-- Quick Actions Panel -->
-            <section class="panel quick-actions-panel">
-                <h2>
-                    <img src="assets/icons/lightning.svg" alt="Quick Actions" class="section-icon">
-                    Quick Actions
-                </h2>
-                
-                <div class="actions-grid">
-                    <button class="action-btn" id="openPhpMyAdmin">
-                        <img src="assets/icons/phpmyadmin.svg" alt="phpMyAdmin" class="action-icon">
-                        <span class="label">phpMyAdmin</span>
-                    </button>
-                    
-                    <button class="action-btn" id="openWebRoot">
-                        <img src="assets/icons/folder.svg" alt="Folder" class="action-icon">
-                        <span class="label">Web Root</span>
-                    </button>
-                    
-                    <button class="action-btn" id="viewLogs">
-                        <img src="assets/icons/logs.svg" alt="Logs" class="action-icon">
-                        <span class="label">View Logs</span>
-                    </button>
-                    
-                    <button class="action-btn" id="createProject">
-                        <img src="assets/icons/project.svg" alt="Project" class="action-icon">
-                        <span class="label">New Project</span>
-                    </button>
-                </div>
-            </section>
-
-            <!-- Project Management Panel -->
-            <section class="panel projects-panel">
-                <h2>
-                    <img src="assets/icons/projects.svg" alt="Projects" class="section-icon">
-                    Project Management
-                </h2>
-                
-                <div class="projects-toolbar">
-                    <button class="btn btn-primary" id="newProjectBtn">New Project</button>
-                    <button class="btn btn-secondary" id="refreshProjectsBtn">Refresh</button>
-                    <button class="btn btn-secondary" id="openProjectsFolderBtn">Open Folder</button>
-                </div>
-                
-                <div class="projects-list" id="projectsList">
-                    <div class="projects-placeholder">
-                        <p>No projects found. Create your first project to get started!</p>
-                    </div>
-                </div>
-            </section>
-
-            <!-- App Installers Panel -->
-            <section class="panel installers-panel">
-                <h2>
-                    <img src="assets/icons/installer.svg" alt="Installers" class="section-icon">
-                    One-Click Installers
-                </h2>
-                
-                <div class="installers-grid">
-                    <div class="installer-card">
-                        <div class="installer-header">
-                            <img src="assets/icons/wordpress.svg" alt="WordPress" class="installer-icon">
-                            <h3>WordPress</h3>
-                        </div>
-                        <p>Popular CMS for websites and blogs</p>
-                        <button class="btn btn-primary install-btn" data-app="wordpress">Install WordPress</button>
-                    </div>
-                    
-                    <div class="installer-card">
-                        <div class="installer-header">
-                            <img src="assets/icons/laravel.svg" alt="Laravel" class="installer-icon">
-                            <h3>Laravel</h3>
-                        </div>
-                        <p>PHP framework for web applications</p>
-                        <button class="btn btn-primary install-btn" data-app="laravel">Install Laravel</button>
-                    </div>
-                    
-                    <div class="installer-card">
-                        <div class="installer-header">
-                            <img src="assets/icons/codeigniter.svg" alt="CodeIgniter" class="installer-icon">
-                            <h3>CodeIgniter</h3>
-                        </div>
-                        <p>Lightweight PHP framework</p>
-                        <button class="btn btn-primary install-btn" data-app="codeigniter">Install CodeIgniter</button>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Download Manager Panel -->
-            <section class="panel download-panel">
-                <h2>
-                    <img src="assets/icons/download.svg" alt="Download" class="section-icon">
-                    Portable Components Manager
-                </h2>
-                
-                <div class="download-content">
-                    <div class="download-header">
-                        <p>Download and configure all required components for DevStackBox to work independently:</p>
-                        <button class="btn btn-primary btn-large" id="downloadAllBtn">
-                            <img src="assets/icons/download.svg" alt="Download" class="btn-icon">
-                            Download All Components
-                        </button>
-                    </div>
-                    
-                    <div class="components-grid">
-                        <!-- Apache Component -->
-                        <div class="component-card" data-component="apache">
-                            <div class="component-header">
-                                <img src="assets/icons/apache.svg" alt="Apache" class="component-icon">
-                                <div class="component-info">
-                                    <h4>Apache HTTP Server</h4>
-                                    <span class="component-status" id="apache-component-status">Not Installed</span>
-                                </div>
-                            </div>
-                            <div class="component-details">
-                                <p>Web server for hosting PHP applications</p>
-                                <span class="component-version">Version: 2.4.x</span>
-                            </div>
-                            <button class="btn btn-secondary component-btn" data-component="apache">
-                                Download Apache
-                            </button>
-                        </div>
-
-                        <!-- MySQL Component -->
-                        <div class="component-card" data-component="mysql">
-                            <div class="component-header">
-                                <img src="assets/icons/mysql.svg" alt="MySQL" class="component-icon">
-                                <div class="component-info">
-                                    <h4>MySQL Database</h4>
-                                    <span class="component-status" id="mysql-component-status">Not Installed</span>
-                                </div>
-                            </div>
-                            <div class="component-details">
-                                <p>Database server for data storage</p>
-                                <span class="component-version">Version: 8.0.x</span>
-                            </div>
-                            <button class="btn btn-secondary component-btn" data-component="mysql">
-                                Download MySQL
-                            </button>
-                        </div>
-
-                        <!-- PHP Versions -->
-                        <div class="component-card" data-component="php">
-                            <div class="component-header">
-                                <img src="assets/icons/php.svg" alt="PHP" class="component-icon">
-                                <div class="component-info">
-                                    <h4>PHP Versions</h4>
-                                    <span class="component-status" id="php-component-status">Not Installed</span>
-                                </div>
-                            </div>
-                            <div class="component-details">
-                                <p>PHP 8.1, 8.2, 8.3, and 8.4 with extensions (8.2 default)</p>
-                                <div class="php-versions">
-                                    <span class="version-tag">PHP 8.1</span>
-                                    <span class="version-tag">PHP 8.2</span>
-                                    <span class="version-tag">PHP 8.3</span>
-                                    <span class="version-tag">PHP 8.4</span>
-                                </div>
-                            </div>
-                            <button class="btn btn-secondary component-btn" data-component="php">
-                                Download PHP
-                            </button>
-                        </div>
-
-                        <!-- phpMyAdmin Component -->
-                        <div class="component-card" data-component="phpmyadmin">
-                            <div class="component-header">
-                                <img src="assets/icons/phpmyadmin.svg" alt="phpMyAdmin" class="component-icon">
-                                <div class="component-info">
-                                    <h4>phpMyAdmin</h4>
-                                    <span class="component-status" id="phpmyadmin-component-status">Not Installed</span>
-                                </div>
-                            </div>
-                            <div class="component-details">
-                                <p>Web-based MySQL administration tool</p>
-                                <span class="component-version">Version: Latest</span>
-                            </div>
-                            <button class="btn btn-secondary component-btn" data-component="phpmyadmin">
-                                Download phpMyAdmin
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- PHP Extensions Manager -->
-                    <div class="extensions-section">
-                        <h3>
-                            <img src="assets/icons/php.svg" alt="PHP Extensions" class="section-icon-small">
-                            PHP Extensions Manager
-                        </h3>
-                        
-                        <div class="extensions-controls" style="margin-bottom: 1rem;">
-                            <div class="form-group" style="display: inline-block; margin-right: 1rem;">
-                                <label for="php-version-extensions">PHP Version:</label>
-                                <select id="php-version-extensions" class="form-select" style="width: auto; display: inline-block;">
-                                    <option value="8.1">PHP 8.1</option>
-                                    <option value="8.2" selected>PHP 8.2</option>
-                                    <option value="8.3">PHP 8.3</option>
-                                    <option value="8.4">PHP 8.4</option>
-                                </select>
-                            </div>
-                            <button class="btn btn-sm btn-secondary" id="refresh-extensions-btn">Refresh Extensions</button>
-                        </div>
-                        
-                        <div class="extensions-grid">
-                            <!-- Extensions will be dynamically loaded here -->
-                        </div>
-                        <div class="extensions-actions">
-                            <button class="btn btn-primary" id="configureExtensionsBtn">Configure Extensions</button>
-                            <button class="btn btn-secondary" id="resetExtensionsBtn">Reset to Default</button>
-                        </div>
-                    </div>
-
-                    <!-- Download Progress -->
-                    <div class="download-progress" id="downloadProgress" style="display: none;">
-                        <div class="progress-header">
-                            <h4>Downloading Components...</h4>
-                            <span class="progress-status" id="progressStatus">Preparing...</span>
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress-fill" id="progressFill" style="width: 0%"></div>
-                        </div>
-                        <div class="progress-details" id="progressDetails">
-                            <span class="current-item">Initializing download...</span>
-                            <span class="progress-percent">0%</span>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- System Information Panel -->
-            <section class="panel system-panel">
-                <h2>
-                    <img src="assets/icons/system.svg" alt="System" class="section-icon">
-                    System Information
-                </h2>
-                
-                <div class="system-info">
-                    <div class="info-row">
-                        <span class="info-label">DevStackBox Version:</span>
-                        <span class="info-value">1.0.0</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Installation Type:</span>
-                        <span class="info-value" id="installationType">Portable</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Apache Status:</span>
-                        <span class="info-value" id="systemApacheStatus">Not Installed</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">MySQL Status:</span>
-                        <span class="info-value" id="systemMysqlStatus">Not Installed</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">PHP Status:</span>
-                        <span class="info-value" id="systemPhpStatus">Not Installed</span>
-                    </div>
-                </div>
-            </section>
-        </main>
-
-        <!-- Status Bar -->
-        <footer class="status-bar">
-            <div class="status-info">
-                <span id="systemInfo">DevStackBox Ready</span>
-            </div>
-            <div class="status-actions">
-                <span class="status-item">Apache: <span id="footer-apache-status" class="status-stopped">Stopped</span></span>
-                <span class="status-item">MySQL: <span id="footer-mysql-status" class="status-stopped">Stopped</span></span>
-                <span class="status-item">PHP: <span id="footer-php-status">Not Set</span></span>
-            </div>
-        </footer>
-    </div>
-
     <!-- Loading Overlay -->
-    <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-overlay" id="loadingOverlay" style="display: none !important;">
         <div class="loading-content">
             <div class="loading-spinner"></div>
             <p id="loadingText">Loading DevStackBox...</p>
@@ -749,87 +485,12 @@
                             <input type="text" id="apache-docroot" name="documentRoot" required>
                         </div>
                     </div>
-
-                    <div class="config-section">
-                        <h3>Performance Settings</h3>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="apache-timeout">Timeout (seconds):</label>
-                                <input type="number" id="apache-timeout" name="timeout" min="1" max="3600" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="apache-workers">Max Request Workers:</label>
-                                <input type="number" id="apache-workers" name="maxRequestWorkers" min="1" max="1000" required>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="config-section">
-                        <h3>KeepAlive Settings</h3>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="apache-keepalive">KeepAlive:</label>
-                                <select id="apache-keepalive" name="keepAlive" required>
-                                    <option value="On">On</option>
-                                    <option value="Off">Off</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="apache-keepalive-timeout">KeepAlive Timeout:</label>
-                                <input type="number" id="apache-keepalive-timeout" name="keepAliveTimeout" min="1" max="300" required>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="apache-max-keepalive">Max KeepAlive Requests:</label>
-                            <input type="number" id="apache-max-keepalive" name="maxKeepAliveRequests" min="0" max="1000" required>
-                        </div>
-                    </div>
-
-                    <div class="config-section">
-                        <h3>Security Settings</h3>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="apache-tokens">Server Tokens:</label>
-                                <select id="apache-tokens" name="serverTokens" required>
-                                    <option value="Prod">Prod</option>
-                                    <option value="Major">Major</option>
-                                    <option value="Minor">Minor</option>
-                                    <option value="Min">Min</option>
-                                    <option value="OS">OS</option>
-                                    <option value="Full">Full</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="apache-signature">Server Signature:</label>
-                                <select id="apache-signature" name="serverSignature" required>
-                                    <option value="Off">Off</option>
-                                    <option value="On">On</option>
-                                    <option value="EMail">EMail</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="apache-loglevel">Log Level:</label>
-                            <select id="apache-loglevel" name="errorLogLevel" required>
-                                <option value="emerg">Emergency</option>
-                                <option value="alert">Alert</option>
-                                <option value="crit">Critical</option>
-                                <option value="error">Error</option>
-                                <option value="warn">Warning</option>
-                                <option value="notice">Notice</option>
-                                <option value="info">Info</option>
-                                <option value="debug">Debug</option>
-                            </select>
-                        </div>
-                    </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <div class="config-actions">
-                    <button type="button" class="btn btn-secondary" id="validateApacheBtn">Validate</button>
-                    <button type="button" class="btn btn-info" id="apacheBackupsBtn">Backups</button>
-                    <button type="button" class="btn btn-warning" id="resetApacheBtn">Reset</button>
-                    <button type="button" class="btn btn-success" id="saveApacheBtn">Save & Restart</button>
+                    <button type="button" class="inline-flex items-center px-4 py-2 bg-secondary hover:bg-gray-600 text-white text-sm font-medium rounded-md transition-colors" id="validateApacheBtn">Validate</button>
+                    <button type="button" class="inline-flex items-center px-4 py-2 bg-success hover:bg-green-600 text-white text-sm font-medium rounded-md transition-colors" id="saveApacheBtn">Save & Restart</button>
                 </div>
             </div>
         </div>
@@ -859,73 +520,13 @@
                                 <input type="text" id="mysql-bind" name="bindAddress" required>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label for="mysql-maxconn">Max Connections:</label>
-                            <input type="number" id="mysql-maxconn" name="maxConnections" min="1" max="10000" required>
-                        </div>
-                    </div>
-
-                    <div class="config-section">
-                        <h3>Performance Settings</h3>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="mysql-packet">Max Allowed Packet:</label>
-                                <input type="text" id="mysql-packet" name="maxAllowedPacket" required>
-                                <small>e.g., 64M, 128M, 1G</small>
-                            </div>
-                            <div class="form-group">
-                                <label for="mysql-buffer">InnoDB Buffer Pool Size:</label>
-                                <input type="text" id="mysql-buffer" name="innodbBufferPoolSize" required>
-                                <small>e.g., 256M, 512M, 1G</small>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="mysql-logsize">InnoDB Log File Size:</label>
-                            <input type="text" id="mysql-logsize" name="innodbLogFileSize" required>
-                            <small>e.g., 50M, 100M, 256M</small>
-                        </div>
-                    </div>
-
-                    <div class="config-section">
-                        <h3>Logging Settings</h3>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="mysql-slowlog">Enable Slow Query Log:</label>
-                                <select id="mysql-slowlog" name="slowQueryLog" required>
-                                    <option value="true">Yes</option>
-                                    <option value="false">No</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="mysql-slowtime">Long Query Time (seconds):</label>
-                                <input type="number" id="mysql-slowtime" name="longQueryTime" min="0" step="0.1" required>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="mysql-generallog">Enable General Log:</label>
-                            <select id="mysql-generallog" name="generalLog" required>
-                                <option value="false">No</option>
-                                <option value="true">Yes</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="config-section">
-                        <h3>SQL Mode</h3>
-                        <div class="form-group">
-                            <label for="mysql-sqlmode">SQL Mode:</label>
-                            <input type="text" id="mysql-sqlmode" name="sqlMode" required>
-                            <small>Comma-separated list of SQL modes</small>
-                        </div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <div class="config-actions">
-                    <button type="button" class="btn btn-secondary" id="validateMySQLBtn">Validate</button>
-                    <button type="button" class="btn btn-info" id="mysqlBackupsBtn">Backups</button>
-                    <button type="button" class="btn btn-warning" id="resetMySQLBtn">Reset</button>
-                    <button type="button" class="btn btn-success" id="saveMySQLBtn">Save & Restart</button>
+                    <button type="button" class="inline-flex items-center px-4 py-2 bg-secondary hover:bg-gray-600 text-white text-sm font-medium rounded-md transition-colors" id="validateMySQLBtn">Validate</button>
+                    <button type="button" class="inline-flex items-center px-4 py-2 bg-success hover:bg-green-600 text-white text-sm font-medium rounded-md transition-colors" id="saveMySQLBtn">Save & Restart</button>
                 </div>
             </div>
         </div>
@@ -947,7 +548,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" id="closeBackupsBtn">Close</button>
+                <button type="button" class="inline-flex items-center px-4 py-2 bg-secondary hover:bg-gray-600 text-white text-sm font-medium rounded-md transition-colors" id="closeBackupsBtn">Close</button>
             </div>
         </div>
     </div>
@@ -968,8 +569,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" id="cancelInstallBtn">Cancel</button>
-                <button type="button" class="btn btn-primary" id="confirmInstallBtn">Install Now</button>
+                <button type="button" class="inline-flex items-center px-4 py-2 bg-secondary hover:bg-gray-600 text-white text-sm font-medium rounded-md transition-colors" id="cancelInstallBtn">Cancel</button>
+                <button type="button" class="inline-flex items-center px-4 py-2 bg-primary hover:bg-blue-700 text-white text-sm font-medium rounded-md transition-colors" id="confirmInstallBtn">Install Now</button>
             </div>
         </div>
     </div>

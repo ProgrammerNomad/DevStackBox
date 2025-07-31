@@ -156,12 +156,12 @@ class OneClickInstallers {
             </div>
 
             <div class="installer-actions">
-              <button class="btn btn-primary install-btn" data-installer="${installer.id}">
-                <img src="assets/icons/download.svg" alt="Install" class="btn-icon">
+              <button class="inline-flex items-center px-4 py-2 bg-primary text-white text-sm font-medium rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors install-btn" data-installer="${installer.id}">
+                <img src="assets/icons/download.svg" alt="Install" class="w-4 h-4 mr-2">
                 Install Now
               </button>
-              <button class="btn btn-secondary info-btn" data-installer="${installer.id}">
-                <img src="assets/icons/system.svg" alt="More Info" class="btn-icon">
+              <button class="inline-flex items-center px-4 py-2 bg-gray-500 text-white text-sm font-medium rounded hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors info-btn" data-installer="${installer.id}">
+                <img src="assets/icons/system.svg" alt="More Info" class="w-4 h-4 mr-2">
                 Details
               </button>
             </div>
@@ -435,8 +435,8 @@ class OneClickInstallers {
           </div>
         </div>
         <div class="modal-footer">
-          <button class="btn btn-secondary close-info">Close</button>
-          <button class="btn btn-primary install-from-info" data-installer="${installer.id}">Install Now</button>
+          <button class="inline-flex items-center px-4 py-2 bg-gray-500 text-white text-sm font-medium rounded hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors close-info">Close</button>
+          <button class="inline-flex items-center px-4 py-2 bg-primary text-white text-sm font-medium rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors install-from-info" data-installer="${installer.id}">Install Now</button>
         </div>
       </div>
     `;

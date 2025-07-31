@@ -7,12 +7,25 @@ class DevStackBox {
   constructor() {
     this.services = ['apache', 'mysql'];
     this.currentPhp = null;
-    this.init();
+    // Don't initialize immediately - wait for proper DOM ready state
+    this.initWhenReady();
+  }
+
+  initWhenReady() {
+    // Double-check DOM is fully loaded
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => this.init());
+    } else {
+      // DOM is already loaded
+      this.init();
+    }
   }
 
   async init() {
     console.log('Initializing DevStackBox...');
     
+    // Additional safety check - wait a moment for DOM to settle
+    await new Promise(resolve => setTimeout(resolve, 100));
     // ✅ HIDE LOADING IMMEDIATELY - FIRST THING!
     this.hideLoading();
     
@@ -166,35 +179,105 @@ class DevStackBox {
   }
 
   updateServiceUI(service, status) {
-    const statusEl = document.getElementById(`${service}-status`);
-    const startBtn = document.querySelector(`[data-service="${service}"].start-btn`);
-    const stopBtn = document.querySelector(`[data-service="${service}"].stop-btn`);
-    const footerStatus = document.getElementById(`footer-${service}-status`);
+    // Ensure DOM is ready before attempting to update UI
+    if (document.readyState === 'loading') {
+      console.warn(`DOM not ready, postponing UI update for ${service}`);
+      document.addEventListener('DOMContentLoaded', () => {
+        this.updateServiceUI(service, status);
+      });
+      return;
+    }
 
-    if (statusEl) {
-      const dot = statusEl.querySelector('.status-dot');
-      const text = statusEl.childNodes[statusEl.childNodes.length - 1];
-      
-      if (status.running) {
-        dot.className = 'status-dot running';
-        text.textContent = ' Running';
-      } else {
-        dot.className = 'status-dot stopped';
-        text.textContent = status.installed ? ' Stopped' : ' Not Installed';
+    try {
+      const statusEl = document.getElementById(`${service}-status`);
+      const startBtn = document.querySelector(`[data-service="${service}"].start-btn`);
+      const stopBtn = document.querySelector(`[data-service="${service}"].stop-btn`);
+      const footerStatus = document.getElementById(`footer-${service}-status`);
+
+      if (!statusEl) {
+        console.warn(`Status element not found for service: ${service}`);
+        return;
       }
-    }
 
-    if (startBtn) startBtn.disabled = status.running || !status.installed;
-    if (stopBtn) stopBtn.disabled = !status.running;
-    
-    if (footerStatus) {
-      footerStatus.textContent = status.running ? 'Running' : 'Stopped';
-      footerStatus.className = status.running ? 'status-running' : 'status-stopped';
-    }
+      if (statusEl) {
+        // Find the status dot (span with rounded-full class) and text content
+        const dot = statusEl.querySelector('span.rounded-full');
+        
+        if (status.running) {
+          if (dot) {
+            dot.className = 'w-2 h-2 bg-green-500 rounded-full mr-2';
+          } else {
+            console.warn(`Status dot not found for service: ${service}, creating new status element`);
+            statusEl.innerHTML = '<span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>Running';
+            return; // Skip text node manipulation since we rebuilt the element
+          }
+          // Update text content - get all text after the dot
+          const textNodes = statusEl.childNodes;
+          for (let i = 0; i < textNodes.length; i++) {
+            if (textNodes[i].nodeType === Node.TEXT_NODE) {
+              textNodes[i].textContent = 'Running';
+              break;
+            }
+          }
+          // If no text node found, set the statusEl textContent directly but preserve the dot
+          if (!Array.from(textNodes).some(node => node.nodeType === Node.TEXT_NODE)) {
+            // Clear and rebuild the status element
+            statusEl.innerHTML = '<span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>Running';
+          }
+        } else {
+          if (dot) {
+            dot.className = 'w-2 h-2 bg-red-500 rounded-full mr-2';
+          } else {
+            console.warn(`Status dot not found for service: ${service}, creating new status element`);
+            const statusText = status.installed ? 'Stopped' : 'Not Installed';
+            statusEl.innerHTML = `<span class="w-2 h-2 bg-red-500 rounded-full mr-2"></span>${statusText}`;
+            return; // Skip text node manipulation since we rebuilt the element
+          }
+          // Update text content
+          const textNodes = statusEl.childNodes;
+          const statusText = status.installed ? 'Stopped' : 'Not Installed';
+          for (let i = 0; i < textNodes.length; i++) {
+            if (textNodes[i].nodeType === Node.TEXT_NODE) {
+              textNodes[i].textContent = statusText;
+              break;
+            }
+          }
+          // If no text node found, rebuild the status element
+          if (!Array.from(textNodes).some(node => node.nodeType === Node.TEXT_NODE)) {
+            statusEl.innerHTML = `<span class="w-2 h-2 bg-red-500 rounded-full mr-2"></span>${statusText}`;
+          }
+        }
+      } else {
+        console.warn(`Status element not found for service: ${service}`);
+      }
 
-    // Update PHP Info button when Apache status changes
-    if (service === 'apache' && window.configUI && window.configUI.updatePhpInfoButton) {
-      window.configUI.updatePhpInfoButton();
+      if (startBtn) {
+        startBtn.disabled = status.running || !status.installed;
+      } else {
+        console.warn(`Start button not found for service: ${service}`);
+      }
+      
+      if (stopBtn) {
+        stopBtn.disabled = !status.running;
+      } else {
+        console.warn(`Stop button not found for service: ${service}`);
+      }
+      
+      if (footerStatus) {
+        footerStatus.textContent = status.running ? 'Running' : 'Stopped';
+        footerStatus.className = status.running ? 
+          'ml-1 px-2 py-1 rounded text-xs bg-green-100 text-green-800' : 
+          'ml-1 px-2 py-1 rounded text-xs bg-red-100 text-red-800';
+      } else {
+        console.warn(`Footer status not found for service: ${service}`);
+      }
+
+      // Update PHP Info button when Apache status changes
+      if (service === 'apache' && window.configUI && window.configUI.updatePhpInfoButton) {
+        window.configUI.updatePhpInfoButton();
+      }
+    } catch (error) {
+      console.error(`Error updating UI for service ${service}:`, error);
     }
   }
 
@@ -382,19 +465,26 @@ class DevStackBox {
   }
 
   updateSystemInfo(status) {
-    const apacheStatus = document.getElementById('systemApacheStatus');
-    const mysqlStatus = document.getElementById('systemMysqlStatus');
-    const phpStatus = document.getElementById('systemPhpStatus');
+    try {
+      const apacheStatus = document.getElementById('systemApacheStatus');
+      const mysqlStatus = document.getElementById('systemMysqlStatus');
+      const phpStatus = document.getElementById('systemPhpStatus');
 
-    if (apacheStatus) {
-      apacheStatus.textContent = status.apache ? 'Pre-bundled' : 'Not Bundled';
-      apacheStatus.className = status.apache ? 'status-available' : 'status-missing';
-    }
-    if (mysqlStatus) {
-      mysqlStatus.textContent = status.mysql ? 'Pre-bundled' : 'Not Bundled';
-      mysqlStatus.className = status.mysql ? 'status-available' : 'status-missing';
-    }
-    if (phpStatus) {
+      if (apacheStatus) {
+        apacheStatus.textContent = status.apache ? 'Pre-bundled' : 'Not Bundled';
+        apacheStatus.className = status.apache ? 'text-sm font-semibold text-green-600' : 'text-sm font-semibold text-red-600';
+      } else {
+        console.warn('Apache status element not found');
+      }
+      
+      if (mysqlStatus) {
+        mysqlStatus.textContent = status.mysql ? 'Pre-bundled' : 'Not Bundled';
+        mysqlStatus.className = status.mysql ? 'text-sm font-semibold text-green-600' : 'text-sm font-semibold text-red-600';
+      } else {
+        console.warn('MySQL status element not found');
+      }
+      
+      if (phpStatus) {
       const phpVersions = [];
       // Check for new format (status.php object) or old format (status.php81, etc.)
       if (status.php && typeof status.php === 'object') {
@@ -416,10 +506,10 @@ class DevStackBox {
           return a.localeCompare(b);
         });
         phpStatus.textContent = `PHP ${sortedVersions.join(', ')} (8.2 default)`;
-        phpStatus.className = 'status-available';
+        phpStatus.className = 'text-sm font-semibold text-green-600';
       } else {
         phpStatus.textContent = 'Not Bundled';
-        phpStatus.className = 'status-missing';
+        phpStatus.className = 'text-sm font-semibold text-red-600';
       }
     }
     
@@ -427,7 +517,13 @@ class DevStackBox {
     const pmaStatus = document.getElementById('systemPhpmyadminStatus');
     if (pmaStatus) {
       pmaStatus.textContent = status.phpmyadmin ? 'Pre-bundled' : 'Not Bundled';
-      pmaStatus.className = status.phpmyadmin ? 'status-available' : 'status-missing';
+      pmaStatus.className = status.phpmyadmin ? 'text-sm font-semibold text-green-600' : 'text-sm font-semibold text-red-600';
+    } else {
+      console.warn('phpMyAdmin status element not found');
+    }
+    
+    } catch (error) {
+      console.error('Failed to update system info:', error);
     }
   }
 
@@ -447,7 +543,7 @@ class DevStackBox {
     const footerPhpStatus = document.getElementById('footer-php-status');
     if (footerPhpStatus) {
       footerPhpStatus.textContent = `PHP ${version}`;
-      footerPhpStatus.className = 'status-running';
+      footerPhpStatus.className = 'ml-1 px-2 py-1 rounded text-xs bg-green-100 text-green-800';
     }
   }
 
@@ -488,6 +584,7 @@ class DevStackBox {
     const text = document.getElementById('loadingText');
     
     if (overlay) {
+      overlay.style.display = 'flex'; // Force show with inline style
       overlay.classList.add('show'); // Use CSS class for better control
     }
     if (text) {
@@ -499,6 +596,7 @@ class DevStackBox {
     const overlay = document.getElementById('loadingOverlay');
     if (overlay) {
       overlay.classList.remove('show'); // Use CSS class for better control
+      overlay.style.display = 'none'; // Force hide with inline style
     }
   }
 
@@ -609,21 +707,22 @@ DevStackBox/
   }
 
   updateDownloadModalStatus(status) {
-    // Update Apache status
-    const apacheStatus = document.getElementById('apache-download-status');
-    if (apacheStatus) {
-      apacheStatus.textContent = status.apache ? '✅ Pre-bundled' : '❌ Missing';
-      apacheStatus.className = status.apache ? 'status-badge status-success' : 'status-badge status-error';
-    }
+    try {
+      // Update Apache status
+      const apacheStatus = document.getElementById('apache-download-status');
+      if (apacheStatus) {
+        apacheStatus.textContent = status.apache ? '✅ Pre-bundled' : '❌ Missing';
+        apacheStatus.className = status.apache ? 'status-badge status-success' : 'status-badge status-error';
+      }
 
-    // Update MySQL status
-    const mysqlStatus = document.getElementById('mysql-download-status');
-    if (mysqlStatus) {
-      mysqlStatus.textContent = status.mysql ? '✅ Pre-bundled' : '❌ Missing';
-      mysqlStatus.className = status.mysql ? 'status-badge status-success' : 'status-badge status-error';
-    }
+      // Update MySQL status
+      const mysqlStatus = document.getElementById('mysql-download-status');
+      if (mysqlStatus) {
+        mysqlStatus.textContent = status.mysql ? '✅ Pre-bundled' : '❌ Missing';
+        mysqlStatus.className = status.mysql ? 'status-badge status-success' : 'status-badge status-error';
+      }
 
-    // Update phpMyAdmin status
+      // Update phpMyAdmin status
     const phpmyadminStatus = document.getElementById('phpmyadmin-download-status');
     if (phpmyadminStatus) {
       phpmyadminStatus.textContent = status.phpmyadmin ? '✅ Pre-bundled' : '❌ Missing';
@@ -649,11 +748,15 @@ DevStackBox/
       if ((component === 'apache' && status.apache) ||
           (component === 'mysql' && status.mysql) ||
           (component === 'phpmyadmin' && status.phpmyadmin)) {
-        btn.innerHTML = '<img src="assets/icons/system.svg" alt="Bundled" class="btn-icon"> Pre-bundled';
+        btn.innerHTML = '<img src="assets/icons/system.svg" alt="Bundled" class="w-4 h-4 mr-2"> Pre-bundled';
         btn.disabled = true;
-        btn.className = 'btn btn-success download-btn';
+        btn.className = 'inline-flex items-center px-4 py-2 bg-green-600 text-white text-sm font-medium rounded opacity-60 cursor-not-allowed download-btn';
       }
     });
+    
+    } catch (error) {
+      console.error('Failed to update download modal status:', error);
+    }
   }
 
   // Quick Actions Methods
@@ -743,6 +846,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const overlay = document.getElementById('loadingOverlay');
   if (overlay) {
     overlay.classList.remove('show'); // Ensure it's hidden
+    overlay.style.display = 'none'; // Force hide with inline style
   }
   
   // Always create DevStackBox instance
@@ -754,6 +858,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Hide loading overlay even on error
     if (overlay) {
       overlay.classList.remove('show');
+      overlay.style.display = 'none';
     }
     
     // Show error message

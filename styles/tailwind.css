@@ -119,10 +119,27 @@
   position: fixed;
   inset: 0;
   z-index: 50;
-  display: flex;
+  display: none; /* Hidden by default */
   align-items: center;
   justify-content: center;
   background-color: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.modal-overlay.active {
+  display: flex;
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Show modal when it has inline display style (for JavaScript control) */
+.modal-overlay[style*="display: flex"],
+.modal-overlay[style*="display:flex"] {
+  display: flex !important;
+  opacity: 1;
+  visibility: visible;
 }
 
 .modal-content {
@@ -198,4 +215,46 @@
 .status-loading {
   background-color: #fef3c7;
   color: #92400e;
+}
+
+/* Additional status classes used by JavaScript */
+.status-available {
+  color: #16a34a;
+  font-weight: 500;
+}
+
+.status-missing {
+  color: #dc2626;
+  font-weight: 500;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border: 1px solid;
+}
+
+.status-success {
+  background-color: #dcfce7;
+  color: #166534;
+  border-color: #bbf7d0;
+}
+
+.status-error {
+  background-color: #fee2e2;
+  color: #991b1b;
+  border-color: #fecaca;
+}
+
+.version-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 500;
 }

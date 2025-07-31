@@ -232,7 +232,7 @@ class ConfigurationUI {
                                 <small class="form-help">Select PHP version to manage extensions</small>
                             </div>
                             <div class="form-group">
-                                <button type="button" id="refresh-extensions-btn" class="btn btn-secondary">
+                                <button type="button" id="refresh-extensions-btn" class="inline-flex items-center px-3 py-2 bg-gray-500 text-white text-sm font-medium rounded hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors">
                                     <img src="assets/icons/refresh.svg" alt="Refresh" class="btn-icon">
                                     Refresh Extensions
                                 </button>
@@ -260,15 +260,15 @@ class ConfigurationUI {
             <div class="modal-footer">
                 <div class="config-status" id="configStatus">Ready to configure</div>
                 <div class="modal-buttons">
-                    <button class="btn btn-secondary" id="configValidateBtn">
+                    <button class="inline-flex items-center px-4 py-2 bg-gray-500 text-white text-sm font-medium rounded hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors" id="configValidateBtn">
                         <img src="assets/icons/check.svg" alt="Validate" class="btn-icon">
                         Validate Configuration
                     </button>
-                    <button class="btn btn-primary" id="configSaveBtn">
+                    <button class="inline-flex items-center px-4 py-2 bg-primary text-white text-sm font-medium rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors" id="configSaveBtn">
                         <img src="assets/icons/save.svg" alt="Save" class="btn-icon">
                         Save & Apply
                     </button>
-                    <button class="btn btn-secondary" id="configResetBtn">Reset to Defaults</button>
+                    <button class="inline-flex items-center px-4 py-2 bg-gray-500 text-white text-sm font-medium rounded hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors" id="configResetBtn">Reset to Defaults</button>
                 </div>
             </div>
         </div>

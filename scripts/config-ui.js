@@ -286,7 +286,7 @@ class ConfigurationUI {
                                 </select>
                             </div>
                             <div class="form-group" style="margin-bottom: 0;">
-                                <button type="button" id="refresh-extensions-btn" class="btn btn-secondary" style="height: 38px;">
+                                <button type="button" id="refresh-extensions-btn" class="inline-flex items-center px-3 py-2 bg-gray-500 text-white text-sm font-medium rounded hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors" style="height: 38px;">
                                     <img src="assets/icons/refresh.svg" alt="Refresh" style="width: 14px; height: 14px; margin-right: 4px;">
                                     Refresh
                                 </button>
@@ -308,11 +308,11 @@ class ConfigurationUI {
             <div class="modal-footer">
                 <div class="config-status" id="configStatus">Ready to configure</div>
                 <div class="modal-buttons">
-                    <button class="btn btn-secondary" id="configValidateBtn">Validate</button>
-                    <button class="btn btn-primary" id="configSaveBtn">Save & Apply</button>
-                    <button class="btn btn-secondary" id="configResetBtn">Reset</button>
-                    <button class="btn btn-info" id="savePhpExtensionsBtn" style="display:none;">Save Extensions</button>
-                    <button class="btn btn-warning" id="resetPhpExtensionsBtn" style="display:none;">Reset Extensions</button>
+                    <button class="inline-flex items-center px-4 py-2 bg-gray-500 text-white text-sm font-medium rounded hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors" id="configValidateBtn">Validate</button>
+                    <button class="inline-flex items-center px-4 py-2 bg-primary text-white text-sm font-medium rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors" id="configSaveBtn">Save & Apply</button>
+                    <button class="inline-flex items-center px-4 py-2 bg-gray-500 text-white text-sm font-medium rounded hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors" id="configResetBtn">Reset</button>
+                    <button class="inline-flex items-center px-4 py-2 bg-blue-500 text-white text-sm font-medium rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors" id="savePhpExtensionsBtn" style="display:none;">Save Extensions</button>
+                    <button class="inline-flex items-center px-4 py-2 bg-yellow-500 text-white text-sm font-medium rounded hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 transition-colors" id="resetPhpExtensionsBtn" style="display:none;">Reset Extensions</button>
                 </div>
             </div>
         </div>
