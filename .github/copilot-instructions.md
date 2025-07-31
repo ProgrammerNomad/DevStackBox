@@ -111,7 +111,7 @@ DevStackBox/
 | Environment Configuration  | Easy access to config files like `php.ini`, `my.ini`                      |
 | Logs Viewer                | View Apache/MySQL logs in the interface                                    |
 | Port Changer               | GUI support to change Apache and MySQL ports                              |
-| System Tray Support        | Minimize to tray like Laragon                                              |
+| System Tray Support        | Minimize to tray like Laragon and XAMPP                                              |
 | Open Source and Lightweight| Designed to be minimal yet extendable                                     |
 
 ---

@@ -7,6 +7,7 @@
     <title>DevStackBox - Local Development Environment</title>
     <link rel="stylesheet" href="styles/main.css">
     <link rel="stylesheet" href="styles/config-ui.css">
+    <link rel="stylesheet" href="styles/installers.css">
 </head>
 <body>
     <div class="app-container">
@@ -206,38 +207,37 @@
             </section>
 
             <!-- App Installers Panel -->
+            <!-- One-Click Installers Panel -->
             <section class="panel installers-panel">
                 <h2>
                     <img src="assets/icons/installer.svg" alt="Installers" class="section-icon">
                     One-Click Installers
                 </h2>
                 
-                <div class="installers-grid">
-                    <div class="installer-card">
-                        <div class="installer-header">
-                            <img src="assets/icons/wordpress.svg" alt="WordPress" class="installer-icon">
-                            <h3>WordPress</h3>
-                        </div>
-                        <p>Popular CMS for websites and blogs</p>
-                        <button class="btn btn-primary install-btn" data-app="wordpress">Install WordPress</button>
+                <div class="installers-toolbar">
+                    <div class="search-container">
+                        <input type="text" 
+                               id="installerSearch" 
+                               class="form-input" 
+                               placeholder="Search installers..."
+                               autocomplete="off">
                     </div>
-                    
-                    <div class="installer-card">
-                        <div class="installer-header">
-                            <img src="assets/icons/laravel.svg" alt="Laravel" class="installer-icon">
-                            <h3>Laravel</h3>
-                        </div>
-                        <p>PHP framework for web applications</p>
-                        <button class="btn btn-primary install-btn" data-app="laravel">Install Laravel</button>
+                    <div class="filter-container">
+                        <select id="categoryFilter" class="form-select">
+                            <option value="">All Categories</option>
+                            <option value="CMS">CMS</option>
+                            <option value="Framework">Framework</option>
+                            <option value="E-commerce">E-commerce</option>
+                            <option value="Forum">Forum</option>
+                            <option value="Wiki">Wiki</option>
+                        </select>
                     </div>
-                    
-                    <div class="installer-card">
-                        <div class="installer-header">
-                            <img src="assets/icons/codeigniter.svg" alt="CodeIgniter" class="installer-icon">
-                            <h3>CodeIgniter</h3>
-                        </div>
-                        <p>Lightweight PHP framework</p>
-                        <button class="btn btn-primary install-btn" data-app="codeigniter">Install CodeIgniter</button>
+                </div>
+                
+                <div id="installersContainer" class="installers-container">
+                    <div class="loading-spinner">
+                        <div class="spinner"></div>
+                        <p>Loading installers...</p>
                     </div>
                 </div>
             </section>
@@ -954,8 +954,31 @@
         </div>
     </div>
 
+    <!-- Installer Details Modal -->
+    <div id="installerModal" class="modal-overlay">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h3>
+                    <img id="modalInstallerIcon" src="" alt="" class="modal-icon">
+                    <span id="modalInstallerName">Installer Details</span>
+                </h3>
+                <button class="modal-close" id="closeInstallerModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="installerModalContent">
+                    <!-- Dynamic content will be inserted here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="cancelInstallBtn">Cancel</button>
+                <button type="button" class="btn btn-primary" id="confirmInstallBtn">Install Now</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Scripts -->
     <script src="scripts/config-ui.js"></script>
+    <script src="scripts/one-click-installers.js"></script>
     <script src="scripts/app.js?v=1.0.1"></script>
 </body>
 </html>

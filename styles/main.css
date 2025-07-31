@@ -534,9 +534,26 @@ body {
   grid-column: 1 / -1;
 }
 
+.installers-category {
+  margin-bottom: 2rem;
+}
+
+.installers-category:last-child {
+  margin-bottom: 0;
+}
+
+.installers-category h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--border-color);
+}
+
 .installers-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(5, 1fr);
   gap: 1.5rem;
 }
 
@@ -545,39 +562,115 @@ body {
   border-radius: var(--border-radius);
   padding: 1.5rem;
   background-color: #fefefe;
-  text-align: center;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .installer-card:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-lg);
+  cursor: pointer;
 }
 
 .installer-header {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
+  gap: 1rem;
   margin-bottom: 1rem;
 }
 
 .installer-icon {
-  width: 40px;
-  height: 40px;
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
 }
 
-.installer-header h3 {
+.installer-info {
+  flex: 1;
+  text-align: left;
+}
+
+.installer-info h4 {
   font-size: 1.125rem;
   font-weight: 600;
   color: var(--text-primary);
+  margin: 0 0 0.25rem 0;
 }
 
-.installer-card p {
+.installer-category {
+  font-size: 0.75rem;
+  font-weight: 500;
   color: var(--text-secondary);
-  margin-bottom: 1.5rem;
+  background-color: var(--background-color);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.installer-description {
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
   font-size: 0.9rem;
   line-height: 1.4;
+  flex: 1;
+}
+
+.installer-features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.feature-tag {
+  font-size: 0.75rem;
+  background-color: var(--primary-color);
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  font-weight: 500;
+}
+
+.installer-card .install-btn {
+  margin-top: auto;
+  width: 100%;
+}
+
+/* Responsive breakpoints for installers */
+@media (max-width: 1400px) {
+  .installers-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 1200px) {
+  .installers-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
+  .installers-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .installers-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .installer-header {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .installer-info {
+    text-align: center;
+  }
 }
 
 /* System Panel - Full width */
@@ -1072,10 +1165,6 @@ body {
   .installers-panel,
   .system-panel {
     grid-column: 1;
-  }
-  
-  .installers-grid {
-    grid-template-columns: 1fr;
   }
   
   .banner-content {

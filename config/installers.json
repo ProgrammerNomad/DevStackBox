@@ -1,0 +1,328 @@
+{
+  "installers": [
+    {
+      "id": "wordpress",
+      "name": "WordPress",
+      "version": "6.3.1",
+      "description": "The world's most popular content management system. Perfect for blogs, websites, and e-commerce.",
+      "category": "CMS",
+      "icon": "assets/icons/wordpress.svg",
+      "downloadUrl": "https://wordpress.org/latest.zip",
+      "officialSite": "https://wordpress.org",
+      "requirements": {
+        "php": "7.4+",
+        "mysql": "5.6+",
+        "diskSpace": "100MB"
+      },
+      "installation": {
+        "extractTo": "www/wordpress",
+        "databaseRequired": true,
+        "configFile": "wp-config.php",
+        "setupUrl": "/wordpress/wp-admin/install.php",
+        "defaultDatabase": "wordpress_db"
+      },
+      "features": [
+        "User-friendly interface",
+        "Thousands of themes & plugins",
+        "SEO optimized",
+        "Multi-language support"
+      ],
+      "tags": ["cms", "blog", "website", "popular"]
+    },
+    {
+      "id": "laravel",
+      "name": "Laravel",
+      "version": "10.x",
+      "description": "The PHP framework for web artisans. Build modern, elegant web applications with expressive syntax.",
+      "category": "Framework",
+      "icon": "assets/icons/laravel.svg",
+      "downloadUrl": "https://github.com/laravel/laravel/archive/refs/heads/10.x.zip",
+      "officialSite": "https://laravel.com",
+      "requirements": {
+        "php": "8.1+",
+        "mysql": "5.7+",
+        "diskSpace": "200MB"
+      },
+      "installation": {
+        "extractTo": "www/laravel",
+        "databaseRequired": true,
+        "configFile": ".env",
+        "setupUrl": "/laravel/public",
+        "defaultDatabase": "laravel_db",
+        "composerRequired": true
+      },
+      "features": [
+        "Elegant syntax",
+        "Built-in ORM (Eloquent)",
+        "Artisan CLI",
+        "Modern development tools"
+      ],
+      "tags": ["framework", "mvc", "modern", "artisan"]
+    },
+    {
+      "id": "codeigniter",
+      "name": "CodeIgniter",
+      "version": "4.4.1",
+      "description": "A lightweight PHP framework with a small footprint. Simple and elegant toolkit for developers.",
+      "category": "Framework",
+      "icon": "assets/icons/codeigniter.svg",
+      "downloadUrl": "https://github.com/codeigniter4/CodeIgniter4/releases/download/v4.4.1/CodeIgniter4-4.4.1.zip",
+      "officialSite": "https://codeigniter.com",
+      "requirements": {
+        "php": "7.4+",
+        "mysql": "5.1+",
+        "diskSpace": "50MB"
+      },
+      "installation": {
+        "extractTo": "www/codeigniter",
+        "databaseRequired": false,
+        "configFile": "app/Config/Database.php",
+        "setupUrl": "/codeigniter/public",
+        "defaultDatabase": "ci_db"
+      },
+      "features": [
+        "Lightweight framework",
+        "Easy to learn",
+        "Flexible routing",
+        "Built-in security features"
+      ],
+      "tags": ["framework", "lightweight", "mvc", "simple"]
+    },
+    {
+      "id": "drupal",
+      "name": "Drupal",
+      "version": "10.1.3",
+      "description": "A flexible CMS platform for building complex websites. Powers millions of websites worldwide.",
+      "category": "CMS",
+      "icon": "assets/icons/drupal.svg",
+      "downloadUrl": "https://www.drupal.org/download-latest/zip",
+      "officialSite": "https://drupal.org",
+      "requirements": {
+        "php": "8.1+",
+        "mysql": "5.7.8+",
+        "diskSpace": "300MB"
+      },
+      "installation": {
+        "extractTo": "www/drupal",
+        "databaseRequired": true,
+        "configFile": "sites/default/settings.php",
+        "setupUrl": "/drupal/install.php",
+        "defaultDatabase": "drupal_db"
+      },
+      "features": [
+        "Highly customizable",
+        "Enterprise-ready",
+        "Strong security",
+        "Multilingual support"
+      ],
+      "tags": ["cms", "enterprise", "flexible", "secure"]
+    },
+    {
+      "id": "joomla",
+      "name": "Joomla",
+      "version": "4.3.4",
+      "description": "Award-winning content management system for building websites and online applications.",
+      "category": "CMS",
+      "icon": "assets/icons/joomla.svg",
+      "downloadUrl": "https://downloads.joomla.org/cms/joomla4/4-3-4/Joomla_4-3-4-Stable-Full_Package.zip",
+      "officialSite": "https://joomla.org",
+      "requirements": {
+        "php": "8.0+",
+        "mysql": "5.6+",
+        "diskSpace": "200MB"
+      },
+      "installation": {
+        "extractTo": "www/joomla",
+        "databaseRequired": true,
+        "configFile": "configuration.php",
+        "setupUrl": "/joomla/installation/index.php",
+        "defaultDatabase": "joomla_db"
+      },
+      "features": [
+        "User-friendly admin",
+        "Multi-language ready",
+        "Strong community",
+        "Flexible templates"
+      ],
+      "tags": ["cms", "multilingual", "community", "templates"]
+    },
+    {
+      "id": "symfony",
+      "name": "Symfony",
+      "version": "6.3",
+      "description": "High-performance PHP framework for web development. Build maintainable and scalable applications.",
+      "category": "Framework",
+      "icon": "assets/icons/symfony.svg",
+      "downloadUrl": "https://github.com/symfony/symfony/archive/refs/heads/6.3.zip",
+      "officialSite": "https://symfony.com",
+      "requirements": {
+        "php": "8.1+",
+        "mysql": "5.7+",
+        "diskSpace": "250MB"
+      },
+      "installation": {
+        "extractTo": "www/symfony",
+        "databaseRequired": false,
+        "configFile": ".env",
+        "setupUrl": "/symfony/public",
+        "defaultDatabase": "symfony_db",
+        "composerRequired": true
+      },
+      "features": [
+        "High performance",
+        "Reusable components",
+        "Professional tools",
+        "Long-term support"
+      ],
+      "tags": ["framework", "performance", "components", "professional"]
+    },
+    {
+      "id": "phpbb",
+      "name": "phpBB",
+      "version": "3.3.11",
+      "description": "Free and open-source forum software. Create vibrant online communities with ease.",
+      "category": "Forum",
+      "icon": "assets/icons/phpbb.svg",
+      "downloadUrl": "https://download.phpbb.com/pub/release/3.3/3.3.11/phpBB-3.3.11.zip",
+      "officialSite": "https://phpbb.com",
+      "requirements": {
+        "php": "7.3+",
+        "mysql": "5.6+",
+        "diskSpace": "150MB"
+      },
+      "installation": {
+        "extractTo": "www/phpbb",
+        "databaseRequired": true,
+        "configFile": "config.php",
+        "setupUrl": "/phpbb/install/app.php",
+        "defaultDatabase": "phpbb_db"
+      },
+      "features": [
+        "Modern forum software",
+        "Mobile responsive",
+        "Spam protection",
+        "Extensive customization"
+      ],
+      "tags": ["forum", "community", "discussion", "responsive"]
+    },
+    {
+      "id": "opencart",
+      "name": "OpenCart",
+      "version": "4.0.2.3",
+      "description": "Feature-rich e-commerce platform. Build professional online stores with powerful features.",
+      "category": "E-commerce",
+      "icon": "assets/icons/opencart.svg",
+      "downloadUrl": "https://github.com/opencart/opencart/releases/download/4.0.2.3/opencart-4.0.2.3.zip",
+      "officialSite": "https://opencart.com",
+      "requirements": {
+        "php": "8.0+",
+        "mysql": "5.7+",
+        "diskSpace": "300MB"
+      },
+      "installation": {
+        "extractTo": "www/opencart",
+        "databaseRequired": true,
+        "configFile": "config.php",
+        "setupUrl": "/opencart/install/index.php",
+        "defaultDatabase": "opencart_db"
+      },
+      "features": [
+        "Multi-store support",
+        "Payment gateways",
+        "SEO optimized",
+        "Mobile friendly"
+      ],
+      "tags": ["ecommerce", "store", "shopping", "payment"]
+    },
+    {
+      "id": "prestashop",
+      "name": "PrestaShop",
+      "version": "8.1.1",
+      "description": "Leading e-commerce solution. Create beautiful online stores with advanced features.",
+      "category": "E-commerce",
+      "icon": "assets/icons/prestashop.svg",
+      "downloadUrl": "https://github.com/PrestaShop/PrestaShop/releases/download/8.1.1/prestashop_8.1.1.zip",
+      "officialSite": "https://prestashop.com",
+      "requirements": {
+        "php": "8.0+",
+        "mysql": "5.6+",
+        "diskSpace": "400MB"
+      },
+      "installation": {
+        "extractTo": "www/prestashop",
+        "databaseRequired": true,
+        "configFile": "app/config/parameters.php",
+        "setupUrl": "/prestashop/install/index.php",
+        "defaultDatabase": "prestashop_db"
+      },
+      "features": [
+        "Professional design",
+        "Advanced analytics",
+        "Multi-language",
+        "Mobile optimized"
+      ],
+      "tags": ["ecommerce", "professional", "analytics", "multilingual"]
+    },
+    {
+      "id": "mediawiki",
+      "name": "MediaWiki",
+      "version": "1.40.1",
+      "description": "Wiki software that powers Wikipedia. Create collaborative knowledge bases and documentation.",
+      "category": "Wiki",
+      "icon": "assets/icons/mediawiki.svg",
+      "downloadUrl": "https://releases.wikimedia.org/mediawiki/1.40/mediawiki-1.40.1.tar.gz",
+      "officialSite": "https://mediawiki.org",
+      "requirements": {
+        "php": "7.4+",
+        "mysql": "5.6+",
+        "diskSpace": "200MB"
+      },
+      "installation": {
+        "extractTo": "www/mediawiki",
+        "databaseRequired": true,
+        "configFile": "LocalSettings.php",
+        "setupUrl": "/mediawiki/mw-config/index.php",
+        "defaultDatabase": "mediawiki_db"
+      },
+      "features": [
+        "Collaborative editing",
+        "Version control",
+        "Rich formatting",
+        "Extensible platform"
+      ],
+      "tags": ["wiki", "collaboration", "documentation", "knowledge"]
+    }
+  ],
+  "categories": [
+    {
+      "id": "cms",
+      "name": "Content Management",
+      "description": "Website and content management systems",
+      "icon": "assets/icons/categories/cms.svg"
+    },
+    {
+      "id": "framework",
+      "name": "PHP Frameworks",
+      "description": "Development frameworks for building applications",
+      "icon": "assets/icons/categories/framework.svg"
+    },
+    {
+      "id": "ecommerce",
+      "name": "E-commerce",
+      "description": "Online store and shopping platforms",
+      "icon": "assets/icons/categories/ecommerce.svg"
+    },
+    {
+      "id": "forum",
+      "name": "Forum & Community",
+      "description": "Discussion boards and community platforms",
+      "icon": "assets/icons/categories/forum.svg"
+    },
+    {
+      "id": "wiki",
+      "name": "Wiki & Documentation",
+      "description": "Knowledge bases and documentation systems",
+      "icon": "assets/icons/categories/wiki.svg"
+    }
+  ]
+}

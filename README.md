@@ -9,7 +9,7 @@ A lightweight, portable, open-source local development tool for PHP developers
 - **Multiple PHP Versions** - Switch between PHP 8.1, 8.2 (default), 8.3, and 8.4
 - **phpMyAdmin** - Built-in database management interface
 - **One-Click App Installers** - Install WordPress, Laravel, and more
-- **System Tray Support** - Minimize to system tray like Laragon
+- **System Tray Support** - Minimize to system tray like Laragon and XAMPP
 - **Configuration Management** - Easy access to config files
 - **Logs Viewer** - View Apache and MySQL logs in real-time
 
@@ -138,7 +138,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🙏 Acknowledgments
 
-- Inspired by local development tools like Laragon
+- Inspired by local development tools like Laragon and XAMPP
 - Built with Electron for cross-platform compatibility
 - Designed to be lightweight and developer-friendly
 

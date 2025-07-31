@@ -31,6 +31,11 @@ class DevStackBox {
       // Make configUI available globally for cross-component communication
       window.configUI = this.configUI;
       
+      // Initialize One-Click Installers
+      console.log('Initializing One-Click Installers...');
+      this.installers = new OneClickInstallers();
+      await this.installers.init();
+      
       // Setup event listeners
       this.setupEventListeners();
       
