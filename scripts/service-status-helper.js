@@ -65,8 +65,17 @@ function updateServiceLoadingUI(service, action) {
     footerStatus.className = 'px-2 py-1 rounded-md text-xs font-semibold bg-yellow-500 text-white';
   }
   
-  // Show notification
-  showNotification(`${capitalizeFirstLetter(service)} ${action}...`, 'info');
+  // Update buttons based on action
+  const startBtn = document.querySelector(`[data-service="${service}"].start-btn`);
+  const stopBtn = document.querySelector(`[data-service="${service}"].stop-btn`);
+  
+  if (action === 'starting') {
+    if (startBtn) startBtn.disabled = true;
+    if (stopBtn) stopBtn.disabled = true;
+  } else if (action === 'stopping') {
+    if (startBtn) startBtn.disabled = true;
+    if (stopBtn) stopBtn.disabled = true;
+  }
 }
 
 function ensureNotificationContainer() {

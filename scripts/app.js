@@ -554,47 +554,48 @@ class DevStackBox {
       }
       
       if (phpStatus) {
-      const phpVersions = [];
-      // Check for new format (status.php object) or old format (status.php81, etc.)
-      if (status.php && typeof status.php === 'object') {
-        Object.keys(status.php).forEach(version => {
-          if (status.php[version]) phpVersions.push(version);
-        });
+        const phpVersions = [];
+        // Check for new format (status.php object) or old format (status.php81, etc.)
+        if (status.php && typeof status.php === 'object') {
+          Object.keys(status.php).forEach(version => {
+            if (status.php[version]) phpVersions.push(version);
+          });
+        } else {
+          if (status.php81) phpVersions.push('8.1');
+          if (status.php82) phpVersions.push('8.2');
+          if (status.php83) phpVersions.push('8.3');
+          if (status.php84) phpVersions.push('8.4');
+        }
+        
+        if (phpVersions.length > 0) {
+          // Prioritize PHP 8.2 in display
+          const sortedVersions = phpVersions.sort((a, b) => {
+            if (a === '8.2') return -1;
+            if (b === '8.2') return 1;
+            return a.localeCompare(b);
+          });
+          phpStatus.textContent = `PHP ${sortedVersions.join(', ')} (8.2 default)`;
+          phpStatus.className = 'text-sm font-semibold text-green-600';
+        } else {
+          phpStatus.textContent = 'Not Bundled';
+          phpStatus.className = 'text-sm font-semibold text-red-600';
+        }
       } else {
-        if (status.php81) phpVersions.push('8.1');
-        if (status.php82) phpVersions.push('8.2');
-        if (status.php83) phpVersions.push('8.3');
-        if (status.php84) phpVersions.push('8.4');
+        console.warn('PHP status element not found');
       }
       
-      if (phpVersions.length > 0) {
-        // Prioritize PHP 8.2 in display
-        const sortedVersions = phpVersions.sort((a, b) => {
-          if (a === '8.2') return -1;
-          if (b === '8.2') return 1;
-          return a.localeCompare(b);
-        });
-        phpStatus.textContent = `PHP ${sortedVersions.join(', ')} (8.2 default)`;
-        phpStatus.className = 'text-sm font-semibold text-green-600';
+      // Update phpMyAdmin status if element exists
+      const pmaStatus = document.getElementById('systemPhpmyadminStatus');
+      if (pmaStatus) {
+        pmaStatus.textContent = status.phpmyadmin ? 'Pre-bundled' : 'Not Bundled';
+        pmaStatus.className = status.phpmyadmin ? 'text-sm font-semibold text-green-600' : 'text-sm font-semibold text-red-600';
       } else {
-        phpStatus.textContent = 'Not Bundled';
-        phpStatus.className = 'text-sm font-semibold text-red-600';
+        console.warn('phpMyAdmin status element not found');
       }
+    } catch (error) {
+      console.error('Failed to update system info:', error);
     }
-    
-    // Update phpMyAdmin status if element exists
-    const pmaStatus = document.getElementById('systemPhpmyadminStatus');
-    if (pmaStatus) {
-      pmaStatus.textContent = status.phpmyadmin ? 'Pre-bundled' : 'Not Bundled';
-      pmaStatus.className = status.phpmyadmin ? 'text-sm font-semibold text-green-600' : 'text-sm font-semibold text-red-600';
-    } else {
-      console.warn('phpMyAdmin status element not found');
-    }
-    
-  } catch (error) {
-    console.error('Failed to update system info:', error);
   }
-}
 
   updatePhpVersionDisplay(version) {
     const phpVersionSelect = document.getElementById('phpVersion');

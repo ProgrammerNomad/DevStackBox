@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="styles/installers.css">
 </head>
 <body>
-    <div class="min-h-screen bg-gray-50 pb-20">
+    <div class="min-h-screen bg-gray-50 pb-24"><!-- pb-24 ensures content doesn't get hidden behind the fixed footer -->
         <!-- Notification Container -->
         <div id="notification-container" class="fixed top-4 right-4 z-50 space-y-2"></div>
         <header class="bg-white border-b border-gray-200 shadow-sm">
@@ -231,7 +231,7 @@
                     </div>
                 </h2>
                 
-                <div id="installersContainer" class="min-h-[200px] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                <div id="installersContainer" class="min-h-[200px] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-6 p-1">
                     <div class="flex items-center justify-center h-48 col-span-full">
                         <div class="text-center">
                             <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
@@ -329,13 +329,6 @@
                         <span id="footer-mysql-status" class="px-2 py-1 rounded-md text-xs font-semibold bg-red-500 text-white">Stopped</span>
                     </div>
                     <div class="flex items-center space-x-2">
-                        <img src="assets/icons/php.svg" alt="PHP" class="w-4 h-4 text-white">
-                        <span class="text-sm font-medium">PHP:</span>
-                        <span id="footer-php-status" class="px-2 py-1 rounded-md text-xs font-semibold bg-green-500 text-white">PHP 8.2</span>
-                    </div>
-                </div>
-            </div>
-        </footer>
                         <img src="assets/icons/php.svg" alt="PHP" class="w-4 h-4 text-white">
                         <span class="text-sm font-medium">PHP:</span>
                         <span id="footer-php-status" class="px-2 py-1 rounded-md text-xs font-semibold bg-green-500 text-white">PHP 8.2</span>

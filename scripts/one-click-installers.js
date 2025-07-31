@@ -106,68 +106,44 @@ class OneClickInstallers {
     
     if (filteredInstallers.length === 0) {
       return `
-        <div class="no-installers">
-          <img src="assets/icons/error.svg" alt="No applications" class="empty-icon">
-          <h3>No applications found</h3>
-          <p>Try adjusting your search or filter criteria</p>
+        <div class="col-span-full flex flex-col items-center justify-center py-12 text-center">
+          <img src="assets/icons/error.svg" alt="No applications" class="w-16 h-16 mb-4 opacity-50">
+          <h3 class="text-lg font-medium text-gray-900 mb-2">No applications found</h3>
+          <p class="text-sm text-gray-500">Try adjusting your search or filter criteria</p>
         </div>
       `;
     }
 
     return `
-      <div class="installers-grid">
         ${filteredInstallers.map(installer => `
-          <div class="installer-card" data-installer="${installer.id}">
-            <div class="installer-header">
-              <img src="${installer.icon}" alt="${installer.name}" class="installer-icon" 
-                   onerror="this.src='assets/icons/installer.svg'">
-              <div class="installer-info">
-                <h3 class="installer-name">${installer.name}</h3>
-                <span class="installer-version">v${installer.version}</span>
-                <span class="installer-category">${installer.category}</span>
+          <div class="bg-white border border-gray-200 rounded-lg p-5 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col h-full" data-installer="${installer.id}">
+            <div class="flex items-center space-x-3 mb-3">
+              <img src="${installer.icon}" alt="${installer.name}" class="w-10 h-10 object-contain" onerror="this.src='assets/icons/installer.svg'">
+              <div class="flex-1 min-w-0">
+                <h3 class="text-base font-medium text-gray-900">${installer.name}</h3>
+                <div class="flex items-center gap-2 mt-1">
+                  <span class="inline-block bg-primary text-white text-xs px-2 py-0.5 rounded-full">v${installer.version}</span>
+                  <span class="inline-block bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded-full">${installer.category}</span>
+                </div>
               </div>
             </div>
             
-            <div class="installer-description">
-              <p>${installer.description}</p>
+            <div class="mb-4">
+              <p class="text-sm text-gray-600 line-clamp-2">${installer.description}</p>
             </div>
 
-            <div class="installer-features">
-              <div class="features-list">
-                ${installer.features.slice(0, 4).map(feature => `
-                  <span class="feature-tag">${feature}</span>
-                `).join('')}
-              </div>
-            </div>
-
-            <div class="installer-requirements">
-              <div class="requirement">
-                <span class="req-label">PHP:</span>
-                <span class="req-value">${installer.requirements.php}</span>
-              </div>
-              <div class="requirement">
-                <span class="req-label">MySQL:</span>
-                <span class="req-value">${installer.requirements.mysql}</span>
-              </div>
-              <div class="requirement">
-                <span class="req-label">Size:</span>
-                <span class="req-value">${installer.requirements.diskSpace}</span>
-              </div>
-            </div>
-
-            <div class="installer-actions">
-              <button class="inline-flex items-center px-4 py-2 bg-primary text-white text-sm font-medium rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors install-btn" data-installer="${installer.id}">
+            <div class="mt-auto flex gap-2">
+              <button class="flex-1 inline-flex items-center justify-center px-3 py-2 bg-primary text-white text-sm font-medium rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors install-btn" data-installer="${installer.id}">
                 <img src="assets/icons/download.svg" alt="Install" class="w-4 h-4 mr-2">
-                Install Now
+                Install
               </button>
-              <button class="inline-flex items-center px-4 py-2 bg-gray-500 text-white text-sm font-medium rounded hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors info-btn" data-installer="${installer.id}">
+              <button class="flex-1 inline-flex items-center justify-center px-3 py-2 bg-gray-500 text-white text-sm font-medium rounded hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors info-btn" data-installer="${installer.id}">
                 <img src="assets/icons/system.svg" alt="More Info" class="w-4 h-4 mr-2">
                 Details
               </button>
             </div>
           </div>
         `).join('')}
-      </div>
     `;
   }
 
@@ -375,77 +351,110 @@ class OneClickInstallers {
    */
   showInfoDialog(installer) {
     const dialog = document.createElement('div');
-    dialog.className = 'modal-overlay installer-info-modal';
+    dialog.className = 'fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50';
     dialog.innerHTML = `
-      <div class="modal-content">
-        <div class="modal-header">
-          <h2>${installer.name} Details</h2>
-          <button class="modal-close">&times;</button>
+      <div class="bg-white rounded-lg shadow-xl max-w-3xl w-full mx-4 max-h-[90vh] flex flex-col">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+          <h2 class="text-xl font-semibold text-gray-900 flex items-center">
+            <img src="${installer.icon}" alt="${installer.name}" class="w-6 h-6 mr-3" onerror="this.src='assets/icons/installer.svg'">
+            ${installer.name}
+          </h2>
+          <button class="text-gray-400 hover:text-gray-600 text-2xl font-semibold">&times;</button>
         </div>
-        <div class="modal-body">
-          <div class="app-details">
-            <div class="app-header">
-              <img src="${installer.icon}" alt="${installer.name}" class="app-icon">
-              <div class="app-basic-info">
-                <h3>${installer.name}</h3>
-                <p class="version">Version ${installer.version}</p>
-                <p class="category">${installer.category}</p>
-                <a href="${installer.officialSite}" target="_blank" class="official-link">
-                  Visit Official Website →
+        <div class="px-6 py-4 overflow-y-auto">
+          <div class="space-y-6">
+            <!-- Basic info -->
+            <div class="flex flex-col sm:flex-row sm:items-center p-4 bg-gray-50 rounded-lg gap-4">
+              <img src="${installer.icon}" alt="${installer.name}" class="w-16 h-16 object-contain mx-auto sm:mx-0" onerror="this.src='assets/icons/installer.svg'">
+              <div>
+                <div class="flex flex-wrap gap-2 mb-2">
+                  <span class="inline-block bg-primary text-white text-xs px-2 py-1 rounded-full">v${installer.version}</span>
+                  <span class="inline-block bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded-full">${installer.category}</span>
+                </div>
+                <a href="${installer.officialSite}" target="_blank" class="text-primary hover:underline text-sm flex items-center">
+                  Visit Official Website
+                  <svg class="w-3 h-3 ml-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"></path>
+                    <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z"></path>
+                  </svg>
                 </a>
               </div>
             </div>
             
-            <div class="app-description">
-              <h4>Description</h4>
-              <p>${installer.description}</p>
+            <!-- Description -->
+            <div>
+              <h3 class="text-lg font-medium text-gray-900 mb-2">Description</h3>
+              <p class="text-gray-600">${installer.description}</p>
             </div>
 
-            <div class="app-features">
-              <h4>Key Features</h4>
-              <ul>
+            <!-- Features -->
+            <div>
+              <h3 class="text-lg font-medium text-gray-900 mb-2">Key Features</h3>
+              <ul class="list-disc pl-5 text-gray-600 space-y-1">
                 ${installer.features.map(feature => `<li>${feature}</li>`).join('')}
               </ul>
             </div>
 
-            <div class="app-requirements">
-              <h4>System Requirements</h4>
-              <div class="requirements-grid">
-                <div class="requirement">
-                  <strong>PHP Version:</strong> ${installer.requirements.php}
+            <!-- Requirements -->
+            <div>
+              <h3 class="text-lg font-medium text-gray-900 mb-2">System Requirements</h3>
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div class="bg-gray-50 p-3 rounded-lg text-center">
+                  <span class="block text-xs text-gray-500 mb-1">PHP Version</span>
+                  <span class="block text-sm font-medium text-gray-700">${installer.requirements.php}</span>
                 </div>
-                <div class="requirement">
-                  <strong>MySQL Version:</strong> ${installer.requirements.mysql}
+                <div class="bg-gray-50 p-3 rounded-lg text-center">
+                  <span class="block text-xs text-gray-500 mb-1">MySQL Version</span>
+                  <span class="block text-sm font-medium text-gray-700">${installer.requirements.mysql}</span>
                 </div>
-                <div class="requirement">
-                  <strong>Disk Space:</strong> ${installer.requirements.diskSpace}
+                <div class="bg-gray-50 p-3 rounded-lg text-center">
+                  <span class="block text-xs text-gray-500 mb-1">Disk Space</span>
+                  <span class="block text-sm font-medium text-gray-700">${installer.requirements.diskSpace}</span>
                 </div>
               </div>
             </div>
 
-            <div class="app-installation">
-              <h4>Installation Details</h4>
-              <div class="installation-details">
-                <p><strong>Install Location:</strong> ${installer.installation.extractTo}</p>
-                <p><strong>Setup URL:</strong> ${installer.installation.setupUrl}</p>
-                <p><strong>Database Required:</strong> ${installer.installation.databaseRequired ? 'Yes' : 'No'}</p>
-                ${installer.installation.composerRequired ? '<p><strong>Composer Required:</strong> Yes</p>' : ''}
+            <!-- Installation Details -->
+            <div>
+              <h3 class="text-lg font-medium text-gray-900 mb-2">Installation Details</h3>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div class="bg-gray-50 p-3 rounded-lg">
+                  <span class="block text-xs text-gray-500 mb-1">Install Location</span>
+                  <span class="block text-sm font-medium text-gray-700">${installer.installation.extractTo}</span>
+                </div>
+                <div class="bg-gray-50 p-3 rounded-lg">
+                  <span class="block text-xs text-gray-500 mb-1">Setup URL</span>
+                  <span class="block text-sm font-medium text-gray-700">${installer.installation.setupUrl}</span>
+                </div>
+                <div class="bg-gray-50 p-3 rounded-lg">
+                  <span class="block text-xs text-gray-500 mb-1">Database Required</span>
+                  <span class="block text-sm font-medium text-gray-700">${installer.installation.databaseRequired ? 'Yes' : 'No'}</span>
+                </div>
+                ${installer.installation.composerRequired ? `
+                <div class="bg-gray-50 p-3 rounded-lg">
+                  <span class="block text-xs text-gray-500 mb-1">Composer Required</span>
+                  <span class="block text-sm font-medium text-gray-700">Yes</span>
+                </div>
+                ` : ''}
               </div>
             </div>
           </div>
         </div>
-        <div class="modal-footer">
-          <button class="inline-flex items-center px-4 py-2 bg-gray-500 text-white text-sm font-medium rounded hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors close-info">Close</button>
-          <button class="inline-flex items-center px-4 py-2 bg-primary text-white text-sm font-medium rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors install-from-info" data-installer="${installer.id}">Install Now</button>
+        <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end gap-3">
+          <button class="px-4 py-2 border border-gray-300 text-gray-700 bg-white rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors close-info">
+            Close
+          </button>
+          <button class="px-4 py-2 bg-primary text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors install-from-info" data-installer="${installer.id}">
+            Install Now
+          </button>
         </div>
       </div>
     `;
 
     document.body.appendChild(dialog);
-    dialog.classList.add('active');
 
     // Bind modal events
-    dialog.querySelector('.modal-close').addEventListener('click', () => {
+    dialog.querySelector('button:first-of-type').addEventListener('click', () => {
       document.body.removeChild(dialog);
     });
 
