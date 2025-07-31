@@ -36,4 +36,4 @@ To add PHP versions:
 3. Copy and configure php.ini
 4. Test CLI: `php --version`
 
-DevStackBox includes pre-bundled PHP 8.2 by default, with 8.1 and 8.3 available for download.
+DevStackBox includes pre-bundled PHP 8.2 by default, with 8.1, 8.3 and 8.4 available for download.
