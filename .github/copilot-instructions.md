@@ -6,7 +6,7 @@ This file will help you get started with **GitHub Copilot** in **Visual Studio C
 
 ---
 
-## 🚀 1. Prerequisites
+## ## 🎨 10. Working with Tailwind CSS 1. Prerequisites
 
 Before using Copilot effectively with this project, ensure you have:
 
@@ -131,10 +131,12 @@ DevStackBox/
 | phpMyAdmin                 | 🔄 Partial  | Access to MySQL management interface                                        |
 | One-click App Installers   | 🔄 Partial  | Front-end framework for app installers completed                            |
 | Environment Configuration  | 🔄 Partial  | Initial config framework implemented; modals in progress                    |
+| PHP Extensions Management  | 🔄 WIP      | Tailwind-based UI for enabling/disabling PHP extensions                     |
 | Logs Viewer                | 📋 Planned  | View Apache/MySQL logs in the interface                                     |
 | Port Changer               | 📋 Planned  | GUI support to change Apache and MySQL ports                                |
 | System Tray Support        | 📋 Planned  | Minimize to tray like Laragon and XAMPP                                     |
 | Tailwind UI                | ✅ Done     | All UI components use Tailwind CSS (no custom CSS)                          |
+| Service Button Logic       | ✅ Done     | Start/Stop buttons correctly disabled based on service state                |
 
 ---
 
@@ -211,7 +213,7 @@ This section explains how DevStackBox works internally and how to contribute eff
 
 ---
 
-## 🛠️ 9. Extended Feature Support (Planned and In Progress)
+## 🛠️ 9. Current Development Focus
 
 ### 🔌 PHP Extensions Management
 - Tailwind-based toggle switches for enabling/disabling extensions
@@ -340,5 +342,25 @@ When adding dark mode, use the `dark:` variant:
   <!-- Content that works in both light and dark modes -->
 </div>
 ```
+
+---
+
+## 11. Recent Progress and Priorities
+
+### ✅ Completed
+- Logical start/stop button states for Apache and MySQL services
+- Basic UI framework for all main components
+- Responsive layout with Tailwind CSS
+
+### 🔄 In Progress
+- Converting configuration modals to pure Tailwind (no custom CSS)
+- PHP Extensions management UI with toggle switches
+- Config editors for Apache, MySQL, and PHP with syntax highlighting
+
+### 📅 Next Up
+- Real-time service status updates
+- Log viewer implementation
+- System tray integration
+- Virtual hosts management
 
 ---
