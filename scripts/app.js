@@ -163,11 +163,44 @@ class DevStackBox {
       });
     }
 
+    // Theme switcher button
+    const themeSwitcherBtn = document.getElementById('themeSwitcherBtn');
+    if (themeSwitcherBtn) {
+      themeSwitcherBtn.addEventListener('click', () => {
+        // Toggle between light and dark mode
+        const isDarkMode = document.documentElement.classList.toggle('dark');
+        
+        // Update the icon visibility
+        const lightIcon = themeSwitcherBtn.querySelector('.light-icon');
+        const darkIcon = themeSwitcherBtn.querySelector('.dark-icon');
+        
+        if (isDarkMode) {
+          lightIcon.classList.add('hidden');
+          darkIcon.classList.remove('hidden');
+          localStorage.setItem('theme', 'dark');
+        } else {
+          darkIcon.classList.add('hidden');
+          lightIcon.classList.remove('hidden');
+          localStorage.setItem('theme', 'light');
+        }
+      });
+      
+      // Check for saved theme preference
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme === 'dark') {
+        document.documentElement.classList.add('dark');
+        const lightIcon = themeSwitcherBtn.querySelector('.light-icon');
+        const darkIcon = themeSwitcherBtn.querySelector('.dark-icon');
+        lightIcon.classList.add('hidden');
+        darkIcon.classList.remove('hidden');
+      }
+    }
+    
     // Download settings modal
     const downloadBtn = document.getElementById('downloadSettingsBtn');
     if (downloadBtn) {
       downloadBtn.addEventListener('click', () => {
-        this.showDownloadModal();
+        this.showPreferencesModal();
       });
     }
 
@@ -180,10 +213,10 @@ class DevStackBox {
     }
 
     // Modal close
-    const closeModal = document.getElementById('closeDownloadModal');
+    const closeModal = document.getElementById('closePreferencesModal');
     if (closeModal) {
       closeModal.addEventListener('click', () => {
-        this.hideDownloadModal();
+        this.hidePreferencesModal();
       });
     }
 
@@ -640,18 +673,146 @@ class DevStackBox {
     }
   }
 
-  showDownloadModal() {
+  showPreferencesModal() {
     const modal = document.getElementById('downloadSettingsModal');
     if (modal) {
-      modal.classList.add('active');
+      // Update to use Tailwind's display handling
+      modal.classList.remove('hidden');
+      this.setupTabHandlers();
+      this.setupPreferencesHandlers();
+      this.loadSavedPreferences();
+    }
+  }
+  
+  loadSavedPreferences() {
+    // Load saved preferences from storage
+    const savedPrefs = localStorage.getItem('devStackBoxPreferences');
+    if (savedPrefs) {
+      try {
+        const prefs = JSON.parse(savedPrefs);
+        
+        // Apply theme
+        if (prefs.theme) {
+          const themeRadio = document.getElementById(`theme-${prefs.theme}`);
+          if (themeRadio) themeRadio.checked = true;
+        }
+        
+        // Apply other settings
+        if (document.getElementById('start-minimized'))
+          document.getElementById('start-minimized').checked = prefs.startMinimized || false;
+          
+        if (document.getElementById('auto-start-services'))
+          document.getElementById('auto-start-services').checked = prefs.autoStartServices || false;
+          
+        if (document.getElementById('default-php'))
+          document.getElementById('default-php').value = prefs.defaultPhp || '8.2';
+          
+        if (document.getElementById('enable-detailed-logs'))
+          document.getElementById('enable-detailed-logs').checked = prefs.detailedLogs || false;
+          
+        if (document.getElementById('auto-clear-logs'))
+          document.getElementById('auto-clear-logs').checked = prefs.autoClearLogs || false;
+          
+        if (document.getElementById('check-updates'))
+          document.getElementById('check-updates').checked = prefs.checkUpdates !== undefined ? prefs.checkUpdates : true;
+      } catch (error) {
+        console.error('Error loading preferences:', error);
+      }
     }
   }
 
-  hideDownloadModal() {
+  hidePreferencesModal() {
     const modal = document.getElementById('downloadSettingsModal');
     if (modal) {
-      modal.classList.remove('active');
+      // Update to use Tailwind's display handling
+      modal.classList.add('hidden');
     }
+  }
+  
+  setupTabHandlers() {
+    // Setup tab functionality
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+    
+    // Helper function to switch tabs
+    const switchToTab = (btn) => {
+      // Remove active class from all buttons and tabs
+      tabBtns.forEach(b => b.classList.remove('active', 'border-primary', 'text-primary'));
+      tabBtns.forEach(b => b.classList.add('border-transparent', 'text-gray-500'));
+      tabContents.forEach(tab => tab.classList.add('hidden'));
+      tabContents.forEach(tab => tab.classList.remove('active'));
+      
+      // Add active class to clicked button
+      btn.classList.remove('border-transparent', 'text-gray-500');
+      btn.classList.add('active', 'border-primary', 'text-primary');
+      
+      // Show corresponding tab content
+      const tabId = btn.getAttribute('data-tab');
+      const tabContent = document.getElementById(`${tabId}-tab`);
+      if (tabContent) {
+        tabContent.classList.remove('hidden');
+        tabContent.classList.add('active');
+      }
+    };
+    
+    // Add click event listeners to tabs
+    tabBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        switchToTab(btn);
+      });
+    });
+    
+    // Set the first tab as active by default
+    const firstTab = tabBtns[0];
+    if (firstTab) {
+      switchToTab(firstTab);
+    }
+  }
+  
+  setupPreferencesHandlers() {
+    // Cancel button handler
+    const cancelBtn = document.getElementById('cancelPreferences');
+    if (cancelBtn) {
+      cancelBtn.addEventListener('click', () => {
+        this.hidePreferencesModal();
+      });
+    }
+    
+    // Save button handler
+    const saveBtn = document.getElementById('savePreferences');
+    if (saveBtn) {
+      saveBtn.addEventListener('click', () => {
+        // Save preferences logic here
+        this.savePreferences();
+        this.hidePreferencesModal();
+      });
+    }
+  }
+  
+  savePreferences() {
+    // Get values from form elements
+    const theme = document.querySelector('input[name="theme"]:checked')?.value || 'light';
+    const startMinimized = document.getElementById('start-minimized')?.checked || false;
+    const autoStartServices = document.getElementById('auto-start-services')?.checked || false;
+    const defaultPhp = document.getElementById('default-php')?.value || '8.2';
+    const detailedLogs = document.getElementById('enable-detailed-logs')?.checked || false;
+    const autoClearLogs = document.getElementById('auto-clear-logs')?.checked || false;
+    const checkUpdates = document.getElementById('check-updates')?.checked || false;
+    
+    // Save preferences to storage
+    const preferences = {
+      theme,
+      startMinimized,
+      autoStartServices,
+      defaultPhp,
+      detailedLogs,
+      autoClearLogs,
+      checkUpdates
+    };
+    
+    // Use localStorage for now, can be updated to use electron storage
+    localStorage.setItem('devStackBoxPreferences', JSON.stringify(preferences));
+    this.showNotification('Preferences saved successfully!');
   }
 
   async downloadComponent(component) {
@@ -898,7 +1059,7 @@ DevStackBox/
     document.body.appendChild(modal);
   }
 
-  updateDownloadModalStatus(status) {
+  updatePreferencesModalStatus(status) {
     try {
       // Update Apache status
       const apacheStatus = document.getElementById('apache-download-status');
