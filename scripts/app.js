@@ -302,14 +302,37 @@ class DevStackBox {
         console.warn(`Status element not found for service: ${service}`);
       }
 
+      // Always update button states based on service status, even during loading
       if (startBtn) {
-        startBtn.disabled = status.running || !status.installed;
+        if (loadingState === 'starting') {
+          startBtn.disabled = true;
+          startBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        } else {
+          // Start button should be disabled when service is running or not installed
+          startBtn.disabled = status.running || !status.installed;
+          if (startBtn.disabled) {
+            startBtn.classList.add('opacity-50', 'cursor-not-allowed');
+          } else {
+            startBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+          }
+        }
       } else {
         console.warn(`Start button not found for service: ${service}`);
       }
       
       if (stopBtn) {
-        stopBtn.disabled = !status.running;
+        if (loadingState === 'stopping') {
+          stopBtn.disabled = true;
+          stopBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        } else {
+          // Stop button should be disabled when service is not running
+          stopBtn.disabled = !status.running;
+          if (stopBtn.disabled) {
+            stopBtn.classList.add('opacity-50', 'cursor-not-allowed');
+          } else {
+            stopBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+          }
+        }
       } else {
         console.warn(`Stop button not found for service: ${service}`);
       }
@@ -796,10 +819,12 @@ class DevStackBox {
         ${actionText}
       `;
     } else {
-      // Restore original state
-      button.disabled = false;
+      // Don't just reset the button state, we'll let loadServiceStatus properly set the state
+      // based on the current service status. This ensures buttons remain in the correct state.
       button.classList.remove('opacity-60', 'cursor-not-allowed');
       button.textContent = button.dataset.originalText || (action === 'start' ? 'Start' : 'Stop');
+      
+      // We don't set button.disabled = false here anymore since it will be set by loadServiceStatus
     }
   }
 
