@@ -200,52 +200,12 @@ class DevStackBox {
       }
 
       if (statusEl) {
-        // Find the status dot (span with rounded-full class) and text content
-        const dot = statusEl.querySelector('span.rounded-full');
-        
+        // Simply rebuild the entire status element to avoid any duplication issues
         if (status.running) {
-          if (dot) {
-            dot.className = 'w-2 h-2 bg-green-500 rounded-full mr-2';
-          } else {
-            console.warn(`Status dot not found for service: ${service}, creating new status element`);
-            statusEl.innerHTML = '<span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>Running';
-            return; // Skip text node manipulation since we rebuilt the element
-          }
-          // Update text content - get all text after the dot
-          const textNodes = statusEl.childNodes;
-          for (let i = 0; i < textNodes.length; i++) {
-            if (textNodes[i].nodeType === Node.TEXT_NODE) {
-              textNodes[i].textContent = 'Running';
-              break;
-            }
-          }
-          // If no text node found, set the statusEl textContent directly but preserve the dot
-          if (!Array.from(textNodes).some(node => node.nodeType === Node.TEXT_NODE)) {
-            // Clear and rebuild the status element
-            statusEl.innerHTML = '<span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>Running';
-          }
+          statusEl.innerHTML = '<span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>Running';
         } else {
-          if (dot) {
-            dot.className = 'w-2 h-2 bg-red-500 rounded-full mr-2';
-          } else {
-            console.warn(`Status dot not found for service: ${service}, creating new status element`);
-            const statusText = status.installed ? 'Stopped' : 'Not Installed';
-            statusEl.innerHTML = `<span class="w-2 h-2 bg-red-500 rounded-full mr-2"></span>${statusText}`;
-            return; // Skip text node manipulation since we rebuilt the element
-          }
-          // Update text content
-          const textNodes = statusEl.childNodes;
           const statusText = status.installed ? 'Stopped' : 'Not Installed';
-          for (let i = 0; i < textNodes.length; i++) {
-            if (textNodes[i].nodeType === Node.TEXT_NODE) {
-              textNodes[i].textContent = statusText;
-              break;
-            }
-          }
-          // If no text node found, rebuild the status element
-          if (!Array.from(textNodes).some(node => node.nodeType === Node.TEXT_NODE)) {
-            statusEl.innerHTML = `<span class="w-2 h-2 bg-red-500 rounded-full mr-2"></span>${statusText}`;
-          }
+          statusEl.innerHTML = `<span class="w-2 h-2 bg-red-500 rounded-full mr-2"></span>${statusText}`;
         }
       } else {
         console.warn(`Status element not found for service: ${service}`);
@@ -266,8 +226,8 @@ class DevStackBox {
       if (footerStatus) {
         footerStatus.textContent = status.running ? 'Running' : 'Stopped';
         footerStatus.className = status.running ? 
-          'ml-1 px-2 py-1 rounded text-xs bg-green-100 text-green-800' : 
-          'ml-1 px-2 py-1 rounded text-xs bg-red-100 text-red-800';
+          'px-2 py-1 rounded-md text-xs font-semibold bg-green-500 text-white' : 
+          'px-2 py-1 rounded-md text-xs font-semibold bg-red-500 text-white';
       } else {
         console.warn(`Footer status not found for service: ${service}`);
       }
