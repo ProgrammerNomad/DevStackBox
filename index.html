@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="styles/installers.css">
 </head>
 <body>
-    <div class="min-h-screen bg-gray-50">
+    <div class="min-h-screen bg-gray-50 pb-20">
         <!-- Header -->
         <header class="bg-white border-b border-gray-200 shadow-sm">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
@@ -26,6 +26,9 @@
                 </div>
             </div>
         </header>
+
+        <!-- Notification Container -->
+        <div id="notification-container" class="fixed top-4 right-4 z-50 space-y-2"></div>
 
         <!-- Main Content -->
         <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -209,17 +212,13 @@
 
             <!-- One-Click Installers Panel -->
             <section class="bg-white rounded-lg shadow-md p-6 mb-6">
-                <h2 class="flex items-center text-xl font-semibold text-gray-900 mb-6">
-                    <img src="assets/icons/installer.svg" alt="Installers" class="w-6 h-6 mr-3">
-                    One-Click Installers
-                </h2>
-                
-                <div class="flex flex-col sm:flex-row gap-4 mb-6">
-                    <div class="flex-1">
-                        <input type="text" id="installerSearch" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary" placeholder="Search installers..." autocomplete="off">
+                <h2 class="flex items-center justify-between text-xl font-semibold text-gray-900 mb-4">
+                    <div class="flex items-center">
+                        <img src="assets/icons/installer.svg" alt="Installers" class="w-6 h-6 mr-3">
+                        One-Click Installers
                     </div>
-                    <div class="sm:w-48">
-                        <select id="categoryFilter" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary">
+                    <div class="flex items-center space-x-2">
+                        <select id="categoryFilter" class="text-sm px-2 py-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary">
                             <option value="">All Categories</option>
                             <option value="cms">Content Management</option>
                             <option value="framework">PHP Frameworks</option>
@@ -227,11 +226,12 @@
                             <option value="forum">Forum & Community</option>
                             <option value="wiki">Wiki & Documentation</option>
                         </select>
+                        <input type="text" id="installerSearch" class="text-sm w-48 px-2 py-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary" placeholder="Search installers..." autocomplete="off">
                     </div>
-                </div>
+                </h2>
                 
-                <div id="installersContainer" class="min-h-[300px]">
-                    <div class="flex items-center justify-center h-48">
+                <div id="installersContainer" class="min-h-[200px] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                    <div class="flex items-center justify-center h-48 col-span-full">
                         <div class="text-center">
                             <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
                             <p class="text-gray-500">Loading installers...</p>
@@ -293,13 +293,22 @@
                                 <span class="text-sm font-semibold text-green-600" id="systemPhpStatus">PHP 8.2, 8.1, 8.3, 8.4 (8.2 default)</span>
                             </div>
                         </div>
+                        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center space-x-2">
+                                    <img src="assets/icons/phpmyadmin.svg" alt="phpMyAdmin" class="w-4 h-4">
+                                    <span class="text-sm font-medium text-gray-700">phpMyAdmin Status</span>
+                                </div>
+                                <span class="text-sm font-semibold text-green-600" id="systemPhpmyadminStatus">Pre-bundled</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
         </main>
 
         <!-- Status Bar / Footer -->
-        <footer class="bg-gradient-to-r from-gray-800 to-gray-900 text-white px-6 py-4 mt-6 shadow-lg">
+        <footer class="fixed bottom-0 left-0 right-0 bg-gradient-to-r from-gray-800 to-gray-900 text-white px-6 py-4 shadow-lg z-40">
             <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-4">
                     <div class="flex items-center space-x-2">
@@ -327,6 +336,9 @@
             </div>
         </footer>
     </div>
+
+    <!-- Notification Container -->
+    <div id="notificationContainer" class="fixed top-4 right-4 z-50 space-y-2"></div>
 
     <!-- Download & Settings Modal -->
     <div class="modal-overlay" id="downloadSettingsModal">
@@ -610,6 +622,7 @@
     <!-- Scripts -->
     <script src="scripts/config-ui.js"></script>
     <script src="scripts/one-click-installers.js"></script>
+    <script src="scripts/service-status-helper.js"></script>
     <script src="scripts/app.js?v=1.0.1"></script>
 </body>
 </html>
