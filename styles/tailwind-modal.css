@@ -1,0 +1,59 @@
+/* 
+ * Tailwind Modal Specific Overrides
+ * Only include critical CSS that can't be achieved with Tailwind classes
+ */
+
+/* Define primary color variable if needed */
+:root {
+  --color-primary: #4f46e5;
+  --color-primary-darker: #4338ca;
+}
+
+/* Apply primary color to elements with .text-primary class */
+.text-primary {
+  color: var(--color-primary);
+}
+
+/* Apply primary color to elements with .bg-primary class */
+.bg-primary {
+  background-color: var(--color-primary);
+}
+
+/* Apply primary color to elements with .border-primary class */
+.border-primary {
+  border-color: var(--color-primary);
+}
+
+/* Apply primary color to elements with .ring-primary class */
+.ring-primary {
+  --tw-ring-color: var(--color-primary);
+}
+
+/* Modal transition animations */
+.modal-overlay {
+  transition: opacity 0.3s ease;
+  opacity: 0;
+}
+
+.modal-overlay[style*="display: flex"] {
+  opacity: 1;
+}
+
+/* Ensure modal appears above other content */
+#configModal {
+  z-index: 100;
+}
+
+/* Animation for tab switching */
+[id$="-tab"] {
+  transition: opacity 0.2s ease;
+}
+
+[id$="-tab"].hidden {
+  display: none;
+  opacity: 0;
+}
+
+[id$="-tab"]:not(.hidden) {
+  opacity: 1;
+}
