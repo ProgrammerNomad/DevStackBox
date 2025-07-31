@@ -60,7 +60,9 @@
           ]
         }
       ],
-      "icon": "assets/icon.png"
+      "icon": "assets/icon.png",
+      "artifactName": "DevStackBox-Portable.exe",
+      "signAndEditExecutable": false
     },
     "mac": {
       "target": "dmg",
