@@ -92,7 +92,7 @@ DevStackBox is under active development, aiming to simplify local PHP and MySQL 
 
 ---
 
-## 🔮 Planned Features
+## 🔮 Planned Features 
 
 To become a truly powerful and complete solution for PHP developers, DevStackBox aims to include all essential features found in Laragon, XAMPP, and WAMP, plus modern improvements:
 
