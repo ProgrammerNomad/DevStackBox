@@ -93,11 +93,18 @@ npm start
 | **Database Backup/Restore (One-Click)**       | 🕓 Planned    | UI to export/import MySQL databases                                |
 | **MySQL User Management**                     | 🕓 Planned    | Create/edit MySQL users/privileges via UI                          |
 | **Quick Launch Tools**                        | 🕓 Planned    | Terminal (PHP/MySQL CLI), copy connection string, etc.             |
-| **Integrated Terminal with CLI**              | 🕓 Planned    | Built-in portable CLI terminal using node-pty and xterm.js         |
+| **Full App/Data Backup/Restore**              | 🕓 Planned    | Backup configs, databases, logs in one click                       |
+| **Automatic Virtual Host Management**         | 🕓 Planned    | Pretty URLs like `myapp.test`                                      |
+| **HTTPS/SSL for Local Sites**                 | 🕓 Planned    | One-click SSL for local domains and phpMyAdmin                     |
 | **Project Templates/Cloning**                 | 🕓 Planned    | Clone from Git or use templates for new projects                   |
 | **Composer Integration**                      | 🕓 Planned    | Global/per-project Composer support                                |
 | **PHP INI & Apache Config Editors**           | 🕓 Planned    | User-friendly config editing                                       |
 | **PHP Error Display Toggle**                  | 🕓 Planned    | Enable/disable display_errors from UI                              |
+| **Service Status & Tray Notifications**       | 🕓 Planned    | Tray notifications for service events                              |
+| **Portable PHP CLI**                          | 🕓 Planned    | Terminal with PHP version selector                                 |
+| **Bundled Tools (curl, git, node, npm, etc.)**| 🕓 Planned    | Optionally bundle common CLI tools                                 |
+| **Log Viewer Enhancements**                   | 🕓 Planned    | Real-time, filterable, tabbed log viewer for all services/apps     |
+| **Project Full Backup/Restore**               | 🕓 Planned    | Backup/restore www files, configs, databases                       |
 | **Service Status & Tray Notifications**       | 🕓 Planned    | Tray notifications for service events                              |
 | **Portable PHP CLI**                          | 🕓 Planned    | Terminal with PHP version selector                                 |
 | **Bundled Tools (curl, git, node, npm, etc.)**| 🕓 Planned    | Optionally bundle common CLI tools                                 |
@@ -199,7 +206,7 @@ DevStackBox has a modern header with three consistent buttons:
 
 <!-- Preferences Button (consistent height with primary styling) -->
 <button class="inline-flex items-center justify-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-blue-700 h-10" id="downloadSettingsBtn">
-    <img src="assets/icons/system.svg" class="w-4 h-4 mr-1.5">
+    <img src="assets/icons/system.svg" class="w-4 h-4 mr-2">
     <span>Preferences</span>
 </button>
 ```
@@ -208,9 +215,11 @@ DevStackBox has a modern header with three consistent buttons:
 - Consistent `h-10` height for all header buttons
 - `justify-center` for better alignment of content
 - Proper spacing with `space-x-2` between buttons
-- Language text always visible (no responsive hiding)
+- Language text always visible (no responsive hiding) with proper Unicode font support
 - Consistent border and hover states for visual consistency  
 - Proper focus rings for accessibility
+- **Unicode Support**: Enhanced font families for Devanagari script rendering
+- **Consistent Spacing**: All icon-text combinations use `mr-2` for uniform spacing
 
 For other UI components and modals:
 ```html
@@ -635,6 +644,49 @@ When adding dark mode, use the `dark:` variant:
 </div>
 ```
 
+### 🔤 Unicode and Font Support
+
+DevStackBox includes comprehensive **offline** Unicode support for international languages, especially Hindi (Devanagari script). The app is completely offline and uses system fonts without any external dependencies.
+
+**Font Stack:**
+```css
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans', 'Noto Sans Devanagari', sans-serif;
+}
+
+/* Specific Unicode support for Hindi text */
+*[lang="hi"], 
+.hindi-text,
+.language-text,
+.language-option span {
+  font-family: 'Segoe UI', 'Noto Sans Devanagari', 'Mangal', 'Aparajita', 'Kokila', sans-serif;
+  font-feature-settings: "kern" 1, "liga" 1;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Language switcher specific styling */
+.language-flag {
+  font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
+  font-size: 1rem;
+  line-height: 1;
+}
+```
+
+**Offline Font Approach:**
+- **No External Dependencies**: All fonts are system-based or bundled locally
+- **CSP Compliant**: Content Security Policy prevents external font loading for security
+- **System Font Fallbacks**: Graceful degradation to system fonts on all platforms
+- **No CDN Dependencies**: Complete offline functionality without internet connection
+
+**Key Features:**
+- **Perfect Hindi Rendering**: System fonts like Mangal, Aparajita, and Kokila ensure proper Devanagari display
+- **Performance Optimized**: No external font loading delays or network dependencies
+- **Cross-Platform**: Works consistently across Windows, macOS, and Linux using system fonts
+- **Security Enhanced**: CSP prevents external resource loading for better security
+- **Accessibility**: Proper text rendering and antialiasing for all scripts using system capabilities
+
 ---
 
 ## 🌐 11. Working with Multilanguage Support (i18next)
@@ -689,11 +741,19 @@ Add keys to both language files:
 ### 🎛️ Language Switcher Components
 
 The header contains a language switcher with:
-- Dropdown button with flag icons and full language names
-- Current language display (always visible)
-- Click-to-switch functionality
+- Dropdown button with flag icons and full language names (no country prefixes like IN/US)
+- Current language display (always visible with proper Unicode support)
+- Click-to-switch functionality with smooth transitions
 - Consistent button styling with theme switcher and preferences
 - Proper height alignment (h-10) for visual consistency
+- Enhanced Unicode font support for Devanagari script (Hindi)
+- Proper spacing between icons and text elements
+
+**Key Design Improvements:**
+- **Unicode Support**: Added Noto Sans Devanagari font family for perfect Hindi character rendering
+- **Proper Spacing**: Consistent `mr-2` spacing between flag icons and text
+- **Font Rendering**: Optimized text rendering with antialiasing for better Unicode display
+- **No Prefixes**: Language names display as "English" and "हिन्दी" without country codes
 
 ### 💻 Using i18n in JavaScript
 
@@ -726,14 +786,33 @@ newElement.textContent = window.i18nManager.t('buttons.newAction');
 
 ### 🎨 UI Components with Multilanguage
 
-Language switcher button follows the same Tailwind pattern as other header buttons:
+Language switcher button follows the same Tailwind pattern as other header buttons with improved Unicode support:
 
 ```html
+<!-- Language Switcher with proper Unicode support -->
 <button class="inline-flex items-center justify-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors h-10">
   <span class="language-flag text-base mr-2">🇺🇸</span>
   <span class="language-text">English</span>
+  <svg class="w-4 h-4 ml-2 text-gray-500"><!-- dropdown arrow --></svg>
+</button>
+
+<!-- Theme Switcher (consistent styling) -->
+<button class="inline-flex items-center justify-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 h-10">
+  <svg class="w-5 h-5"><!-- theme icons --></svg>
+</button>
+
+<!-- Preferences Button (proper spacing) -->
+<button class="inline-flex items-center justify-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-blue-700 h-10">
+  <img src="assets/icons/system.svg" class="w-4 h-4 mr-2">
+  <span>Preferences</span>
 </button>
 ```
+
+**Button Design Improvements:**
+- **Consistent Spacing**: All buttons use `mr-2` for proper icon-text spacing
+- **Unicode Fonts**: Automatic font fallback for Devanagari script rendering
+- **Proper Heights**: All header buttons maintain `h-10` for visual consistency
+- **Enhanced Accessibility**: Better focus rings and transition effects
 
 ---
 

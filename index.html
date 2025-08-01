@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:;">
     <title>DevStackBox - Local Development Environment</title>
+    
     <link rel="stylesheet" href="styles/tailwind-output.css">
+    <link rel="stylesheet" href="styles/main.css">
     <link rel="stylesheet" href="styles/tailwind-modal.css">
     <link rel="stylesheet" href="styles/installers.css">
     <link rel="stylesheet" href="styles/dark-mode.css">
@@ -31,20 +33,20 @@
                         <button class="inline-flex items-center justify-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors h-10" id="languageSwitcher" data-i18n="[title]header.switchLanguage" title="Switch Language">
                             <span class="language-flag text-base mr-2">🇺🇸</span>
                             <span class="language-text">English</span>
-                            <svg class="w-4 h-4 ml-1 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-4 h-4 ml-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                             </svg>
                         </button>
                         <!-- Language Dropdown -->
                         <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-50 hidden" id="languageDropdown">
                             <div class="py-1">
-                                <button class="language-option flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" data-lang="en">
-                                    <span class="text-base mr-3">🇺🇸</span>
-                                    <span>English</span>
+                                <button class="language-option flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors" data-lang="en">
+                                    <span class="language-flag text-base mr-3">🇺🇸</span>
+                                    <span class="language-text">English</span>
                                 </button>
-                                <button class="language-option flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" data-lang="hi">
-                                    <span class="text-base mr-3">🇮🇳</span>
-                                    <span>हिन्दी</span>
+                                <button class="language-option flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors" data-lang="hi">
+                                    <span class="language-flag text-base mr-3">🇮🇳</span>
+                                    <span class="language-text">हिन्दी</span>
                                 </button>
                             </div>
                         </div>
@@ -64,7 +66,7 @@
                     
                     <!-- Preferences Button -->
                     <button class="inline-flex items-center justify-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors h-10" id="downloadSettingsBtn" data-i18n="[title]header.preferences" title="Preferences">
-                        <img src="assets/icons/system.svg" alt="Settings" class="w-4 h-4 mr-1.5">
+                        <img src="assets/icons/system.svg" alt="Settings" class="w-4 h-4 mr-2">
                         <span data-i18n="header.preferences">Preferences</span>
                     </button>
                 </div>
