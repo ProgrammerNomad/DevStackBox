@@ -24,12 +24,30 @@ class OneClickInstallers {
         });
       }
       
+      console.log('Loading installers data...');
       await this.loadInstallers();
+      console.log('Rendering installers interface...');
       this.renderInterface();
+      console.log('Binding installers events...');
       this.bindEvents();
       console.log('OneClickInstallers interface ready');
     } catch (error) {
       console.error('Error initializing OneClickInstallers:', error);
+      
+      // Show fallback content if initialization fails
+      const container = document.getElementById('installersContainer');
+      if (container) {
+        container.innerHTML = `
+          <div class="col-span-full flex flex-col items-center justify-center py-12 text-center">
+            <img src="assets/icons/error.svg" alt="Error" class="w-16 h-16 mb-4 opacity-50">
+            <h3 class="text-lg font-medium text-gray-900 mb-2">Failed to load installers</h3>
+            <p class="text-sm text-gray-500 mb-4">There was an error loading the application installers.</p>
+            <button class="px-4 py-2 bg-primary text-white rounded-md hover:bg-blue-700" onclick="location.reload()">
+              Reload Page
+            </button>
+          </div>
+        `;
+      }
     }
   }
 
@@ -284,6 +302,8 @@ class OneClickInstallers {
       return;
     }
 
+    console.log('Showing installation dialog for:', installer.name);
+
     // Update modal content
     const modalIcon = document.getElementById('modalInstallerIcon');
     const modalName = document.getElementById('modalInstallerName');
@@ -292,140 +312,206 @@ class OneClickInstallers {
     const cancelBtn = document.getElementById('cancelInstallBtn');
     const closeBtn = document.getElementById('closeInstallerModal');
 
-    if (modalIcon) modalIcon.src = installer.icon;
-    if (modalIcon) modalIcon.alt = installer.name;
-    if (modalName) modalName.textContent = `Install ${installer.name}`;
+    if (modalIcon) {
+      modalIcon.src = installer.icon || 'assets/icons/installer.svg';
+      modalIcon.alt = installer.name || 'Application';
+      modalIcon.onerror = function() { this.src = 'assets/icons/installer.svg'; };
+    }
+    if (modalName) modalName.textContent = `Install ${installer.name || 'Application'}`;
 
     if (modalContent) {
+      // Get folder name safely
+      const folderName = installer.installation && installer.installation.extractTo 
+        ? installer.installation.extractTo.split('/').pop() || installer.installation.extractTo.split('/')[1] || installer.name.toLowerCase()
+        : installer.name.toLowerCase();
+
+      // Get default database name safely  
+      const defaultDb = installer.installation && installer.installation.defaultDatabase 
+        ? installer.installation.defaultDatabase 
+        : `${installer.name.toLowerCase().replace(/[^a-z0-9]/g, '_')}_db`;
+
       modalContent.innerHTML = `
         <div class="installation-info">
           <div class="app-info">
-            <img src="${installer.icon}" alt="${installer.name}" class="app-icon">
+            <img src="${installer.icon || 'assets/icons/installer.svg'}" alt="${installer.name}" class="app-icon" onerror="this.src='assets/icons/installer.svg'">
             <div>
-              <h3>${installer.name} v${installer.version}</h3>
-              <p>${installer.description}</p>
+              <h3>${installer.name} v${installer.version || 'Latest'}</h3>
+              <p>${installer.description || 'No description available.'}</p>
             </div>
           </div>
           
           <div class="installation-options">
             <div class="form-group">
               <label for="install-folder">Installation Folder:</label>
-              <input type="text" id="install-folder" value="${installer.installation.extractTo.split('/')[1]}" class="form-input">
+              <input type="text" id="install-folder" value="${folderName}" class="form-input">
+              <small class="text-gray-600">Will be installed in: www/${folderName}</small>
             </div>
             
-            ${installer.installation.databaseRequired ? `
+            ${installer.installation && installer.installation.databaseRequired ? `
               <div class="form-group">
                 <label for="database-name">Database Name:</label>
-                <input type="text" id="database-name" value="${installer.installation.defaultDatabase}" class="form-input">
+                <input type="text" id="database-name" value="${defaultDb}" class="form-input">
+                <small class="text-gray-600">A new MySQL database will be created</small>
               </div>
             ` : ''}
+            
+            <div class="form-group">
+              <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                <h4 class="text-sm font-medium text-blue-900 mb-2">Installation Details:</h4>
+                <ul class="text-sm text-blue-800 space-y-1">
+                  <li>• PHP ${installer.requirements?.php || '7.4+'}+ required</li>
+                  <li>• MySQL ${installer.requirements?.mysql || '5.6+'}+ required</li>
+                  <li>• Disk space: ${installer.requirements?.diskSpace || '100MB'}</li>
+                  ${installer.installation?.setupUrl ? `<li>• Setup URL: <code>${installer.installation.setupUrl}</code></li>` : ''}
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
       `;
     }
 
-    // Show modal
-    modal.style.display = 'flex';
-
-    // Bind events
-    const closeModal = () => {
-      modal.style.display = 'none';
-    };
-
-    if (closeBtn) closeBtn.onclick = closeModal;
-    if (cancelBtn) cancelBtn.onclick = closeModal;
-    
-    modal.onclick = (e) => {
-      if (e.target === modal) closeModal();
-    };
-
+    // Clear any previous event listeners by cloning buttons
     if (confirmBtn) {
-      confirmBtn.onclick = () => {
+      const newConfirmBtn = confirmBtn.cloneNode(true);
+      confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+      newConfirmBtn.onclick = () => {
         this.performInstallation(installer, modal);
       };
     }
+
+    if (cancelBtn) {
+      const newCancelBtn = cancelBtn.cloneNode(true);
+      cancelBtn.parentNode.replaceChild(newCancelBtn, cancelBtn);
+      newCancelBtn.onclick = () => this.closeModal(modal);
+    }
+
+    if (closeBtn) {
+      const newCloseBtn = closeBtn.cloneNode(true);
+      closeBtn.parentNode.replaceChild(newCloseBtn, closeBtn);
+      newCloseBtn.onclick = () => this.closeModal(modal);
+    }
+
+    // Show modal with proper animation
+    modal.style.display = 'flex';
+    // Force reflow
+    modal.offsetHeight;
+    modal.classList.add('show');
+
+    // Close modal when clicking outside
+    modal.onclick = (e) => {
+      if (e.target === modal) {
+        this.closeModal(modal);
+      }
+    };
+
+    console.log('Installation dialog displayed successfully');
+  }
+
+  /**
+   * Close modal with animation
+   */
+  closeModal(modal) {
+    if (!modal) return;
+    
+    modal.classList.remove('show');
+    setTimeout(() => {
+      modal.style.display = 'none';
+    }, 300);
   }
 
   /**
    * Show info dialog
    */
   showInfoDialog(installer) {
+    console.log('Showing info dialog for:', installer.name);
+    
     const dialog = document.createElement('div');
-    dialog.className = 'fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50';
+    dialog.className = 'fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 modal-overlay';
+    dialog.style.display = 'flex';
     dialog.innerHTML = `
-      <div class="bg-white rounded-lg shadow-xl max-w-3xl w-full mx-4 max-h-[90vh] flex flex-col">
+      <div class="bg-white rounded-lg shadow-xl max-w-3xl w-full mx-4 max-h-[90vh] flex flex-col modal-content">
         <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
           <h2 class="text-xl font-semibold text-gray-900 flex items-center">
-            <img src="${installer.icon}" alt="${installer.name}" class="w-6 h-6 mr-3" onerror="this.src='assets/icons/installer.svg'">
+            <img src="${installer.icon || 'assets/icons/installer.svg'}" alt="${installer.name}" class="w-6 h-6 mr-3" onerror="this.src='assets/icons/installer.svg'">
             ${installer.name}
           </h2>
-          <button class="text-gray-400 hover:text-gray-600 text-2xl font-semibold">&times;</button>
+          <button class="text-gray-400 hover:text-gray-600 text-2xl font-semibold close-info-dialog" aria-label="Close">&times;</button>
         </div>
         <div class="px-6 py-4 overflow-y-auto">
           <div class="space-y-6">
             <!-- Basic info -->
             <div class="flex flex-col sm:flex-row sm:items-center p-4 bg-gray-50 rounded-lg gap-4">
-              <img src="${installer.icon}" alt="${installer.name}" class="w-16 h-16 object-contain mx-auto sm:mx-0" onerror="this.src='assets/icons/installer.svg'">
+              <img src="${installer.icon || 'assets/icons/installer.svg'}" alt="${installer.name}" class="w-16 h-16 object-contain mx-auto sm:mx-0" onerror="this.src='assets/icons/installer.svg'">
               <div>
                 <div class="flex flex-wrap gap-2 mb-2">
-                  <span class="inline-block bg-primary text-white text-xs px-2 py-1 rounded-full">v${installer.version}</span>
-                  <span class="inline-block bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded-full">${installer.category}</span>
+                  <span class="inline-block bg-primary text-white text-xs px-2 py-1 rounded-full">v${installer.version || 'Latest'}</span>
+                  <span class="inline-block bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded-full">${installer.category || 'Application'}</span>
                 </div>
-                <a href="${installer.officialSite}" target="_blank" class="text-primary hover:underline text-sm flex items-center">
+                ${installer.officialSite ? `
+                <a href="${installer.officialSite}" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline text-sm flex items-center">
                   Visit Official Website
                   <svg class="w-3 h-3 ml-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                     <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"></path>
                     <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z"></path>
                   </svg>
                 </a>
+                ` : ''}
               </div>
             </div>
             
             <!-- Description -->
             <div>
               <h3 class="text-lg font-medium text-gray-900 mb-2">Description</h3>
-              <p class="text-gray-600">${installer.description}</p>
+              <p class="text-gray-600">${installer.description || 'No description available.'}</p>
             </div>
 
             <!-- Features -->
+            ${installer.features && installer.features.length > 0 ? `
             <div>
               <h3 class="text-lg font-medium text-gray-900 mb-2">Key Features</h3>
               <ul class="list-disc pl-5 text-gray-600 space-y-1">
                 ${installer.features.map(feature => `<li>${feature}</li>`).join('')}
               </ul>
             </div>
+            ` : ''}
 
             <!-- Requirements -->
+            ${installer.requirements ? `
             <div>
               <h3 class="text-lg font-medium text-gray-900 mb-2">System Requirements</h3>
               <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div class="bg-gray-50 p-3 rounded-lg text-center">
                   <span class="block text-xs text-gray-500 mb-1">PHP Version</span>
-                  <span class="block text-sm font-medium text-gray-700">${installer.requirements.php}</span>
+                  <span class="block text-sm font-medium text-gray-700">${installer.requirements.php || '7.4+'}</span>
                 </div>
                 <div class="bg-gray-50 p-3 rounded-lg text-center">
                   <span class="block text-xs text-gray-500 mb-1">MySQL Version</span>
-                  <span class="block text-sm font-medium text-gray-700">${installer.requirements.mysql}</span>
+                  <span class="block text-sm font-medium text-gray-700">${installer.requirements.mysql || '5.6+'}</span>
                 </div>
                 <div class="bg-gray-50 p-3 rounded-lg text-center">
                   <span class="block text-xs text-gray-500 mb-1">Disk Space</span>
-                  <span class="block text-sm font-medium text-gray-700">${installer.requirements.diskSpace}</span>
+                  <span class="block text-sm font-medium text-gray-700">${installer.requirements.diskSpace || '100MB'}</span>
                 </div>
               </div>
             </div>
+            ` : ''}
 
             <!-- Installation Details -->
+            ${installer.installation ? `
             <div>
               <h3 class="text-lg font-medium text-gray-900 mb-2">Installation Details</h3>
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div class="bg-gray-50 p-3 rounded-lg">
                   <span class="block text-xs text-gray-500 mb-1">Install Location</span>
-                  <span class="block text-sm font-medium text-gray-700">${installer.installation.extractTo}</span>
+                  <span class="block text-sm font-medium text-gray-700">${installer.installation.extractTo || 'www/' + installer.name.toLowerCase()}</span>
                 </div>
+                ${installer.installation.setupUrl ? `
                 <div class="bg-gray-50 p-3 rounded-lg">
                   <span class="block text-xs text-gray-500 mb-1">Setup URL</span>
                   <span class="block text-sm font-medium text-gray-700">${installer.installation.setupUrl}</span>
                 </div>
+                ` : ''}
                 <div class="bg-gray-50 p-3 rounded-lg">
                   <span class="block text-xs text-gray-500 mb-1">Database Required</span>
                   <span class="block text-sm font-medium text-gray-700">${installer.installation.databaseRequired ? 'Yes' : 'No'}</span>
@@ -438,10 +524,11 @@ class OneClickInstallers {
                 ` : ''}
               </div>
             </div>
+            ` : ''}
           </div>
         </div>
         <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end gap-3">
-          <button class="px-4 py-2 border border-gray-300 text-gray-700 bg-white rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors close-info">
+          <button class="px-4 py-2 border border-gray-300 text-gray-700 bg-white rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors close-info-dialog">
             Close
           </button>
           <button class="px-4 py-2 bg-primary text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors install-from-info" data-installer="${installer.id}">
@@ -453,25 +540,44 @@ class OneClickInstallers {
 
     document.body.appendChild(dialog);
 
+    // Force reflow and add animation class
+    dialog.offsetHeight;
+    dialog.classList.add('show');
+
     // Bind modal events
-    dialog.querySelector('button:first-of-type').addEventListener('click', () => {
-      document.body.removeChild(dialog);
+    const closeDialog = () => {
+      dialog.classList.remove('show');
+      setTimeout(() => {
+        if (document.body.contains(dialog)) {
+          document.body.removeChild(dialog);
+        }
+      }, 300);
+    };
+
+    // Close button events
+    dialog.querySelectorAll('.close-info-dialog').forEach(btn => {
+      btn.addEventListener('click', closeDialog);
     });
 
-    dialog.querySelector('.close-info').addEventListener('click', () => {
-      document.body.removeChild(dialog);
-    });
-
+    // Outside click to close
     dialog.addEventListener('click', (e) => {
       if (e.target === dialog) {
-        document.body.removeChild(dialog);
+        closeDialog();
       }
     });
 
-    dialog.querySelector('.install-from-info').addEventListener('click', () => {
-      document.body.removeChild(dialog);
-      this.handleInstallClick(installer.id);
-    });
+    // Install button
+    const installBtn = dialog.querySelector('.install-from-info');
+    if (installBtn) {
+      installBtn.addEventListener('click', () => {
+        closeDialog();
+        setTimeout(() => {
+          this.handleInstallClick(installer.id);
+        }, 100);
+      });
+    }
+
+    console.log('Info dialog displayed successfully');
   }
 
   /**
@@ -560,8 +666,12 @@ class OneClickInstallers {
 
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
-  if (document.getElementById('installers-container')) {
+  // Check if installers section exists - it should be in index.html
+  if (document.getElementById('installersContainer')) {
+    console.log('OneClickInstallers: DOM ready, initializing...');
     window.oneClickInstallers = new OneClickInstallers();
     window.oneClickInstallers.init();
+  } else {
+    console.log('OneClickInstallers: installersContainer not found, waiting for app initialization...');
   }
 });

@@ -1519,37 +1519,64 @@ class ConfigurationUI {
         // Use a timeout to prevent hanging
         const statusPromise = window.electronAPI.getServiceStatus('apache');
         const timeoutPromise = new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Status check timeout')), 5000)
+          setTimeout(() => reject(new Error('Status check timeout')), 3000)
         );
         
         const status = await Promise.race([statusPromise, timeoutPromise]);
         
         if (status && status.running) {
-          // Apache is running - enable button
+          // Apache is running - enable button and update text
           phpInfoBtn.disabled = false;
           phpInfoBtn.classList.remove('disabled');
           phpInfoBtn.title = 'View PHP configuration and information';
+          
+          // Update button text to remove "(Apache required)" message
+          const buttonTextElement = phpInfoBtn.querySelector('span') || phpInfoBtn;
+          if (buttonTextElement.textContent.includes('(Apache required)')) {
+            buttonTextElement.textContent = 'PHP Info';
+          }
+          
           console.log('PHP Info button enabled - Apache is running');
         } else {
-          // Apache is not running - disable button
+          // Apache is not running - disable button and show requirement
           phpInfoBtn.disabled = true;
           phpInfoBtn.classList.add('disabled');
           phpInfoBtn.title = 'Apache must be running to view PHP Info';
+          
+          // Update button text to show requirement
+          const buttonTextElement = phpInfoBtn.querySelector('span') || phpInfoBtn;
+          if (!buttonTextElement.textContent.includes('(Apache required)')) {
+            buttonTextElement.textContent = 'PHP Info (Apache required)';
+          }
+          
           console.log('PHP Info button disabled - Apache is not running');
         }
       } else {
-        // API not available - disable button
-        phpInfoBtn.disabled = true;
-        phpInfoBtn.classList.add('disabled');
-        phpInfoBtn.title = 'Unable to check Apache status';
-        console.log('PHP Info button disabled - API not available');
+        // API not available - assume Apache might be running and enable button
+        phpInfoBtn.disabled = false;
+        phpInfoBtn.classList.remove('disabled');
+        phpInfoBtn.title = 'View PHP configuration and information (status unknown)';
+        
+        // Keep original button text
+        const buttonTextElement = phpInfoBtn.querySelector('span') || phpInfoBtn;
+        if (buttonTextElement.textContent.includes('(Apache required)')) {
+          buttonTextElement.textContent = 'PHP Info';
+        }
+        
+        console.log('PHP Info button enabled - API not available, assuming Apache may be running');
       }
     } catch (error) {
       console.error('Error updating PHP Info button:', error);
-      // On error, disable button
-      phpInfoBtn.disabled = true;
-      phpInfoBtn.classList.add('disabled');
-      phpInfoBtn.title = 'Error checking Apache status';
+      // On error, enable button (fail open)
+      phpInfoBtn.disabled = false;
+      phpInfoBtn.classList.remove('disabled');
+      phpInfoBtn.title = 'View PHP configuration and information (status check failed)';
+      
+      // Keep original button text
+      const buttonTextElement = phpInfoBtn.querySelector('span') || phpInfoBtn;
+      if (buttonTextElement.textContent.includes('(Apache required)')) {
+        buttonTextElement.textContent = 'PHP Info';
+      }
     }
   }
 

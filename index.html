@@ -184,29 +184,56 @@
                     <span data-i18n="php.title">PHP Management</span>
                 </h2>
                 
-                <div class="space-y-6">
-                    <div class="space-y-3">
-                        <label for="phpVersion" class="block text-sm font-medium text-gray-700" data-i18n="php.activeVersion">Active PHP Version:</label>
-                        <div class="flex items-center space-x-3">
-                            <select id="phpVersion" class="flex-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary" data-i18n="[title]php.selectVersion">
+                <!-- Two Column Layout -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Left Column: PHP Version Selection & Switch -->
+                    <div class="space-y-4">
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">PHP Version Selection</h3>
+                        <div class="space-y-3">
+                            <label for="phpVersion" class="block text-sm font-medium text-gray-700" data-i18n="php.selectVersion">Select PHP Version:</label>
+                            <select id="phpVersion" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary" data-i18n="[title]php.selectVersion">
                                 <option value="8.1">PHP 8.1</option>
-                                <option value="8.2">PHP 8.2 (Default)</option>
+                                <option value="8.2" selected>PHP 8.2 (Default)</option>
                                 <option value="8.3">PHP 8.3</option>
                                 <option value="8.4">PHP 8.4</option>
                             </select>
-                            <button class="inline-flex items-center px-4 py-2 bg-primary text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors" id="switchPhpBtn" data-i18n="common.switch">Switch</button>
                         </div>
+                        <button class="w-full inline-flex items-center justify-center px-4 py-2 bg-primary text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors" id="switchPhpBtn" data-i18n="common.switch">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
+                            </svg>
+                            Switch PHP Version
+                        </button>
                     </div>
                     
+                    <!-- Right Column: Current Version & Actions -->
                     <div class="space-y-4">
-                        <div class="text-sm">
-                            <span class="font-medium text-gray-900" data-i18n="php.currentVersion">Current Version:</span>
-                            <span id="currentPhpVersion" class="text-gray-600 ml-2">PHP 8.2</span>
-                        </div>
-                        <div class="flex flex-wrap gap-2">
-                            <button class="inline-flex items-center px-3 py-2 bg-secondary hover:bg-gray-600 text-white text-sm rounded-md transition-colors config-btn" data-config="php" data-i18n="php.config">Edit php.ini</button>
-                            <button class="inline-flex items-center px-3 py-2 bg-secondary hover:bg-gray-600 text-white text-sm rounded-md transition-colors config-btn" data-config="php-extensions" data-i18n="php.extensions">PHP Extensions</button>
-                            <button class="inline-flex items-center px-3 py-2 bg-secondary hover:bg-gray-600 text-white text-sm rounded-md transition-colors disabled" id="phpInfoBtn" disabled data-i18n="[title]php.infoTitle" title="Apache must be running to view PHP Info" data-i18n="php.info">PHP Info</button>
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Current PHP Environment</h3>
+                        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                            <div class="text-sm mb-4">
+                                <span class="font-medium text-gray-900" data-i18n="php.currentVersion">Current Version:</span>
+                                <span id="currentPhpVersion" class="text-primary font-semibold ml-2">PHP 8.2</span>
+                            </div>
+                            <div class="space-y-2">
+                                <button class="w-full inline-flex items-center justify-center px-3 py-2 bg-secondary hover:bg-gray-600 text-white text-sm rounded-md transition-colors config-btn" data-config="php" data-i18n="php.config">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                    </svg>
+                                    Edit php.ini
+                                </button>
+                                <button class="w-full inline-flex items-center justify-center px-3 py-2 bg-secondary hover:bg-gray-600 text-white text-sm rounded-md transition-colors config-btn" data-config="php-extensions" data-i18n="php.extensions">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                                    </svg>
+                                    PHP Extensions
+                                </button>
+                                <button class="w-full inline-flex items-center justify-center px-3 py-2 bg-secondary hover:bg-gray-600 text-white text-sm rounded-md transition-colors" id="phpInfoBtn" data-i18n="[title]php.infoTitle" title="View PHP configuration and information" data-i18n="php.info">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    PHP Info
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>

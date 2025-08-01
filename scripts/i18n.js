@@ -8,7 +8,7 @@ class I18nManager {
         this.currentLanguage = 'en';
         this.supportedLanguages = {
             en: { name: 'English', flag: '🇺🇸' },
-            hi: { name: 'हिน्दी', flag: '🇮🇳' }
+            hi: { name: 'हिंदी', flag: '🇮🇳' }
         };
         this.isInitialized = false;
     }
