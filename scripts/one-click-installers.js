@@ -195,39 +195,74 @@ class OneClickInstallers {
    * Bind event listeners
    */
   bindEvents() {
+    // Remove any existing event listeners first to prevent duplicates
+    this.removeEventListeners();
+    
     // Search input - use the existing HTML element
     const searchInput = document.getElementById('installerSearch');
     if (searchInput) {
-      searchInput.addEventListener('input', (e) => {
+      this.searchInputHandler = (e) => {
         this.handleSearchChange(e.target.value);
-      });
+      };
+      searchInput.addEventListener('input', this.searchInputHandler);
     }
 
     // Category filter - use the existing HTML element  
     const categoryFilter = document.getElementById('categoryFilter');
     if (categoryFilter) {
-      categoryFilter.addEventListener('change', (e) => {
+      this.categoryFilterHandler = (e) => {
         this.handleFilterChange(e.target.value);
-      });
+      };
+      categoryFilter.addEventListener('change', this.categoryFilterHandler);
     }
 
-    // Install buttons
-    document.addEventListener('click', (e) => {
+    // Use event delegation for install and info buttons
+    this.documentClickHandler = (e) => {
+      // Install buttons
       if (e.target.matches('.install-btn') || e.target.closest('.install-btn')) {
+        e.preventDefault();
+        e.stopPropagation();
         const button = e.target.matches('.install-btn') ? e.target : e.target.closest('.install-btn');
         const installerId = button.getAttribute('data-installer');
-        this.handleInstallClick(installerId);
+        if (installerId) {
+          this.handleInstallClick(installerId);
+        }
+        return;
       }
-    });
 
-    // Info buttons
-    document.addEventListener('click', (e) => {
+      // Info buttons
       if (e.target.matches('.info-btn') || e.target.closest('.info-btn')) {
+        e.preventDefault();
+        e.stopPropagation();
         const button = e.target.matches('.info-btn') ? e.target : e.target.closest('.info-btn');
         const installerId = button.getAttribute('data-installer');
-        this.handleInfoClick(installerId);
+        if (installerId) {
+          this.handleInfoClick(installerId);
+        }
+        return;
       }
-    });
+    };
+
+    document.addEventListener('click', this.documentClickHandler);
+  }
+
+  /**
+   * Remove event listeners to prevent duplicates
+   */
+  removeEventListeners() {
+    const searchInput = document.getElementById('installerSearch');
+    if (searchInput && this.searchInputHandler) {
+      searchInput.removeEventListener('input', this.searchInputHandler);
+    }
+
+    const categoryFilter = document.getElementById('categoryFilter');
+    if (categoryFilter && this.categoryFilterHandler) {
+      categoryFilter.removeEventListener('change', this.categoryFilterHandler);
+    }
+
+    if (this.documentClickHandler) {
+      document.removeEventListener('click', this.documentClickHandler);
+    }
   }
 
   /**
@@ -371,25 +406,57 @@ class OneClickInstallers {
       `;
     }
 
-    // Clear any previous event listeners by cloning buttons
-    if (confirmBtn) {
-      const newConfirmBtn = confirmBtn.cloneNode(true);
-      confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
-      newConfirmBtn.onclick = () => {
-        this.performInstallation(installer, modal);
-      };
-    }
+    // Remove any existing event listeners to prevent duplicates
+    this.clearModalEventListeners(modal);
 
-    if (cancelBtn) {
-      const newCancelBtn = cancelBtn.cloneNode(true);
-      cancelBtn.parentNode.replaceChild(newCancelBtn, cancelBtn);
-      newCancelBtn.onclick = () => this.closeModal(modal);
-    }
+    // Create new event handlers with proper event handling
+    const closeModalHandler = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      this.closeModal(modal);
+    };
+    
+    const confirmInstallHandler = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      this.performInstallation(installer, modal);
+    };
+    
+    const outsideClickHandler = (e) => {
+      // Only close if clicking on the modal overlay itself
+      if (e.target === modal || e.target.classList.contains('modal-overlay')) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.closeModal(modal);
+      }
+    };
 
+    // Bind new event listeners
     if (closeBtn) {
-      const newCloseBtn = closeBtn.cloneNode(true);
-      closeBtn.parentNode.replaceChild(newCloseBtn, closeBtn);
-      newCloseBtn.onclick = () => this.closeModal(modal);
+      closeBtn.addEventListener('click', closeModalHandler);
+      closeBtn._installHandler = closeModalHandler;
+    }
+    
+    if (cancelBtn) {
+      cancelBtn.addEventListener('click', closeModalHandler);
+      cancelBtn._installHandler = closeModalHandler;
+    }
+    
+    if (confirmBtn) {
+      confirmBtn.addEventListener('click', confirmInstallHandler);
+      confirmBtn._installHandler = confirmInstallHandler;
+    }
+
+    // Outside click handler
+    modal.addEventListener('click', outsideClickHandler);
+    modal._outsideClickHandler = outsideClickHandler;
+
+    // Prevent clicks inside modal content from bubbling up
+    const installModalContent = modal.querySelector('.modal-content');
+    if (installModalContent) {
+      installModalContent.addEventListener('click', (e) => {
+        e.stopPropagation();
+      });
     }
 
     // Show modal with proper animation
@@ -398,14 +465,37 @@ class OneClickInstallers {
     modal.offsetHeight;
     modal.classList.add('show');
 
-    // Close modal when clicking outside
-    modal.onclick = (e) => {
-      if (e.target === modal) {
-        this.closeModal(modal);
-      }
-    };
-
     console.log('Installation dialog displayed successfully');
+  }
+
+  /**
+   * Clear modal event listeners to prevent duplicates
+   */
+  clearModalEventListeners(modal) {
+    const confirmBtn = document.getElementById('confirmInstallBtn');
+    const cancelBtn = document.getElementById('cancelInstallBtn');
+    const closeBtn = document.getElementById('closeInstallerModal');
+
+    // Remove existing event listeners
+    if (confirmBtn && confirmBtn._installHandler) {
+      confirmBtn.removeEventListener('click', confirmBtn._installHandler);
+      delete confirmBtn._installHandler;
+    }
+    
+    if (cancelBtn && cancelBtn._installHandler) {
+      cancelBtn.removeEventListener('click', cancelBtn._installHandler);
+      delete cancelBtn._installHandler;
+    }
+    
+    if (closeBtn && closeBtn._installHandler) {
+      closeBtn.removeEventListener('click', closeBtn._installHandler);
+      delete closeBtn._installHandler;
+    }
+
+    if (modal._outsideClickHandler) {
+      modal.removeEventListener('click', modal._outsideClickHandler);
+      delete modal._outsideClickHandler;
+    }
   }
 
   /**
@@ -426,9 +516,13 @@ class OneClickInstallers {
   showInfoDialog(installer) {
     console.log('Showing info dialog for:', installer.name);
     
+    // Close any existing info dialogs first
+    this.closeAllInfoDialogs();
+    
     const dialog = document.createElement('div');
-    dialog.className = 'fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 modal-overlay';
+    dialog.className = 'fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 modal-overlay info-dialog';
     dialog.style.display = 'flex';
+    dialog.setAttribute('data-installer-id', installer.id);
     dialog.innerHTML = `
       <div class="bg-white rounded-lg shadow-xl max-w-3xl w-full mx-4 max-h-[90vh] flex flex-col modal-content">
         <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
@@ -544,40 +638,112 @@ class OneClickInstallers {
     dialog.offsetHeight;
     dialog.classList.add('show');
 
-    // Bind modal events
+    // Bind modal events - improved event handling
     const closeDialog = () => {
-      dialog.classList.remove('show');
-      setTimeout(() => {
-        if (document.body.contains(dialog)) {
-          document.body.removeChild(dialog);
-        }
-      }, 300);
+      if (document.body.contains(dialog)) {
+        dialog.classList.remove('show');
+        setTimeout(() => {
+          if (document.body.contains(dialog)) {
+            document.body.removeChild(dialog);
+          }
+        }, 300);
+      }
     };
 
-    // Close button events
+    // Close button events - prevent event bubbling
     dialog.querySelectorAll('.close-info-dialog').forEach(btn => {
-      btn.addEventListener('click', closeDialog);
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        closeDialog();
+      });
     });
 
-    // Outside click to close
+    // Outside click to close - improved targeting
     dialog.addEventListener('click', (e) => {
-      if (e.target === dialog) {
+      // Only close if clicking on the overlay itself, not the modal content
+      if (e.target === dialog || e.target.classList.contains('modal-overlay')) {
+        e.preventDefault();
+        e.stopPropagation();
         closeDialog();
       }
     });
 
+    // Prevent clicks inside modal content from bubbling up
+    const modalContent = dialog.querySelector('.modal-content');
+    if (modalContent) {
+      modalContent.addEventListener('click', (e) => {
+        e.stopPropagation();
+      });
+    }
+
+    // ESC key to close
+    const escHandler = (e) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        closeDialog();
+        document.removeEventListener('keydown', escHandler);
+      }
+    };
+    document.addEventListener('keydown', escHandler);
+
     // Install button
     const installBtn = dialog.querySelector('.install-from-info');
     if (installBtn) {
-      installBtn.addEventListener('click', () => {
+      installBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
         closeDialog();
         setTimeout(() => {
           this.handleInstallClick(installer.id);
         }, 100);
-      });
+      }, { once: true });
     }
 
     console.log('Info dialog displayed successfully');
+  }
+
+  /**
+   * Close all existing info dialogs
+   */
+  closeAllInfoDialogs() {
+    const existingDialogs = document.querySelectorAll('.info-dialog');
+    existingDialogs.forEach(dialog => {
+      if (document.body.contains(dialog)) {
+        dialog.classList.remove('show');
+        setTimeout(() => {
+          if (document.body.contains(dialog)) {
+            document.body.removeChild(dialog);
+          }
+        }, 100);
+      }
+    });
+  }
+
+  /**
+   * Cleanup method to remove all event listeners
+   */
+  cleanup() {
+    this.removeEventListeners();
+    this.closeAllInfoDialogs();
+    
+    // Close installation modal if open
+    const installModal = document.getElementById('installerModal');
+    if (installModal) {
+      this.closeModal(installModal);
+      this.clearModalEventListeners(installModal);
+    }
+  }
+
+  /**
+   * Destroy the installer instance
+   */
+  destroy() {
+    this.cleanup();
+    this.installers = [];
+    this.categories = [];
+    console.log('OneClickInstallers destroyed');
   }
 
   /**
