@@ -640,37 +640,53 @@ class OneClickInstallers {
 
     // Bind modal events - improved event handling
     const closeDialog = () => {
+      console.log('Closing info dialog');
       if (document.body.contains(dialog)) {
         dialog.classList.remove('show');
+        
+        // Clean up event listeners
+        document.removeEventListener('keydown', escHandler);
+        
         setTimeout(() => {
           if (document.body.contains(dialog)) {
             document.body.removeChild(dialog);
+            console.log('Info dialog removed from DOM');
           }
         }, 300);
       }
     };
 
-    // Close button events - prevent event bubbling
-    dialog.querySelectorAll('.close-info-dialog').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        e.stopImmediatePropagation();
-        closeDialog();
-      });
-    });
-
-    // Outside click to close - improved targeting
+    // Use event delegation to prevent multiple handlers and conflicts
     dialog.addEventListener('click', (e) => {
-      // Only close if clicking on the overlay itself, not the modal content
-      if (e.target === dialog || e.target.classList.contains('modal-overlay')) {
+      // Close button clicks
+      if (e.target.classList.contains('close-info-dialog')) {
         e.preventDefault();
         e.stopPropagation();
         closeDialog();
+        return;
+      }
+      
+      // Install button clicks
+      if (e.target.classList.contains('install-from-info')) {
+        e.preventDefault();
+        e.stopPropagation();
+        closeDialog();
+        setTimeout(() => {
+          this.handleInstallClick(installer.id);
+        }, 100);
+        return;
+      }
+      
+      // Outside click to close (only if clicking on the overlay itself)
+      if (e.target === dialog) {
+        e.preventDefault();
+        e.stopPropagation();
+        closeDialog();
+        return;
       }
     });
 
-    // Prevent clicks inside modal content from bubbling up
+    // Prevent clicks inside modal content from bubbling up to overlay
     const modalContent = dialog.querySelector('.modal-content');
     if (modalContent) {
       modalContent.addEventListener('click', (e) => {
@@ -678,28 +694,16 @@ class OneClickInstallers {
       });
     }
 
-    // ESC key to close
+    // ESC key handler (define before use)
     const escHandler = (e) => {
       if (e.key === 'Escape') {
         e.preventDefault();
         closeDialog();
-        document.removeEventListener('keydown', escHandler);
       }
     };
-    document.addEventListener('keydown', escHandler);
 
-    // Install button
-    const installBtn = dialog.querySelector('.install-from-info');
-    if (installBtn) {
-      installBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        closeDialog();
-        setTimeout(() => {
-          this.handleInstallClick(installer.id);
-        }, 100);
-      }, { once: true });
-    }
+    // ESC key to close
+    document.addEventListener('keydown', escHandler);
 
     console.log('Info dialog displayed successfully');
   }
@@ -827,6 +831,54 @@ class OneClickInstallers {
     notification.querySelector('.notification-close').addEventListener('click', () => {
       document.body.removeChild(notification);
     });
+  }
+
+  /**
+   * Close all existing info dialogs
+   */
+  closeAllInfoDialogs() {
+    const existingDialogs = document.querySelectorAll('.info-dialog');
+    existingDialogs.forEach(dialog => {
+      dialog.classList.remove('show');
+      setTimeout(() => {
+        if (document.body.contains(dialog)) {
+          document.body.removeChild(dialog);
+        }
+      }, 300);
+    });
+  }
+
+  /**
+   * Remove all existing event listeners
+   */
+  removeEventListeners() {
+    // Remove click event listeners for install and info buttons
+    document.removeEventListener('click', this.installClickHandler);
+    document.removeEventListener('click', this.infoClickHandler);
+  }
+
+  /**
+   * Cleanup method to remove all event listeners
+   */
+  cleanup() {
+    this.removeEventListeners();
+    this.closeAllInfoDialogs();
+    
+    // Close installation modal if open
+    const installModal = document.getElementById('installerModal');
+    if (installModal) {
+      this.closeModal(installModal);
+    }
+  }
+
+  /**
+   * Destroy the installer instance
+   */
+  destroy() {
+    this.cleanup();
+    this.installers = [];
+    this.categories = [];
+    console.log('OneClickInstallers destroyed');
   }
 }
 
