@@ -830,14 +830,5 @@ class OneClickInstallers {
   }
 }
 
-// Initialize when DOM is ready
-document.addEventListener('DOMContentLoaded', () => {
-  // Check if installers section exists - it should be in index.html
-  if (document.getElementById('installersContainer')) {
-    console.log('OneClickInstallers: DOM ready, initializing...');
-    window.oneClickInstallers = new OneClickInstallers();
-    window.oneClickInstallers.init();
-  } else {
-    console.log('OneClickInstallers: installersContainer not found, waiting for app initialization...');
-  }
-});
+// Export the class for use in other modules
+// No automatic initialization - let the app handle initialization
