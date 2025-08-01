@@ -21,14 +21,6 @@ A lightweight, portable, open-source local development environment for PHP devel
 - **Mail Testing Tools** – Built-in Mailhog or similar for catching outgoing emails (planned)
 - **PHP Extensions Management** – Enable/disable PHP extensions per version (planned)
 - **Portable Mode / Zero Installation** – Run without installation, keep all settings/logs/projects in app folder (planned)
-- **Database Backup/Restore (One-Click)** – Simple UI to export/import MySQL databases (planned)
-- **MySQL User Management** – UI for creating/editing MySQL users and privileges (planned)
-- **Quick Launch Tools** – One-click open for terminal (with PHP/MySQL CLI), copy connection string, etc. (planned)
-- **Full App/Data Backup/Restore** – Option to back up all configs, databases, and logs in one click (planned)
-- **Automatic Virtual Host Management** – Pretty URLs like `myapp.test` (planned)
-- **HTTPS/SSL for Local Sites** – One-click self-signed SSL for local domains and phpMyAdmin (planned)
-- **Multilanguage UI** – Internationalization support (planned)
-- **Project Templates/Cloning** – Clone projects from a git URL or start from template (planned)
 
 ---
 
@@ -98,22 +90,13 @@ DevStackBox is under active development, aiming to simplify local PHP and MySQL 
 - ✅ Config editors framework
 - ✅ phpMyAdmin integration
 
-### Next Steps (In Progress)
-
-- 🔄 Enhanced error handling and notifications (modals/banners)
-- 🔄 Real-time MySQL service status monitoring
-- 📦 Log viewers with real-time updates, tabs, and search/filter
-- 📦 System tray integration (Electron Tray API)
-- 📦 Auto-update support using electron-updater and GitHub Releases
-- 📦 User-initiated crash and bug reporting to GitHub Issues
-- 📦 Security analyzer tools
-- 📦 Mail testing integration (Mailhog or similar)
-
 ---
 
 ## 🔮 Planned Features
 
-The following features, commonly found in tools like Laragon, XAMPP, and WAMP, are planned for future releases (PHP/MySQL focused):
+To become a truly powerful and complete solution for PHP developers, DevStackBox aims to include all essential features found in Laragon, XAMPP, and WAMP, plus modern improvements:
+
+### **Planned / Upcoming Features:**
 
 - **Apache HTTP Server Integration**  
   Portable Apache server with easy start/stop and virtual host management
@@ -140,7 +123,7 @@ The following features, commonly found in tools like Laragon, XAMPP, and WAMP, a
   Create/edit MySQL users and privileges from the UI
 
 - **Quick Launch Tools**  
-  One-click terminal (with PHP/MySQL CLI), copy connection string, etc.
+  One-click terminal (with PHP/MySQL CLI), copy connection string, open Composer/Artisan, etc.
 
 - **Full App/Data Backup/Restore**  
   Back up all configs, databases, and logs in one click
@@ -150,6 +133,30 @@ The following features, commonly found in tools like Laragon, XAMPP, and WAMP, a
 
 - **Project Templates & Cloning**  
   Easily create new projects from templates or clone from Git
+
+- **Composer Integration**  
+  Install and manage Composer globally and per project
+
+- **PHP INI & Apache Config GUI Editors**  
+  Direct, user-friendly access and editing
+
+- **PHP Error Display Toggle**  
+  Enable/disable `display_errors` from the UI
+
+- **Service Status & Tray Notifications**  
+  Tray notifications for service start/stop/status
+
+- **Portable PHP CLI**  
+  Terminal with PHP version selector and correct PATH
+
+- **Bundled Tools**  
+  Option to install tools like curl, openssl, git, nodejs, npm, etc.
+
+- **Log Viewer Enhancements**  
+  Real-time logs, filters, tabs for Apache, MySQL, PHP, phpMyAdmin, and custom project logs
+
+- **Project Full Backup/Restore**  
+  Backup and restore for www files, configs, and databases
 
 ---
 
