@@ -29,7 +29,7 @@ A lightweight, portable, open-source local development environment for PHP devel
 | **Full App/Data Backup/Restore**              | 🕓 Planned    | Backup configs, databases, logs in one click                       |
 | **Automatic Virtual Host Management**         | 🕓 Planned    | Pretty URLs like `myapp.test`                                      |
 | **HTTPS/SSL for Local Sites**                 | 🕓 Planned    | One-click SSL for local domains and phpMyAdmin                     |
-| **Multilanguage UI**                          | 🕓 Planned    | Internationalization support                                       |
+| **Multilanguage UI**                          | ✅ Available  | i18next-based internationalization with English and Hindi support  |
 | **Project Templates/Cloning**                 | 🕓 Planned    | Clone from Git or use templates for new projects                   |
 | **Composer Integration**                      | 🕓 Planned    | Global/per-project Composer support                                |
 | **PHP INI & Apache Config Editors**           | 🕓 Planned    | User-friendly config editing                                       |
@@ -51,6 +51,7 @@ A lightweight, portable, open-source local development environment for PHP devel
 - **phpMyAdmin** – Built-in database management interface for MySQL
 - **Modern Tailwind CSS UI** – Clean, responsive design with no custom CSS dependencies
 - **Configuration Management** – Easy access to config files with syntax highlighting and automatic backup/restore
+- **Multilanguage UI** – Full internationalization support with English and Hindi languages
 - **Logs Viewer** – View MySQL and phpMyAdmin logs in real-time with search/filter (in progress)
 - **System Tray Integration** – Minimize to system tray and quick actions (in progress)
 - **Auto-Update Support** – Electron auto-updates via GitHub Releases (in progress)

@@ -36,6 +36,9 @@
     "tailwindcss": "^3.4.10"
   },
   "dependencies": {
+    "i18next": "^25.3.2",
+    "i18next-browser-languagedetector": "^8.2.0",
+    "i18next-http-backend": "^3.0.2",
     "ps-tree": "^1.2.0"
   },
   "build": {

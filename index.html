@@ -9,6 +9,11 @@
     <link rel="stylesheet" href="styles/tailwind-modal.css">
     <link rel="stylesheet" href="styles/installers.css">
     <link rel="stylesheet" href="styles/dark-mode.css">
+    
+    <!-- i18next Libraries -->
+    <script src="node_modules/i18next/dist/umd/i18next.min.js"></script>
+    <script src="node_modules/i18next-http-backend/i18nextHttpBackend.min.js"></script>
+    <script src="node_modules/i18next-browser-languagedetector/dist/umd/i18nextBrowserLanguageDetector.min.js"></script>
 </head>
 <body>
     <div class="min-h-screen bg-gray-50 pb-24"><!-- pb-24 ensures content doesn't get hidden behind the fixed footer -->
@@ -18,22 +23,49 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
                 <div class="flex items-center space-x-3">
                     <img src="assets/logo.png" alt="DevStackBox" class="h-8 w-8">
-                    <h1 class="text-2xl font-bold text-gray-900">DevStackBox</h1>
+                    <h1 class="text-2xl font-bold text-gray-900" data-i18n="app.name">DevStackBox</h1>
                 </div>
-                <div class="flex items-center space-x-4">
-                    <div class="relative p-2 rounded-full text-gray-700 hover:bg-gray-100 cursor-pointer group" id="themeSwitcherBtn" title="Switch Theme (Light/Dark)">
+                <div class="flex items-center space-x-1">
+                    <!-- Language Switcher -->
+                    <div class="relative">
+                        <button class="inline-flex items-center justify-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors" id="languageSwitcher" data-i18n="[title]header.switchLanguage" title="Switch Language">
+                            <span class="language-flag text-lg mr-1">🇺🇸</span>
+                            <span class="language-text hidden sm:inline">English</span>
+                            <svg class="w-4 h-4 ml-1 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <!-- Language Dropdown -->
+                        <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-50 hidden" id="languageDropdown">
+                            <div class="py-1">
+                                <button class="language-option flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" data-lang="en">
+                                    <span class="text-lg mr-3">🇺🇸</span>
+                                    <span>English</span>
+                                </button>
+                                <button class="language-option flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" data-lang="hi">
+                                    <span class="text-lg mr-3">🇮🇳</span>
+                                    <span>हिन्दी</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Theme Switcher -->
+                    <button class="inline-flex items-center justify-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors" id="themeSwitcherBtn" data-i18n="[title]header.switchTheme" title="Switch Theme (Light/Dark)">
                         <!-- Sun icon for light mode -->
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 theme-icon light-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 theme-icon light-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
                         </svg>
                         <!-- Moon icon for dark mode (hidden by default) -->
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 theme-icon dark-icon hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 theme-icon dark-icon hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
                         </svg>
-                    </div>
-                    <button class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors" id="downloadSettingsBtn" title="Download & Settings">
-                        <img src="assets/icons/system.svg" alt="Settings" class="w-4 h-4 mr-2">
-                        Preferences
+                    </button>
+                    
+                    <!-- Preferences Button -->
+                    <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors" id="downloadSettingsBtn" data-i18n="[title]header.preferences" title="Preferences">
+                        <img src="assets/icons/system.svg" alt="Settings" class="w-4 h-4 mr-1.5">
+                        <span data-i18n="header.preferences">Preferences</span>
                     </button>
                 </div>
             </div>
@@ -49,11 +81,11 @@
                 <div class="flex items-start space-x-4">
                     <img src="assets/icons/system.svg" alt="System" class="w-8 h-8 text-white">
                     <div class="flex-1">
-                        <h3 class="text-xl font-semibold mb-2">DevStackBox Control Panel</h3>
-                        <p class="text-blue-100 mb-4">Complete portable LAMP/WAMP development environment. Start/stop services, manage projects, install apps, and configure your development stack without external dependencies.</p>
+                        <h3 class="text-xl font-semibold mb-2" data-i18n="app.subtitle">DevStackBox Control Panel</h3>
+                        <p class="text-blue-100 mb-4" data-i18n="app.description">Complete portable LAMP/WAMP development environment. Start/stop services, manage projects, install apps, and configure your development stack without external dependencies.</p>
                         <div class="flex flex-wrap gap-3">
-                            <button class="px-4 py-2 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-md text-sm font-medium transition-colors" id="showQuickStartBtn">Quick Start Guide</button>
-                            <button class="px-4 py-2 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-md text-sm font-medium transition-colors" id="systemStatusBtn">System Status</button>
+                            <button class="px-4 py-2 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-md text-sm font-medium transition-colors" id="showQuickStartBtn" data-i18n="buttons.quickStart">Quick Start Guide</button>
+                            <button class="px-4 py-2 bg-white bg-opacity-20 hover:bg-opacity-30 rounded-md text-sm font-medium transition-colors" id="systemStatusBtn" data-i18n="buttons.systemStatus">System Status</button>
                         </div>
                     </div>
                 </div>
@@ -66,18 +98,18 @@
                         <img src="assets/icons/download.svg" alt="Setup" class="w-8 h-8 text-gray-600">
                     </div>
                     <div class="flex-1">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Server Binaries Required</h3>
-                        <p class="text-gray-600 mb-4">DevStackBox needs Apache, MySQL, and PHP binaries. You can either download them automatically or add offline copies to the project folders.</p>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2" data-i18n="installation.title">Server Binaries Required</h3>
+                        <p class="text-gray-600 mb-4" data-i18n="installation.description">DevStackBox needs Apache, MySQL, and PHP binaries. You can either download them automatically or add offline copies to the project folders.</p>
                         <div class="flex flex-wrap gap-3">
                             <button class="inline-flex items-center px-4 py-2 bg-primary text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors" id="downloadServersBtn">
                                 <img src="assets/icons/installer.svg" alt="Install" class="w-4 h-4 mr-2">
-                                Auto Download All
+                                <span data-i18n="installation.autoDownload">Auto Download All</span>
                             </button>
                             <button class="inline-flex items-center px-4 py-2 bg-secondary text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary transition-colors" id="offlineSetupBtn">
                                 <img src="assets/icons/folder.svg" alt="Offline" class="w-4 h-4 mr-2">
-                                Offline Setup Guide
+                                <span data-i18n="installation.offlineSetup">Offline Setup Guide</span>
                             </button>
-                            <button class="px-4 py-2 border border-gray-300 text-gray-700 bg-white rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors" id="customDownloadBtn">Custom Downloads</button>
+                            <button class="px-4 py-2 border border-gray-300 text-gray-700 bg-white rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors" id="customDownloadBtn" data-i18n="installation.customDownload">Custom Downloads</button>
                         </div>
                     </div>
                 </div>
@@ -87,7 +119,7 @@
             <section class="bg-white rounded-lg shadow-md p-6 mb-6">
                 <h2 class="flex items-center text-xl font-semibold text-gray-900 mb-6">
                     <img src="assets/icons/server.svg" alt="Server" class="w-6 h-6 mr-3">
-                    Server Services
+                    <span data-i18n="services.title">Server Services</span>
                 </h2>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -96,20 +128,23 @@
                         <div class="flex items-center justify-between mb-3">
                             <h3 class="flex items-center text-lg font-medium text-gray-900">
                                 <img src="assets/icons/apache.svg" alt="Apache" class="w-5 h-5 mr-2">
-                                Apache HTTP Server
+                                <span data-i18n="services.apache.name">Apache HTTP Server</span>
                             </h3>
                             <span class="flex items-center text-sm font-medium" id="apache-status">
                                 <span class="w-2 h-2 bg-red-500 rounded-full mr-2"></span>
-                                Stopped
+                                <span data-i18n="services.status.stopped">Stopped</span>
                             </span>
                         </div>
                         <div class="mb-4">
-                            <p class="text-sm text-gray-600">Web Server - Port: <span id="apache-port" class="font-medium">80</span></p>
+                            <p class="text-sm text-gray-600">
+                                <span data-i18n="services.apache.description">Web Server - Port:</span>
+                                <span id="apache-port" class="font-medium">80</span>
+                            </p>
                         </div>
                         <div class="flex space-x-2">
-                            <button class="px-3 py-2 bg-success hover:bg-green-600 text-white text-sm font-medium rounded-md transition-colors start-btn" data-service="apache">Start</button>
-                            <button class="px-3 py-2 bg-danger hover:bg-red-600 text-white text-sm font-medium rounded-md transition-colors stop-btn disabled:opacity-50 disabled:cursor-not-allowed" data-service="apache" disabled>Stop</button>
-                            <button class="px-3 py-2 bg-secondary hover:bg-gray-600 text-white text-sm font-medium rounded-md transition-colors config-btn" data-config="apache">Config</button>
+                            <button class="px-3 py-2 bg-success hover:bg-green-600 text-white text-sm font-medium rounded-md transition-colors start-btn" data-service="apache" data-i18n="services.apache.start">Start</button>
+                            <button class="px-3 py-2 bg-danger hover:bg-red-600 text-white text-sm font-medium rounded-md transition-colors stop-btn disabled:opacity-50 disabled:cursor-not-allowed" data-service="apache" disabled data-i18n="services.apache.stop">Stop</button>
+                            <button class="px-3 py-2 bg-secondary hover:bg-gray-600 text-white text-sm font-medium rounded-md transition-colors config-btn" data-config="apache" data-i18n="services.apache.config">Config</button>
                         </div>
                     </div>
 
@@ -118,20 +153,23 @@
                         <div class="flex items-center justify-between mb-3">
                             <h3 class="flex items-center text-lg font-medium text-gray-900">
                                 <img src="assets/icons/mysql.svg" alt="MySQL" class="w-5 h-5 mr-2">
-                                MySQL Database
+                                <span data-i18n="services.mysql.name">MySQL Database</span>
                             </h3>
                             <span class="flex items-center text-sm font-medium" id="mysql-status">
                                 <span class="w-2 h-2 bg-red-500 rounded-full mr-2"></span>
-                                Stopped
+                                <span data-i18n="services.status.stopped">Stopped</span>
                             </span>
                         </div>
                         <div class="mb-4">
-                            <p class="text-sm text-gray-600">Database Server - Port: <span id="mysql-port" class="font-medium">3306</span></p>
+                            <p class="text-sm text-gray-600">
+                                <span data-i18n="services.mysql.description">Database Server - Port:</span>
+                                <span id="mysql-port" class="font-medium">3306</span>
+                            </p>
                         </div>
                         <div class="flex space-x-2">
-                            <button class="px-3 py-2 bg-success hover:bg-green-600 text-white text-sm font-medium rounded-md transition-colors start-btn" data-service="mysql">Start</button>
-                            <button class="px-3 py-2 bg-danger hover:bg-red-600 text-white text-sm font-medium rounded-md transition-colors stop-btn disabled:opacity-50 disabled:cursor-not-allowed" data-service="mysql" disabled>Stop</button>
-                            <button class="px-3 py-2 bg-secondary hover:bg-gray-600 text-white text-sm font-medium rounded-md transition-colors config-btn" data-config="mysql">Config</button>
+                            <button class="px-3 py-2 bg-success hover:bg-green-600 text-white text-sm font-medium rounded-md transition-colors start-btn" data-service="mysql" data-i18n="services.mysql.start">Start</button>
+                            <button class="px-3 py-2 bg-danger hover:bg-red-600 text-white text-sm font-medium rounded-md transition-colors stop-btn disabled:opacity-50 disabled:cursor-not-allowed" data-service="mysql" disabled data-i18n="services.mysql.stop">Stop</button>
+                            <button class="px-3 py-2 bg-secondary hover:bg-gray-600 text-white text-sm font-medium rounded-md transition-colors config-btn" data-config="mysql" data-i18n="services.mysql.config">Config</button>
                         </div>
                     </div>
                 </div>
@@ -141,32 +179,32 @@
             <section class="bg-white rounded-lg shadow-md p-6 mb-6">
                 <h2 class="flex items-center text-xl font-semibold text-gray-900 mb-6">
                     <img src="assets/icons/php.svg" alt="PHP" class="w-6 h-6 mr-3">
-                    PHP Management
+                    <span data-i18n="php.title">PHP Management</span>
                 </h2>
                 
                 <div class="space-y-6">
                     <div class="space-y-3">
-                        <label for="phpVersion" class="block text-sm font-medium text-gray-700">Active PHP Version:</label>
+                        <label for="phpVersion" class="block text-sm font-medium text-gray-700" data-i18n="php.activeVersion">Active PHP Version:</label>
                         <div class="flex items-center space-x-3">
-                            <select id="phpVersion" class="flex-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary">
+                            <select id="phpVersion" class="flex-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary" data-i18n="[title]php.selectVersion">
                                 <option value="8.1">PHP 8.1</option>
                                 <option value="8.2">PHP 8.2 (Default)</option>
                                 <option value="8.3">PHP 8.3</option>
                                 <option value="8.4">PHP 8.4</option>
                             </select>
-                            <button class="inline-flex items-center px-4 py-2 bg-primary text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors" id="switchPhpBtn">Switch</button>
+                            <button class="inline-flex items-center px-4 py-2 bg-primary text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors" id="switchPhpBtn" data-i18n="common.switch">Switch</button>
                         </div>
                     </div>
                     
                     <div class="space-y-4">
                         <div class="text-sm">
-                            <span class="font-medium text-gray-900">Current Version:</span>
+                            <span class="font-medium text-gray-900" data-i18n="php.currentVersion">Current Version:</span>
                             <span id="currentPhpVersion" class="text-gray-600 ml-2">PHP 8.2</span>
                         </div>
                         <div class="flex flex-wrap gap-2">
-                            <button class="inline-flex items-center px-3 py-2 bg-secondary hover:bg-gray-600 text-white text-sm rounded-md transition-colors config-btn" data-config="php">Edit php.ini</button>
-                            <button class="inline-flex items-center px-3 py-2 bg-secondary hover:bg-gray-600 text-white text-sm rounded-md transition-colors config-btn" data-config="php-extensions">PHP Extensions</button>
-                            <button class="inline-flex items-center px-3 py-2 bg-secondary hover:bg-gray-600 text-white text-sm rounded-md transition-colors disabled" id="phpInfoBtn" disabled title="Apache must be running to view PHP Info">PHP Info</button>
+                            <button class="inline-flex items-center px-3 py-2 bg-secondary hover:bg-gray-600 text-white text-sm rounded-md transition-colors config-btn" data-config="php" data-i18n="php.config">Edit php.ini</button>
+                            <button class="inline-flex items-center px-3 py-2 bg-secondary hover:bg-gray-600 text-white text-sm rounded-md transition-colors config-btn" data-config="php-extensions" data-i18n="php.extensions">PHP Extensions</button>
+                            <button class="inline-flex items-center px-3 py-2 bg-secondary hover:bg-gray-600 text-white text-sm rounded-md transition-colors disabled" id="phpInfoBtn" disabled data-i18n="[title]php.infoTitle" title="Apache must be running to view PHP Info" data-i18n="php.info">PHP Info</button>
                         </div>
                     </div>
                 </div>
@@ -176,28 +214,28 @@
             <section class="bg-white rounded-lg shadow-md p-6 mb-6">
                 <h2 class="flex items-center text-xl font-semibold text-gray-900 mb-6">
                     <img src="assets/icons/lightning.svg" alt="Quick Actions" class="w-6 h-6 mr-3">
-                    Quick Actions
+                    <span data-i18n="quickActions.title">Quick Actions</span>
                 </h2>
                 
                 <div class="grid grid-cols-2 gap-4">
-                    <button class="flex flex-col items-center p-4 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 hover:shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" id="openPhpMyAdmin">
+                    <button class="flex flex-col items-center p-4 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 hover:shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" id="openPhpMyAdmin" title="Database management">
                         <img src="assets/icons/phpmyadmin.svg" alt="phpMyAdmin" class="w-8 h-8 mb-2">
-                        <span class="text-sm font-medium text-gray-900">phpMyAdmin</span>
+                        <span class="text-sm font-medium text-gray-900" data-i18n="quickActions.phpmyadmin.title">phpMyAdmin</span>
                     </button>
                     
-                    <button class="flex flex-col items-center p-4 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 hover:shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" id="openWebRoot">
+                    <button class="flex flex-col items-center p-4 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 hover:shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" id="openWebRoot" title="Browse projects folder">
                         <img src="assets/icons/folder.svg" alt="Web Root" class="w-8 h-8 mb-2">
-                        <span class="text-sm font-medium text-gray-900">Web Root</span>
+                        <span class="text-sm font-medium text-gray-900" data-i18n="quickActions.openWebRoot.title">Open Web Root</span>
                     </button>
                     
-                    <button class="flex flex-col items-center p-4 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 hover:shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" id="viewLogs">
+                    <button class="flex flex-col items-center p-4 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 hover:shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" id="viewLogs" title="Apache & MySQL logs">
                         <img src="assets/icons/logs.svg" alt="Logs" class="w-8 h-8 mb-2">
-                        <span class="text-sm font-medium text-gray-900">View Logs</span>
+                        <span class="text-sm font-medium text-gray-900" data-i18n="quickActions.logs.title">View Logs</span>
                     </button>
                     
-                    <button class="flex flex-col items-center p-4 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 hover:shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" id="createProject">
+                    <button class="flex flex-col items-center p-4 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 hover:shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" id="createProject" title="Create new project">
                         <img src="assets/icons/project.svg" alt="New Project" class="w-8 h-8 mb-2">
-                        <span class="text-sm font-medium text-gray-900">New Project</span>
+                        <span class="text-sm font-medium text-gray-900" data-i18n="quickActions.newProject.title">New Project</span>
                     </button>
                 </div>
             </section>
@@ -640,6 +678,7 @@
     </div>
 
     <!-- Scripts -->
+    <script src="scripts/i18n.js"></script>
     <script src="scripts/tailwind-config-ui.js"></script>
     <script src="scripts/one-click-installers.js"></script>
     <script src="scripts/service-status-helper.js"></script>

@@ -1,0 +1,105 @@
+{
+  "app": {
+    "title": "DevStackBox - Local Development Environment",
+    "name": "DevStackBox",
+    "subtitle": "DevStackBox Control Panel",
+    "description": "Complete portable LAMP/WAMP development environment. Start/stop services, manage projects, install apps, and configure your development stack without external dependencies."
+  },
+  "header": {
+    "preferences": "Preferences",
+    "switchTheme": "Switch Theme (Light/Dark)",
+    "switchLanguage": "Switch Language"
+  },
+  "services": {
+    "title": "Server Services",
+    "apache": {
+      "name": "Apache HTTP Server",
+      "description": "Web Server - Port:",
+      "start": "Start",
+      "stop": "Stop",
+      "config": "Config"
+    },
+    "mysql": {
+      "name": "MySQL Database",
+      "description": "Database Server - Port:",
+      "start": "Start",
+      "stop": "Stop",
+      "config": "Config"
+    },
+    "status": {
+      "running": "Running",
+      "stopped": "Stopped",
+      "starting": "Starting...",
+      "stopping": "Stopping..."
+    }
+  },
+  "php": {
+    "title": "PHP Management",
+    "activeVersion": "Active PHP Version:",
+    "selectVersion": "Select PHP Version",
+    "currentVersion": "Current Version:",
+    "extensions": "PHP Extensions",
+    "config": "Edit php.ini",
+    "info": "PHP Info",
+    "infoTitle": "Apache must be running to view PHP Info"
+  },
+  "quickActions": {
+    "title": "Quick Actions",
+    "openWebRoot": {
+      "title": "Open Web Root",
+      "description": "Browse projects folder"
+    },
+    "phpmyadmin": {
+      "title": "phpMyAdmin",
+      "description": "Database management"
+    },
+    "logs": {
+      "title": "View Logs",
+      "description": "Apache & MySQL logs"
+    },
+    "backupRestore": {
+      "title": "Backup & Restore",
+      "description": "Manage configurations"
+    },
+    "newProject": {
+      "title": "New Project",
+      "description": "Create new project"
+    }
+  },
+  "installers": {
+    "title": "One-Click App Installers",
+    "description": "Install popular PHP applications with a single click",
+    "viewAll": "View All Installers"
+  },
+  "installation": {
+    "title": "Server Binaries Required",
+    "description": "DevStackBox needs Apache, MySQL, and PHP binaries. You can either download them automatically or add offline copies to the project folders.",
+    "autoDownload": "Auto Download All",
+    "offlineSetup": "Offline Setup Guide",
+    "customDownload": "Custom Downloads"
+  },
+  "buttons": {
+    "quickStart": "Quick Start Guide",
+    "systemStatus": "System Status"
+  },
+  "footer": {
+    "version": "Version",
+    "website": "Visit Website",
+    "docs": "Documentation",
+    "github": "GitHub"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "save": "Save",
+    "close": "Close",
+    "open": "Open",
+    "edit": "Edit",
+    "delete": "Delete",
+    "refresh": "Refresh",
+    "browse": "Browse",
+    "switch": "Switch"
+  }
+}

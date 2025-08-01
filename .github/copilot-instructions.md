@@ -21,6 +21,7 @@ This file will help you get started with **GitHub Copilot** in **Visual Studio C
 
 Before using Copilot effectively with this project, ensure you have:
 
+- ✅ Windows 10/11 (Linux and macOS support planned)
 - ✅ [Node.js](https://nodejs.org/) (v18 or newer)
 - ✅ [Git](https://git-scm.com/)
 - ✅ [Visual Studio Code](https://code.visualstudio.com/)
@@ -137,26 +138,32 @@ DevStackBox/
 | Feature                    | Status      | Description                                                                 |
 |----------------------------|-------------|-----------------------------------------------------------------------------|
 | Electron Application       | ✅ Done     | Modern GUI interface with Tailwind CSS framework                            |
-| Apache Control             | ✅ Done     | Start/Stop Apache via Electron GUI with logical button states               |
+| Apache Control             | 📋 Planned  | Portable Apache with easy start/stop controls and logical button states     |
 | MySQL Integration          | ✅ Done     | Start/Stop MySQL server with logical button states                          |
 | Service Management         | ✅ Done     | Service management architecture with IPC communication                       |
-| One-click Installers UI    | ✅ Done     | Front-end framework for Top 10 PHP/CMS app installers                      |
+| phpMyAdmin                 | ✅ Done     | Built-in database management interface                                       |
 | Config Editors Framework   | ✅ Done     | Configuration management foundation with backup/restore                      |
 | Tailwind UI                | ✅ Done     | All UI components use Tailwind CSS (no custom CSS dependencies)             |
-| Service Button Logic       | ✅ Done     | Start/Stop buttons correctly disabled based on service state                |
-| Multi PHP Version Support  | 🔄 In Progress | Switch between PHP 8.1, 8.2 (default), 8.3, and 8.4                     |
-| phpMyAdmin                 | 🔄 In Progress | Built-in database management interface                                     |
-| PHP Extensions Management  | 🔄 In Progress | Tailwind-based UI for enabling/disabling PHP extensions per version       |
-| Config Editors (Tailwind)  | 🔄 In Progress | Tailwind-based modals for Apache, MySQL, PHP config with syntax highlighting |
+| Multi PHP Version Support  | � Planned  | Switch between PHP 8.1, 8.2 (default), 8.3, and 8.4                      |
+| PHP Extensions Management  | � Planned  | Enable/disable PHP extensions per version                                    |
 | Enhanced Error Handling    | 🔄 In Progress | Improved notifications with modals/banners                                 |
 | Real-time Status Monitor   | 🔄 In Progress | Live service status monitoring and updates                                 |
-| Logs Viewer                | � In Progress | Real-time log viewing with tabs, search/filter for Apache, MySQL, PHP      |
-| System Tray Support        | � In Progress | Minimize to tray with quick actions (like Laragon/XAMPP)                   |
-| Auto-Update Support        | � In Progress | Electron auto-updates via GitHub Releases                                  |
+| Logs Viewer                | 🔄 In Progress | Real-time log viewing with tabs, search/filter for Apache, MySQL, PHP      |
+| System Tray Support        | 🔄 In Progress | Minimize to tray with quick actions (like Laragon/XAMPP)                   |
+| Auto-Update Support        | 🔄 In Progress | Electron auto-updates via GitHub Releases                                  |
 | User-Initiated Bug Reporting | 🔄 In Progress | Simple, secure bug/crash reporting from inside the app                   |
-| One-click App Installers   | 📋 Planned  | WordPress, Laravel, Drupal, and 7 more popular PHP applications            |
+| One-click App Installers   | 📋 Planned  | Install WordPress, Laravel, and more with intuitive UI                      |
 | Security Analyzer          | 📋 Planned  | Scan PHP configs and code for common security issues                       |
 | Mail Testing Tools         | 📋 Planned  | Built-in Mailhog or similar for catching outgoing emails                   |
+| Portable Mode              | 📋 Planned  | Run without installation, keep all settings/logs/projects in app folder    |
+| Database Backup/Restore    | 📋 Planned  | Simple UI to export/import MySQL databases                                 |
+| MySQL User Management      | 📋 Planned  | UI for creating/editing MySQL users and privileges                         |
+| Quick Launch Tools         | 📋 Planned  | One-click open for terminal, copy connection string, etc.                  |
+| Full App/Data Backup       | 📋 Planned  | Option to back up all configs, databases, and logs in one click           |
+| Virtual Host Management    | 📋 Planned  | Pretty URLs like `myapp.test`                                              |
+| HTTPS/SSL Support          | 📋 Planned  | One-click self-signed SSL for local domains and phpMyAdmin                |
+| Multilanguage UI           | 📋 Planned  | Internationalization support                                               |
+| Project Templates/Cloning  | 📋 Planned  | Clone projects from a git URL or start from template                      |
 
 ---
 
@@ -428,18 +435,21 @@ When adding dark mode, use the `dark:` variant:
 ## 12. Recent Progress and Priorities
 
 ### ✅ Completed
-- Logical start/stop button states for Apache and MySQL services
-- Basic UI framework for all main components
-- Responsive layout with Tailwind CSS
-- Electron application framework with IPC communication
-- Service management architecture foundation
+- Electron application framework
+- Modern GUI interface with Tailwind CSS
+- MySQL service controls with logical button states
+- Config editors framework
+- phpMyAdmin integration
 
 ### 🔄 In Progress
-- Converting configuration modals to pure Tailwind (no custom CSS)
-- PHP Extensions management UI with toggle switches
-- Config editors for Apache, MySQL, and PHP with syntax highlighting
-- Multi-PHP version support (8.1, 8.2, 8.3, 8.4)
-- Enhanced error handling and notification system
+- Enhanced error handling and notifications (modals/banners)
+- Real-time MySQL service status monitoring
+- Log viewers with real-time updates, tabs, and search/filter
+- System tray integration (Electron Tray API)
+- Auto-update support using electron-updater and GitHub Releases
+- User-initiated crash and bug reporting to GitHub Issues
+- Security analyzer tools
+- Mail testing integration (Mailhog or similar)
 - Real-time service status monitoring
 - Log viewer implementation with search/filter
 - System tray integration
@@ -447,10 +457,18 @@ When adding dark mode, use the `dark:` variant:
 - User-initiated crash and bug reporting to GitHub Issues
 
 ### 📅 Next Up
-- Virtual hosts management
+- Apache HTTP Server integration
+- Multiple PHP versions & extensions management  
+- Automatic virtual host management
+- HTTPS/SSL for local sites & phpMyAdmin
 - One-click app installers implementation
-- Security analyzer tools
-- Mail testing integration (Mailhog or similar)
+- Portable mode / zero installation
+- Database backup/restore (one-click)
+- MySQL user management
+- Quick launch tools
+- Full app/data backup/restore
+- Multilanguage UI
+- Project templates & cloning
 
 ---
 

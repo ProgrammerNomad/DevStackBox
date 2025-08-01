@@ -37,6 +37,12 @@ class DevStackBox {
     }
     
     try {
+      // Initialize i18n first
+      console.log('Initializing i18n...');
+      if (window.i18nManager) {
+        await window.i18nManager.init();
+      }
+      
       // Initialize Configuration UI
       console.log('Initializing Configuration UI...');
       this.configUI = new ConfigurationUI();
@@ -1204,7 +1210,7 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // Always create DevStackBox instance
   try {
-    new DevStackBox();
+    window.devStackBox = new DevStackBox();
   } catch (error) {
     console.error('Failed to create DevStackBox:', error);
     

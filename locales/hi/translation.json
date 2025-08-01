@@ -1,0 +1,105 @@
+{
+  "app": {
+    "title": "DevStackBox - स्थानीय विकास परिवेश",
+    "name": "DevStackBox",
+    "subtitle": "DevStackBox नियंत्रण पैनल",
+    "description": "पूर्ण पोर्टेबल LAMP/WAMP विकास परिवेश। सेवाओं को प्रारंभ/बंद करें, परियोजनाओं का प्रबंधन करें, ऐप्स इंस्टॉल करें, और बाहरी निर्भरताओं के बिना अपने विकास स्टैक को कॉन्फ़िगर करें।"
+  },
+  "header": {
+    "preferences": "प्राथमिकताएं",
+    "switchTheme": "थीम बदलें (हल्का/गहरा)",
+    "switchLanguage": "भाषा बदलें"
+  },
+  "services": {
+    "title": "सर्वर सेवाएं",
+    "apache": {
+      "name": "Apache HTTP सर्वर",
+      "description": "वेब सर्वर - पोर्ट:",
+      "start": "प्रारंभ",
+      "stop": "बंद",
+      "config": "कॉन्फ़िग"
+    },
+    "mysql": {
+      "name": "MySQL डेटाबेस",
+      "description": "डेटाबेस सर्वर - पोर्ट:",
+      "start": "प्रारंभ",
+      "stop": "बंद",
+      "config": "कॉन्फ़िग"
+    },
+    "status": {
+      "running": "चल रहा है",
+      "stopped": "बंद",
+      "starting": "प्रारंभ हो रहा है...",
+      "stopping": "बंद हो रहा है..."
+    }
+  },
+  "php": {
+    "title": "PHP प्रबंधन",
+    "activeVersion": "सक्रिय PHP संस्करण:",
+    "selectVersion": "PHP संस्करण चुनें",
+    "currentVersion": "वर्तमान संस्करण:",
+    "extensions": "PHP एक्सटेंशन",
+    "config": "php.ini संपादित करें",
+    "info": "PHP जानकारी",
+    "infoTitle": "PHP जानकारी देखने के लिए Apache चलना चाहिए"
+  },
+  "quickActions": {
+    "title": "त्वरित क्रियाएं",
+    "openWebRoot": {
+      "title": "वेब रूट खोलें",
+      "description": "परियोजनाओं का फ़ोल्डर ब्राउज़ करें"
+    },
+    "phpmyadmin": {
+      "title": "phpMyAdmin",
+      "description": "डेटाबेस प्रबंधन"
+    },
+    "logs": {
+      "title": "लॉग देखें",
+      "description": "Apache और MySQL लॉग"
+    },
+    "backupRestore": {
+      "title": "बैकअप और पुनर्स्थापना",
+      "description": "कॉन्फ़िगरेशन प्रबंधित करें"
+    },
+    "newProject": {
+      "title": "नई परियोजना",
+      "description": "नई परियोजना बनाएं"
+    }
+  },
+  "installers": {
+    "title": "वन-क्लिक ऐप इंस्टॉलर",
+    "description": "एक क्लिक से लोकप्रिय PHP एप्लिकेशन इंस्टॉल करें",
+    "viewAll": "सभी इंस्टॉलर देखें"
+  },
+  "installation": {
+    "title": "सर्वर बाइनरी आवश्यक",
+    "description": "DevStackBox को Apache, MySQL, और PHP बाइनरी की आवश्यकता है। आप या तो उन्हें स्वचालित रूप से डाउनलोड कर सकते हैं या प्रोजेक्ट फ़ोल्डर में ऑफ़लाइन कॉपी जोड़ सकते हैं।",
+    "autoDownload": "सभी स्वचालित डाउनलोड",
+    "offlineSetup": "ऑफ़लाइन सेटअप गाइड",
+    "customDownload": "कस्टम डाउनलोड"
+  },
+  "buttons": {
+    "quickStart": "त्वरित प्रारंभ गाइड",
+    "systemStatus": "सिस्टम स्थिति"
+  },
+  "footer": {
+    "version": "संस्करण",
+    "website": "वेबसाइट पर जाएं",
+    "docs": "दस्तावेज़ीकरण",
+    "github": "GitHub"
+  },
+  "common": {
+    "loading": "लोड हो रहा है...",
+    "error": "त्रुटि",
+    "success": "सफलता",
+    "cancel": "रद्द करें",
+    "save": "सहेजें",
+    "close": "बंद करें",
+    "open": "खोलें",
+    "edit": "संपादित करें",
+    "delete": "हटाएं",
+    "refresh": "रीफ्रेश करें",
+    "browse": "ब्राउज़ करें",
+    "switch": "बदलें"
+  }
+}
