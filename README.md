@@ -4,23 +4,57 @@ A lightweight, portable, open-source local development environment for PHP devel
 
 ---
 
+## 🗂 Feature Summary Table
+
+| Feature                                      | Status        | Description                                                        |
+|-----------------------------------------------|--------------|--------------------------------------------------------------------|
+| **MySQL Database**                           | ✅ Available  | Embedded MySQL server with GUI management                          |
+| **phpMyAdmin Integration**                    | ✅ Available  | Built-in database management interface                             |
+| **Modern Tailwind CSS UI**                    | ✅ Available  | Responsive, utility-first design                                   |
+| **Config Management (Backup/Restore)**        | ✅ Available  | Syntax-highlighting and backup/restore for config files            |
+| **Crash & Bug Reporting via GitHub**          | 🔄 In Progress| User-initiated crash/bug reports with pre-filled GitHub Issues     |
+| **Logs Viewer**                               | 🔄 In Progress| View MySQL, phpMyAdmin, and app logs; search/filter/real-time      |
+| **System Tray Integration**                   | 🔄 In Progress| Minimize to tray, quick actions                                    |
+| **Auto-Update Support**                       | 🔄 In Progress| Electron auto-updates via GitHub Releases                          |
+| **Apache HTTP Server**                        | 🕓 Planned    | Portable Apache, vhost & HTTPS management                          |
+| **Multiple PHP Versions**                     | 🕓 Planned    | Switch between PHP 8.1, 8.2, 8.3, 8.4                              |
+| **One-Click App Installers**                  | 🕓 Planned    | Install WordPress, Laravel, more with simple UI                    |
+| **PHP Extensions Management**                 | 🕓 Planned    | Enable/disable extensions per PHP version                          |
+| **Security Analyzer**                         | 🕓 Planned    | Scan PHP configs/code for security issues                          |
+| **Mail Testing Tools**                        | 🕓 Planned    | Built-in Mailhog or similar for email capture                      |
+| **Portable Mode / Zero Installation**         | 🕓 Planned    | All data/settings/logs in app folder                               |
+| **Database Backup/Restore (One-Click)**       | 🕓 Planned    | UI to export/import MySQL databases                                |
+| **MySQL User Management**                     | 🕓 Planned    | Create/edit MySQL users/privileges via UI                          |
+| **Quick Launch Tools**                        | 🕓 Planned    | Terminal (PHP/MySQL CLI), copy connection string, etc.             |
+| **Full App/Data Backup/Restore**              | 🕓 Planned    | Backup configs, databases, logs in one click                       |
+| **Automatic Virtual Host Management**         | 🕓 Planned    | Pretty URLs like `myapp.test`                                      |
+| **HTTPS/SSL for Local Sites**                 | 🕓 Planned    | One-click SSL for local domains and phpMyAdmin                     |
+| **Multilanguage UI**                          | 🕓 Planned    | Internationalization support                                       |
+| **Project Templates/Cloning**                 | 🕓 Planned    | Clone from Git or use templates for new projects                   |
+| **Composer Integration**                      | 🕓 Planned    | Global/per-project Composer support                                |
+| **PHP INI & Apache Config Editors**           | 🕓 Planned    | User-friendly config editing                                       |
+| **PHP Error Display Toggle**                  | 🕓 Planned    | Enable/disable display_errors from UI                              |
+| **Service Status & Tray Notifications**       | 🕓 Planned    | Tray notifications for service events                              |
+| **Portable PHP CLI**                          | 🕓 Planned    | Terminal with PHP version selector                                 |
+| **Bundled Tools (curl, git, node, npm, etc.)**| 🕓 Planned    | Optionally bundle common CLI tools                                 |
+| **Log Viewer Enhancements**                   | 🕓 Planned    | Real-time, filterable, tabbed log viewer for all services/apps     |
+| **Project Full Backup/Restore**               | 🕓 Planned    | Backup/restore www files, configs, databases                       |
+
+**Legend:**  
+✅ Available  🔄 In Progress  🕓 Planned
+
+---
+
 ## 🚀 Features
 
-- **Apache HTTP Server** – Portable Apache with easy start/stop controls and logical button states (planned)
 - **MySQL Database** – Embedded MySQL server with GUI management and proper state handling
 - **phpMyAdmin** – Built-in database management interface for MySQL
-- **Multiple PHP Versions** – Switch between PHP 8.1, 8.2 (default), 8.3, and 8.4 (planned)
-- **One-Click App Installers** – Install WordPress, Laravel, and more with intuitive UI (planned)
-- **Tailwind CSS Interface** – Clean, responsive design with no custom CSS dependencies
+- **Modern Tailwind CSS UI** – Clean, responsive design with no custom CSS dependencies
 - **Configuration Management** – Easy access to config files with syntax highlighting and automatic backup/restore
-- **Logs Viewer** – View Apache, MySQL, PHP, and app logs in real-time with search/filter (in progress)
+- **Logs Viewer** – View MySQL and phpMyAdmin logs in real-time with search/filter (in progress)
 - **System Tray Integration** – Minimize to system tray and quick actions (in progress)
 - **Auto-Update Support** – Electron auto-updates via GitHub Releases (in progress)
 - **User-Initiated Crash & Bug Reporting via GitHub Issues** – Simple, secure bug/crash reporting from inside the app (in progress)
-- **Security Analyzer** – Scan PHP configs and code for common security issues (planned)
-- **Mail Testing Tools** – Built-in Mailhog or similar for catching outgoing emails (planned)
-- **PHP Extensions Management** – Enable/disable PHP extensions per version (planned)
-- **Portable Mode / Zero Installation** – Run without installation, keep all settings/logs/projects in app folder (planned)
 
 ---
 
@@ -92,11 +126,9 @@ DevStackBox is under active development, aiming to simplify local PHP and MySQL 
 
 ---
 
-## 🔮 Planned Features 
+## 🔮 Planned Features
 
 To become a truly powerful and complete solution for PHP developers, DevStackBox aims to include all essential features found in Laragon, XAMPP, and WAMP, plus modern improvements:
-
-### **Planned / Upcoming Features:**
 
 - **Apache HTTP Server Integration**  
   Portable Apache server with easy start/stop and virtual host management
