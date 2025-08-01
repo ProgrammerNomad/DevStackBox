@@ -11,11 +11,11 @@ A lightweight, portable, open-source local development environment for PHP devel
 - **One-Click App Installers** – Install WordPress, Laravel, and more with intuitive UI (Top 10 PHP apps supported)
 - **Tailwind CSS Interface** – Clean, responsive design with no custom CSS dependencies
 - **Configuration Management** – Easy access to config files with syntax highlighting and automatic backup/restore
-- **Logs Viewer** – View Apache, MySQL, PHP, and app logs in real-time with search/filter (coming soon)
-- **System Tray Integration** – Minimize to system tray and quick actions (coming soon)
-- **Auto-Update Support** – Electron auto-updates via GitHub Releases (coming soon)
+- **Logs Viewer** – View Apache, MySQL, PHP, and app logs in real-time with search/filter (in progress)
+- **System Tray Integration** – Minimize to system tray and quick actions (in progress)
+- **Auto-Update Support** – Electron auto-updates via GitHub Releases (in progress)
 - **Crash Reporting System** – Error and crash reporting for diagnostics (planned)
-- **PHP Extensions Management** – Enable/disable PHP extensions per version (coming soon)
+- **PHP Extensions Management** – Enable/disable PHP extensions per version (in progress)
 - **Security Analyzer** – Scan PHP configs and code for common security issues (planned)
 - **Mail Testing Tools** – Built-in Mailhog or similar for catching outgoing emails (planned)
 
@@ -72,7 +72,7 @@ DevStackBox/
 
 ## 🎯 Current Status
 
-The DevStackBox project has made significant progress with the following components ready:
+DevStackBox is under active development with the following components already **complete**:
 
 - ✅ Electron application framework
 - ✅ Modern GUI interface with Tailwind CSS
@@ -96,6 +96,12 @@ The DevStackBox project has made significant progress with the following compone
 - 📦 Crash reporting system (Sentry or similar)
 - 📦 Security analyzer tools
 - 📦 Mail testing integration (Mailhog or similar)
+
+### Planned Features
+
+- 🗂 Security analyzer (local code/config scans)
+- 🗂 Crash/error reporting
+- 🗂 Mail testing utility
 
 ## 🧩 One-Click App Installers
 
@@ -122,7 +128,7 @@ Each installer provides a guided, pre-filled setup for fast local development.
 - **phpMyAdmin**: Application log (if enabled)
 - **DevStackBox**: Internal/app logs, installer logs
 - **Custom project logs**: (e.g., Laravel logs in `storage/logs`)
-- Logs viewer includes search, filtering, and real-time updates
+- Logs viewer includes search, filtering, and real-time updates (in progress)
 
 ## 🔧 Development
 
