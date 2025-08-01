@@ -14,7 +14,7 @@ A lightweight, portable, open-source local development environment for PHP devel
 - **Logs Viewer** – View Apache, MySQL, PHP, and app logs in real-time with search/filter (in progress)
 - **System Tray Integration** – Minimize to system tray and quick actions (in progress)
 - **Auto-Update Support** – Electron auto-updates via GitHub Releases (in progress)
-- **Crash Reporting System** – Error and crash reporting for diagnostics (planned)
+- **User-Initiated Crash & Bug Reporting via GitHub Issues** – Simple, secure bug/crash reporting from inside the app (in progress)
 - **PHP Extensions Management** – Enable/disable PHP extensions per version (in progress)
 - **Security Analyzer** – Scan PHP configs and code for common security issues (planned)
 - **Mail Testing Tools** – Built-in Mailhog or similar for catching outgoing emails (planned)
@@ -28,17 +28,20 @@ A lightweight, portable, open-source local development environment for PHP devel
 ## 🛠 Installation
 
 1. **Clone the repository:**
+
    ```bash
    git clone https://github.com/ProgrammerNomad/DevStackBox.git
    cd DevStackBox
    ```
 
 2. **Install dependencies:**
+
    ```bash
    npm install
    ```
 
 3. **Run the application:**
+
    ```bash
    npm start
    ```
@@ -93,15 +96,27 @@ DevStackBox is under active development with the following components already **
 - 📦 System tray integration (Electron Tray API)
 - 📦 Auto-update support using electron-updater and GitHub Releases
 - 📦 Application installers
-- 📦 Crash reporting system (Sentry or similar)
+- 📦 User-initiated crash and bug reporting to GitHub Issues
 - 📦 Security analyzer tools
 - 📦 Mail testing integration (Mailhog or similar)
 
 ### Planned Features
 
 - 🗂 Security analyzer (local code/config scans)
-- 🗂 Crash/error reporting
 - 🗂 Mail testing utility
+
+## 🐞 Crash & Bug Reporting
+
+DevStackBox uses a **user-initiated, secure crash and bug reporting system**:
+
+- Users can easily report bugs or crashes directly from the app via a “Report a Bug” option.
+- This opens a pre-filled [GitHub Issue form](https://github.com/ProgrammerNomad/DevStackBox/issues/new) in the user’s browser, including details like error messages, stack traces, and environment info.
+- **No GitHub login is required inside the app.**  
+  Users submit the report through their browser, using their own GitHub account.
+- This approach is fully secure: no authentication tokens or sensitive data are stored or sent by the app.
+
+**Why this approach?**  
+It keeps reporting simple, protects user privacy, and leverages GitHub’s powerful open source collaboration features.
 
 ## 🧩 One-Click App Installers
 

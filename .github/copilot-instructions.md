@@ -2,11 +2,22 @@
 # 🧠 GitHub Copilot Guide for DevStackBox
 
 Welcome to the **DevStackBox** contributor guide!  
-This file will help you get started with **GitHub Copilot** in **Visual Studio Code** so you can develop and contribute faster.
+This file will help you get started with **GitHub Copilot** in **Visual Studio Code** so you can develop and contri### 📂 Folders You'll Work With
+
+- `src/` → Logic for starting/stopping services
+- `php/` → Place multiple PHP versions here (8.1, 8.2, 8.3, 8.4)
+- `apache/` → Portable Apache setup
+- `mysql/` → Portable MySQL (or MariaDB) with default users
+- `phpmyadmin/` → Preinstalled phpMyAdmin config
+- `apps/` → Installers for popular PHP apps (Top 10 CMS/frameworks)
+- `logs/` → Log files directory (Apache, MySQL, PHP, etc.)
+- `config-backups/` → Automatic backups of configuration files
+- `tmp/` → Temporary files and downloads during installations
+- `www/` → Web root directory for projectster.
 
 ---
 
-## ## 🎨 10. Working with Tailwind CSS 1. Prerequisites
+## 1. Prerequisites
 
 Before using Copilot effectively with this project, ensure you have:
 
@@ -27,7 +38,7 @@ npm install
 
 To run the Electron app:
 ```bash
-npm run start
+npm start
 ```
 
 ---
@@ -125,22 +136,46 @@ DevStackBox/
 
 | Feature                    | Status      | Description                                                                 |
 |----------------------------|-------------|-----------------------------------------------------------------------------|
+| Electron Application       | ✅ Done     | Modern GUI interface with Tailwind CSS framework                            |
 | Apache Control             | ✅ Done     | Start/Stop Apache via Electron GUI with logical button states               |
 | MySQL Integration          | ✅ Done     | Start/Stop MySQL server with logical button states                          |
-| Multi PHP Version Support  | 🔄 Partial  | Switch between PHP versions via dropdown interface                          |
-| phpMyAdmin                 | 🔄 Partial  | Access to MySQL management interface                                        |
-| One-click App Installers   | 🔄 Partial  | Front-end framework for app installers completed                            |
-| Environment Configuration  | 🔄 Partial  | Initial config framework implemented; modals in progress                    |
-| PHP Extensions Management  | 🔄 WIP      | Tailwind-based UI for enabling/disabling PHP extensions                     |
-| Logs Viewer                | 📋 Planned  | View Apache/MySQL logs in the interface                                     |
-| Port Changer               | 📋 Planned  | GUI support to change Apache and MySQL ports                                |
-| System Tray Support        | 📋 Planned  | Minimize to tray like Laragon and XAMPP                                     |
-| Tailwind UI                | ✅ Done     | All UI components use Tailwind CSS (no custom CSS)                          |
+| Service Management         | ✅ Done     | Service management architecture with IPC communication                       |
+| One-click Installers UI    | ✅ Done     | Front-end framework for Top 10 PHP/CMS app installers                      |
+| Config Editors Framework   | ✅ Done     | Configuration management foundation with backup/restore                      |
+| Tailwind UI                | ✅ Done     | All UI components use Tailwind CSS (no custom CSS dependencies)             |
 | Service Button Logic       | ✅ Done     | Start/Stop buttons correctly disabled based on service state                |
+| Multi PHP Version Support  | 🔄 In Progress | Switch between PHP 8.1, 8.2 (default), 8.3, and 8.4                     |
+| phpMyAdmin                 | 🔄 In Progress | Built-in database management interface                                     |
+| PHP Extensions Management  | 🔄 In Progress | Tailwind-based UI for enabling/disabling PHP extensions per version       |
+| Config Editors (Tailwind)  | 🔄 In Progress | Tailwind-based modals for Apache, MySQL, PHP config with syntax highlighting |
+| Enhanced Error Handling    | 🔄 In Progress | Improved notifications with modals/banners                                 |
+| Real-time Status Monitor   | 🔄 In Progress | Live service status monitoring and updates                                 |
+| Logs Viewer                | � In Progress | Real-time log viewing with tabs, search/filter for Apache, MySQL, PHP      |
+| System Tray Support        | � In Progress | Minimize to tray with quick actions (like Laragon/XAMPP)                   |
+| Auto-Update Support        | � In Progress | Electron auto-updates via GitHub Releases                                  |
+| User-Initiated Bug Reporting | 🔄 In Progress | Simple, secure bug/crash reporting from inside the app                   |
+| One-click App Installers   | 📋 Planned  | WordPress, Laravel, Drupal, and 7 more popular PHP applications            |
+| Security Analyzer          | 📋 Planned  | Scan PHP configs and code for common security issues                       |
+| Mail Testing Tools         | 📋 Planned  | Built-in Mailhog or similar for catching outgoing emails                   |
 
 ---
 
-## 🙌 7. Copilot Usage Etiquette
+## � Crash & Bug Reporting
+
+DevStackBox uses a **user-initiated, secure crash and bug reporting system**:
+
+- Users can easily report bugs or crashes directly from the app via a "Report a Bug" option.
+- This opens a pre-filled [GitHub Issue form](https://github.com/ProgrammerNomad/DevStackBox/issues/new) in the user's browser, including details like error messages, stack traces, and environment info.
+- **No GitHub login is required inside the app.**  
+  Users submit the report through their browser, using their own GitHub account.
+- This approach is fully secure: no authentication tokens or sensitive data are stored or sent by the app.
+
+**Why this approach?**  
+It keeps reporting simple, protects user privacy, and leverages GitHub's powerful open source collaboration features.
+
+---
+
+## �🙌 7. Copilot Usage Etiquette
 
 - Use Copilot as a helper, not a replacement for critical thinking
 - Review code suggestions carefully
@@ -149,7 +184,7 @@ DevStackBox/
 
 ---
 
-## 💬 Questions?
+## 💬 8. Questions?
 
 If you're stuck, open an issue or reach out on discussions tab in the GitHub repo.
 
@@ -157,7 +192,7 @@ Happy coding with Copilot ✨
 
 ---
 
-## 📘 8. Project Instructions
+## 📘 9. Project Instructions
 
 This section explains how DevStackBox works internally and how to contribute effectively.
 
@@ -185,8 +220,22 @@ This section explains how DevStackBox works internally and how to contribute eff
    - Config files are auto-updated when ports are changed
 
 6. **Multiple PHP Versions:**
-   - Support for selecting between PHP 7.x, 8.x+
+   - Support for selecting between PHP 8.1, 8.2 (default), 8.3, and 8.4
    - The selected version is symlinked or used in Apache/PHP CLI config
+   - Each version can have independent extension management
+
+7. **Log Management:**
+   - Apache: `access.log`, `error.log`, per-vhost logs
+   - MySQL: `error.log`, `slow-query.log`, optionally `general.log`
+   - PHP: Per-version `php_error.log`
+   - phpMyAdmin: Application log (if enabled)
+   - DevStackBox: Internal/app logs, installer logs
+   - Custom project logs: (e.g., Laravel logs in `storage/logs`)
+
+8. **Security & Monitoring:**
+   - Security analyzer for local code/config scans
+   - Crash/error reporting system
+   - Mail testing utility integration
 
 ---
 
@@ -213,7 +262,7 @@ This section explains how DevStackBox works internally and how to contribute eff
 
 ---
 
-## 🛠️ 9. Current Development Focus
+## 🛠️ 10. Current Development Focus
 
 ### 🔌 PHP Extensions Management
 - Tailwind-based toggle switches for enabling/disabling extensions
@@ -222,24 +271,55 @@ This section explains how DevStackBox works internally and how to contribute eff
 - Search and filter functionality for finding extensions
 - Automatically edits `php.ini` for selected PHP version
 - Real-time status updates using Tailwind transitions
+- Support for PHP 8.1, 8.2, 8.3, and 8.4
 
 ### 🧾 Config Editors
 - **PHP Config Editor**
   - Modify `php.ini` in the GUI with Tailwind-based interface
   - Syntax highlighting with Monaco Editor
   - Automatic backup before save
+  - Support for multiple PHP versions
 - **Apache Config Editor**
   - GUI-based access to `httpd.conf`, `extra/httpd-vhosts.conf`
   - Tailwind UI for intuitive editing experience
   - Change document root, ports, virtual hosts
+  - Virtual host management
 - **MySQL Config Editor**
   - Edit `my.ini` or `my.cnf` via Tailwind-styled GUI
   - Change ports, buffer sizes, log settings
   - Configuration validation before saving
 
+### 📱 One-Click App Installers (Top 10)
+1. **WordPress** - Most popular CMS
+2. **Laravel** - Modern PHP framework
+3. **CodeIgniter** - Lightweight PHP framework
+4. **Drupal** - Enterprise CMS
+5. **Joomla** - Content management system
+6. **Symfony** - PHP framework components
+7. **phpBB** - Forum software
+8. **OpenCart** - E-commerce platform
+9. **PrestaShop** - E-commerce solution
+10. **MediaWiki** - Wiki software
+
+### 📊 Log Management System
+- **Apache Logs**: `access.log`, `error.log`, per-vhost logs
+- **MySQL Logs**: `error.log`, `slow-query.log`, `general.log`
+- **PHP Logs**: Per-version `php_error.log`
+- **phpMyAdmin Logs**: Application logs
+- **DevStackBox Logs**: Internal app logs, installer logs
+- **Project Logs**: Laravel, custom application logs
+- Real-time viewing with search/filter functionality
+
+### 🔒 Security & Monitoring Features
+- **Security Analyzer**: Scan PHP configs and code for vulnerabilities
+- **Crash Reporting**: Error reporting for diagnostics
+- **Mail Testing**: Built-in Mailhog integration for email testing
+- **Real-time Monitoring**: Live service status updates
+- **Auto-Updates**: Electron auto-updater via GitHub Releases
+
 ---
 
-## � 10. Working with Tailwind CSS
+## 🎨 11. Working with Tailwind CSS
 
 DevStackBox uses Tailwind CSS exclusively for styling without custom CSS files. When working on UI components:
 
@@ -345,22 +425,207 @@ When adding dark mode, use the `dark:` variant:
 
 ---
 
-## 11. Recent Progress and Priorities
+## 12. Recent Progress and Priorities
 
 ### ✅ Completed
 - Logical start/stop button states for Apache and MySQL services
 - Basic UI framework for all main components
 - Responsive layout with Tailwind CSS
+- Electron application framework with IPC communication
+- Service management architecture foundation
 
 ### 🔄 In Progress
 - Converting configuration modals to pure Tailwind (no custom CSS)
 - PHP Extensions management UI with toggle switches
 - Config editors for Apache, MySQL, and PHP with syntax highlighting
+- Multi-PHP version support (8.1, 8.2, 8.3, 8.4)
+- Enhanced error handling and notification system
+- Real-time service status monitoring
+- Log viewer implementation with search/filter
+- System tray integration
+- Auto-update support using electron-updater and GitHub Releases
+- User-initiated crash and bug reporting to GitHub Issues
 
 ### 📅 Next Up
-- Real-time service status updates
-- Log viewer implementation
-- System tray integration
 - Virtual hosts management
+- One-click app installers implementation
+- Security analyzer tools
+- Mail testing integration (Mailhog or similar)
+
+---
+
+## 13. Implementation Breakdown & Tasks
+
+### 🎯 Priority 1: Core Service Management
+**Goal**: Robust service lifecycle management with real-time status
+
+#### Tasks:
+1. **Real-time Status Monitoring**
+   - Implement WebSocket/IPC for live status updates
+   - Add service health checks (every 5-10 seconds)
+   - Visual status indicators (running/stopped/error states)
+
+2. **Enhanced Service Controls**
+   - Graceful service shutdown with timeout handling
+   - Service restart functionality
+   - Auto-restart on crash detection
+
+3. **Error Handling & Recovery**
+   - Comprehensive error logging and user notifications
+   - Automatic service recovery mechanisms
+   - Port conflict detection and resolution
+
+### 🎯 Priority 2: Configuration Management
+**Goal**: User-friendly config editing with backup/restore
+
+#### Tasks:
+1. **Config Editor UI (Tailwind)**
+   - Monaco Editor integration for syntax highlighting
+   - Real-time validation of configuration syntax
+   - Side-by-side diff view for changes
+
+2. **Backup & Restore System**
+   - Automatic backups before any config changes
+   - Timestamp-based backup naming
+   - One-click restore from backup list
+
+3. **Configuration Templates**
+   - Pre-configured templates for common setups
+   - Virtual host templates for different frameworks
+   - PHP configuration presets for development/production
+
+### 🎯 Priority 3: PHP Multi-Version Support
+**Goal**: Seamless switching between PHP versions
+
+#### Tasks:
+1. **PHP Version Manager**
+   - Download and install PHP versions (8.1, 8.2, 8.3, 8.4)
+   - Symlink management for active PHP version
+   - Apache module configuration updates
+
+2. **PHP Extensions Management**
+   - Per-version extension enable/disable UI
+   - Extension availability checker
+   - Automatic php.ini updates
+
+3. **CLI Integration**
+   - Command-line PHP version switching
+   - Composer integration with correct PHP version
+   - Path environment management
+
+### 🎯 Priority 4: Application Installers
+**Goal**: One-click installation of popular PHP applications
+
+#### Tasks:
+1. **Installer Framework**
+   - Download progress tracking with UI feedback
+   - Zip extraction with error handling
+   - Database setup automation
+
+2. **Top 10 App Support**
+   - WordPress: Auto-download, wp-config setup, database creation
+   - Laravel: Composer installation, .env configuration
+   - Drupal: Installation profile selection, database setup
+   - [Continue for all 10 applications]
+
+3. **Post-Installation Setup**
+   - Virtual host creation for new apps
+   - SSL certificate generation (optional)
+   - Basic security configuration
+
+### 🎯 Priority 5: Log Management System
+**Goal**: Comprehensive log viewing and analysis
+
+#### Tasks:
+1. **Log Viewer UI**
+   - Tabbed interface for different log types
+   - Real-time log streaming with auto-scroll
+   - Search and filter functionality
+
+2. **Log Analysis Features**
+   - Error pattern detection and highlighting
+   - Log rotation management
+   - Export functionality (CSV, JSON)
+
+3. **Alert System**
+   - Critical error notifications
+   - Disk space warnings for log files
+   - Configurable alert thresholds
+
+### 🎯 Priority 6: Advanced Features
+**Goal**: Professional development environment features
+
+#### Tasks:
+1. **System Tray Integration**
+   - Minimize to tray functionality
+   - Quick actions menu (start/stop services)
+   - Service status indicators in tray
+
+2. **Security Tools**
+   - PHP configuration security scanner
+   - File permission checker
+   - Vulnerability database integration
+
+3. **Mail Testing**
+   - Mailhog integration or similar
+   - Email capture and viewing interface
+   - SMTP testing tools
+
+### 🎯 Priority 7: Quality & Maintenance
+**Goal**: Reliable and maintainable application
+
+#### Tasks:
+1. **Auto-Update System**
+   - Electron auto-updater implementation
+   - Update notification system
+   - Rollback mechanism for failed updates
+
+2. **Crash Reporting**
+   - Error tracking integration (Sentry or similar)
+   - Automatic crash report submission
+   - User feedback collection
+
+3. **Testing & Documentation**
+   - Unit tests for core functionality
+   - Integration tests for service management
+   - User guide and troubleshooting docs
+
+---
+
+## 14. Development Guidelines
+
+### 🧹 Code Quality Standards
+- Use ESLint and Prettier for consistent formatting
+- Comment complex logic, especially service management
+- Follow semantic versioning for releases
+- Write descriptive commit messages
+
+### 🔧 Architecture Principles
+- Keep UI and business logic separated
+- Use IPC for all main process communication
+- Implement graceful error handling everywhere
+- Design for cross-platform compatibility
+
+### 🎨 UI/UX Guidelines
+- Mobile-first responsive design with Tailwind
+- Consistent color scheme and typography
+- Loading states for all async operations
+- Intuitive navigation and clear labeling
+
+### 🔒 Security Considerations
+- Validate all user inputs in config editors
+- Secure file path handling to prevent directory traversal
+- Sanitize commands before shell execution
+- Regular security audits of dependencies
+
+---
+
+## 📞 Support
+
+- 🐛 Report bugs: [GitHub Issues](https://github.com/ProgrammerNomad/DevStackBox/issues)
+- 💬 Discussions: [GitHub Discussions](https://github.com/ProgrammerNomad/DevStackBox/discussions)
+- 📧 Email: [shiv@srapsware.com](mailto:shiv@srapsware.com)
+
+**DevStackBox** – Making local PHP development simple, modern, and portable! 🚀
 
 ---
