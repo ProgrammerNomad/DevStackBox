@@ -25,12 +25,12 @@
                     <img src="assets/logo.png" alt="DevStackBox" class="h-8 w-8">
                     <h1 class="text-2xl font-bold text-gray-900" data-i18n="app.name">DevStackBox</h1>
                 </div>
-                <div class="flex items-center space-x-1">
+                <div class="flex items-center space-x-2">
                     <!-- Language Switcher -->
                     <div class="relative">
-                        <button class="inline-flex items-center justify-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors" id="languageSwitcher" data-i18n="[title]header.switchLanguage" title="Switch Language">
-                            <span class="language-flag text-lg mr-1">🇺🇸</span>
-                            <span class="language-text hidden sm:inline">English</span>
+                        <button class="inline-flex items-center justify-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors h-10" id="languageSwitcher" data-i18n="[title]header.switchLanguage" title="Switch Language">
+                            <span class="language-flag text-base mr-2">🇺🇸</span>
+                            <span class="language-text">English</span>
                             <svg class="w-4 h-4 ml-1 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                             </svg>
@@ -39,11 +39,11 @@
                         <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-50 hidden" id="languageDropdown">
                             <div class="py-1">
                                 <button class="language-option flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" data-lang="en">
-                                    <span class="text-lg mr-3">🇺🇸</span>
+                                    <span class="text-base mr-3">🇺🇸</span>
                                     <span>English</span>
                                 </button>
                                 <button class="language-option flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" data-lang="hi">
-                                    <span class="text-lg mr-3">🇮🇳</span>
+                                    <span class="text-base mr-3">🇮🇳</span>
                                     <span>हिन्दी</span>
                                 </button>
                             </div>
@@ -51,7 +51,7 @@
                     </div>
                     
                     <!-- Theme Switcher -->
-                    <button class="inline-flex items-center justify-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors" id="themeSwitcherBtn" data-i18n="[title]header.switchTheme" title="Switch Theme (Light/Dark)">
+                    <button class="inline-flex items-center justify-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors h-10" id="themeSwitcherBtn" data-i18n="[title]header.switchTheme" title="Switch Theme (Light/Dark)">
                         <!-- Sun icon for light mode -->
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 theme-icon light-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
@@ -63,7 +63,7 @@
                     </button>
                     
                     <!-- Preferences Button -->
-                    <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors" id="downloadSettingsBtn" data-i18n="[title]header.preferences" title="Preferences">
+                    <button class="inline-flex items-center justify-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors h-10" id="downloadSettingsBtn" data-i18n="[title]header.preferences" title="Preferences">
                         <img src="assets/icons/system.svg" alt="Settings" class="w-4 h-4 mr-1.5">
                         <span data-i18n="header.preferences">Preferences</span>
                     </button>

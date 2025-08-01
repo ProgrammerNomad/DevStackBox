@@ -13,8 +13,8 @@ DevStackBox is a lightweight, portable, open-source local development environmen
 - ✅ **Modern Tailwind CSS UI** - Responsive, utility-first design
 - ✅ **Config Management** - Syntax highlighting and backup/restore for config files
 - ✅ **Multilanguage UI** - i18next-based internationalization with English and Hindi support
-- 🔄 **In Progress**: Logs viewer, system tray, auto-updates, crash reporting
-- 🕓 **Planned**: Apache, multiple PHP versions, one-click app installers, and more
+- 🔄 **In Progress**: Crash & bug reporting via GitHub, logs viewer, system tray, auto-updates
+- 🕓 **Planned**: Apache, multiple PHP versions, one-click app installers, portable CLI terminal, and more
 
 ### 📂 Key Directory Structure
 
@@ -95,6 +95,14 @@ npm start
 | **Quick Launch Tools**                        | 🕓 Planned    | Terminal (PHP/MySQL CLI), copy connection string, etc.             |
 | **Integrated Terminal with CLI**              | 🕓 Planned    | Built-in portable CLI terminal using node-pty and xterm.js         |
 | **Project Templates/Cloning**                 | 🕓 Planned    | Clone from Git or use templates for new projects                   |
+| **Composer Integration**                      | 🕓 Planned    | Global/per-project Composer support                                |
+| **PHP INI & Apache Config Editors**           | 🕓 Planned    | User-friendly config editing                                       |
+| **PHP Error Display Toggle**                  | 🕓 Planned    | Enable/disable display_errors from UI                              |
+| **Service Status & Tray Notifications**       | 🕓 Planned    | Tray notifications for service events                              |
+| **Portable PHP CLI**                          | 🕓 Planned    | Terminal with PHP version selector                                 |
+| **Bundled Tools (curl, git, node, npm, etc.)**| 🕓 Planned    | Optionally bundle common CLI tools                                 |
+| **Log Viewer Enhancements**                   | 🕓 Planned    | Real-time, filterable, tabbed log viewer for all services/apps     |
+| **Project Full Backup/Restore**               | 🕓 Planned    | Backup/restore www files, configs, databases                       |
 
 **Legend:**  
 ✅ Available  🔄 In Progress  🕓 Planned
@@ -165,9 +173,11 @@ const translation = window.i18nManager.t('services.apache.start');
 - `locales/hi/translation.json` - Hindi translations
 
 **Language Switcher UI:**
-- Dropdown with flag icons (🇺🇸 English, 🇮🇳 हिन्दी)  
+- Dropdown with flag icons and full language names (🇺🇸 English, 🇮🇳 हिन्दी)  
+- Language names always visible (no responsive hiding)
 - Automatic language detection and localStorage persistence
 - Real-time UI updates when switching languages
+- Consistent height with theme switcher and preferences buttons
 
 Copilot will help with adding new translation keys and managing i18next integration.
 
@@ -175,28 +185,31 @@ Copilot will help with adding new translation keys and managing i18next integrat
 DevStackBox has a modern header with three consistent buttons:
 
 ```html
-<!-- Language Switcher (dropdown) -->
-<button class="inline-flex items-center justify-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50" id="languageSwitcher">
-  <span class="language-flag text-lg mr-1">🇺🇸</span>
-  <span class="language-text hidden sm:inline">English</span>
+<!-- Language Switcher (dropdown with consistent height) -->
+<button class="inline-flex items-center justify-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 h-10" id="languageSwitcher">
+    <span class="language-flag text-base mr-2">🇺🇸</span>
+    <span class="language-text">English</span>
+    <svg class="w-4 h-4 ml-1 text-gray-500"><!-- dropdown arrow --></svg>
 </button>
 
-<!-- Theme Switcher -->
-<button class="inline-flex items-center justify-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50" id="themeSwitcherBtn">
-  <svg class="w-5 h-5"><!-- theme icons --></svg>
+<!-- Theme Switcher (consistent with language switcher) -->
+<button class="inline-flex items-center justify-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 h-10" id="themeSwitcherBtn">
+    <svg class="w-5 h-5"><!-- theme icons --></svg>
 </button>
 
-<!-- Preferences Button -->
-<button class="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-blue-700" id="downloadSettingsBtn">
-  <img src="assets/icons/system.svg" class="w-4 h-4 mr-1.5">
-  <span>Preferences</span>
+<!-- Preferences Button (consistent height with primary styling) -->
+<button class="inline-flex items-center justify-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-blue-700 h-10" id="downloadSettingsBtn">
+    <img src="assets/icons/system.svg" class="w-4 h-4 mr-1.5">
+    <span>Preferences</span>
 </button>
 ```
 
 **Button Design Principles:**
-- Consistent `px-3 py-2` padding for uniform height
-- Similar border and hover states for visual consistency  
-- Responsive design (text hides on small screens)
+- Consistent `h-10` height for all header buttons
+- `justify-center` for better alignment of content
+- Proper spacing with `space-x-2` between buttons
+- Language text always visible (no responsive hiding)
+- Consistent border and hover states for visual consistency  
 - Proper focus rings for accessibility
 
 For other UI components and modals:
@@ -676,10 +689,11 @@ Add keys to both language files:
 ### 🎛️ Language Switcher Components
 
 The header contains a language switcher with:
-- Dropdown button with flag icons
-- Current language display
+- Dropdown button with flag icons and full language names
+- Current language display (always visible)
 - Click-to-switch functionality
 - Consistent button styling with theme switcher and preferences
+- Proper height alignment (h-10) for visual consistency
 
 ### 💻 Using i18n in JavaScript
 
@@ -715,9 +729,9 @@ newElement.textContent = window.i18nManager.t('buttons.newAction');
 Language switcher button follows the same Tailwind pattern as other header buttons:
 
 ```html
-<button class="inline-flex items-center justify-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors">
-  <span class="language-flag text-lg mr-1">🇺🇸</span>
-  <span class="language-text hidden sm:inline">English</span>
+<button class="inline-flex items-center justify-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors h-10">
+  <span class="language-flag text-base mr-2">🇺🇸</span>
+  <span class="language-text">English</span>
 </button>
 ```
 
