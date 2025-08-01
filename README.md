@@ -115,6 +115,25 @@ DevStackBox/
 
 ---
 
+## 🖥️ Portable CLI Terminal
+
+DevStackBox includes a powerful, integrated CLI terminal for all your PHP development needs:
+
+- **Integrated Terminal**: Built using [`node-pty`](https://github.com/microsoft/node-pty) and [`xterm.js`](https://xtermjs.org/), the terminal is embedded directly into the app for a seamless experience.
+- **Portable Environment**: The CLI terminal is automatically configured to use your bundled PHP, MySQL, and Composer binaries—no need for global installs.
+- **PHP Version Selector**: Easily switch between different PHP versions within the terminal session (planned).
+- **Composer & MySQL Support**: Run `composer` and `mysql` commands out-of-the-box.
+- **Cross-Platform**: Works on Windows (Linux/macOS planned).
+- **Custom DevStackBox CLI**: (Planned) Use `devstackbox` commands to manage services, switch PHP versions, backup/restore, and more, directly from the terminal.
+
+**How it works:**  
+
+- The terminal window inside DevStackBox launches with the correct environment variables (including PATH), so running `php`, `composer`, or `mysql` will use the versions shipped with DevStackBox.
+- You can open multiple terminals and work in your project directories just like a regular shell.
+- Future releases will enhance this with a custom `devstackbox` CLI for one-command service management and automation.
+
+---
+
 ## 🎯 Current Status
 
 DevStackBox is under active development, aiming to simplify local PHP and MySQL development. The following components are already **complete** or in progress:

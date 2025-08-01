@@ -2,18 +2,34 @@
 # 🧠 GitHub Copilot Guide for DevStackBox
 
 Welcome to the **DevStackBox** contributor guide!  
-This file will help you get started with **GitHub Copilot** in **Visual Studio Code** so you can develop and contri### 📂 Folders You'll Work With
+This file will help you get started with **GitHub Copilot** in **Visual Studio Code** so you can develop and contribute effectively to this modern, portable local PHP development environment.
 
-- `src/` → Logic for starting/stopping services
-- `php/` → Place multiple PHP versions here (8.1, 8.2, 8.3, 8.4)
-- `apache/` → Portable Apache setup
-- `mysql/` → Portable MySQL (or MariaDB) with default users
-- `phpmyadmin/` → Preinstalled phpMyAdmin config
-- `apps/` → Installers for popular PHP apps (Top 10 CMS/frameworks)
-- `logs/` → Log files directory (Apache, MySQL, PHP, etc.)
-- `config-backups/` → Automatic backups of configuration files
-- `tmp/` → Temporary files and downloads during installations
-- `www/` → Web root directory for projectster.
+## 🎯 Current Project Status
+
+DevStackBox is a lightweight, portable, open-source local development environment for PHP developers. Currently implemented features include:
+
+- ✅ **MySQL Database** - Embedded MySQL server with GUI management
+- ✅ **phpMyAdmin Integration** - Built-in database management interface  
+- ✅ **Modern Tailwind CSS UI** - Responsive, utility-first design
+- ✅ **Config Management** - Syntax highlighting and backup/restore for config files
+- ✅ **Multilanguage UI** - i18next-based internationalization with English and Hindi support
+- 🔄 **In Progress**: Logs viewer, system tray, auto-updates, crash reporting
+- 🕓 **Planned**: Apache, multiple PHP versions, one-click app installers, and more
+
+### 📂 Key Directory Structure
+
+- `src/` → Node.js logic for service management
+- `mysql/` → Portable MySQL setup (✅ implemented)
+- `phpmyadmin/` → phpMyAdmin configuration (✅ implemented)
+- `scripts/` → Frontend JavaScript modules
+- `config/` → Configuration files with backup system
+- `config-backups/` → Automatic configuration backups
+- `logs/` → Log files directory for all services
+- `locales/` → Translation files (English & Hindi)
+- `apache/` → Portable Apache setup (🕓 planned)
+- `php/` → Multiple PHP versions (🕓 planned)
+- `apps/` → One-click app installers (🕓 planned)
+- `www/` → Web root directory (🕓 planned)
 
 ---
 
@@ -47,14 +63,45 @@ npm start
 ## 🧩 3. Recommended VS Code Extensions
 
 - 🧠 GitHub Copilot
-- ✨ ESLint
+- ✨ ESLint  
 - 🎨 Prettier - Code formatter
 - ⚡ Electron Snippets (optional)
 - 📄 Markdown All in One (for docs)
 
 ---
 
-## ✍️ 4. Tips for Using Copilot in DevStackBox
+## 📋 4. Current Feature Status Table
+
+| Feature                                      | Status        | Description                                                        |
+|-----------------------------------------------|--------------|--------------------------------------------------------------------|
+| **MySQL Database**                           | ✅ Available  | Embedded MySQL server with GUI management                          |
+| **phpMyAdmin Integration**                    | ✅ Available  | Built-in database management interface                             |
+| **Modern Tailwind CSS UI**                    | ✅ Available  | Responsive, utility-first design                                   |
+| **Config Management (Backup/Restore)**        | ✅ Available  | Syntax-highlighting and backup/restore for config files            |
+| **Multilanguage UI**                          | ✅ Available  | i18next-based internationalization with English and Hindi support  |
+| **Crash & Bug Reporting via GitHub**          | 🔄 In Progress| User-initiated crash/bug reports with pre-filled GitHub Issues     |
+| **Logs Viewer**                               | 🔄 In Progress| View MySQL, phpMyAdmin, and app logs; search/filter/real-time      |
+| **System Tray Integration**                   | 🔄 In Progress| Minimize to tray, quick actions                                    |
+| **Auto-Update Support**                       | 🔄 In Progress| Electron auto-updates via GitHub Releases                          |
+| **Apache HTTP Server**                        | 🕓 Planned    | Portable Apache, vhost & HTTPS management                          |
+| **Multiple PHP Versions**                     | 🕓 Planned    | Switch between PHP 8.1, 8.2, 8.3, 8.4                              |
+| **One-Click App Installers**                  | 🕓 Planned    | Install WordPress, Laravel, more with simple UI                    |
+| **PHP Extensions Management**                 | 🕓 Planned    | Enable/disable extensions per PHP version                          |
+| **Security Analyzer**                         | 🕓 Planned    | Scan PHP configs/code for security issues                          |
+| **Mail Testing Tools**                        | 🕓 Planned    | Built-in Mailhog or similar for email capture                      |
+| **Portable Mode / Zero Installation**         | 🕓 Planned    | All data/settings/logs in app folder                               |
+| **Database Backup/Restore (One-Click)**       | 🕓 Planned    | UI to export/import MySQL databases                                |
+| **MySQL User Management**                     | 🕓 Planned    | Create/edit MySQL users/privileges via UI                          |
+| **Quick Launch Tools**                        | 🕓 Planned    | Terminal (PHP/MySQL CLI), copy connection string, etc.             |
+| **Integrated Terminal with CLI**              | 🕓 Planned    | Built-in portable CLI terminal using node-pty and xterm.js         |
+| **Project Templates/Cloning**                 | 🕓 Planned    | Clone from Git or use templates for new projects                   |
+
+**Legend:**  
+✅ Available  🔄 In Progress  🕓 Planned
+
+---
+
+## ✍️ 5. Tips for Using Copilot in DevStackBox
 
 ### ➤ Service Management (`scripts/app.js`)
 Start typing:
@@ -68,23 +115,91 @@ Copilot will suggest the implementation for handling service UI states.
 ### ➤ Configuration Editor (`scripts/config-ui.js`)
 For example:
 ```js
-// Function to load and display Apache configuration
-loadApacheConfig() {
-  // Get config file content...
+// Function to load and display MySQL configuration
+loadMySQLConfig() {
+  // Get config file content from config/ directory...
 ```
-Copilot will suggest logic for loading and displaying config files.
+Copilot will suggest logic for loading and displaying config files with syntax highlighting.
 
-### ➤ App Installers (`scripts/one-click-installers.js`)
+### ➤ Integrated Terminal (`scripts/terminal.js`) - **🕓 Planned**
+DevStackBox will include a powerful integrated terminal using node-pty and xterm.js:
+
+```js
+// Initialize portable terminal with correct PATH
+initializePortableTerminal() {
+  // Set up environment with bundled PHP, MySQL, Composer...
+```
+Copilot will help with terminal initialization and PATH management.
+
+### ➤ App Installers (`scripts/one-click-installers.js`) - **🕓 Planned**
 Example:
 ```js
 // Perform the WordPress installation
 async installWordPress(options) {
-  // Download WordPress...
+  // Download WordPress to www/ directory...
 ```
 Copilot can help with installation flows and error handling.
 
-### ➤ UI Components (Tailwind CSS)
-For modals and components:
+### ➤ Internationalization (`scripts/i18n.js`) - **✅ Available**
+DevStackBox now has full multilanguage support with English and Hindi:
+
+```js
+// Initialize language system
+await window.i18nManager.init();
+
+// Change language
+await window.i18nManager.changeLanguage('hi'); // Switch to Hindi
+
+// Get translations
+const translation = window.i18nManager.t('services.apache.start');
+
+// Add data-i18n attributes to HTML elements
+<button data-i18n="services.apache.start">Start</button>
+
+// Special attribute translations
+<button data-i18n="[title]header.switchTheme" title="Switch Theme">Theme</button>
+```
+
+**Translation Files:**
+- `locales/en/translation.json` - English translations
+- `locales/hi/translation.json` - Hindi translations
+
+**Language Switcher UI:**
+- Dropdown with flag icons (🇺🇸 English, 🇮🇳 हिन्दी)  
+- Automatic language detection and localStorage persistence
+- Real-time UI updates when switching languages
+
+Copilot will help with adding new translation keys and managing i18next integration.
+
+### ➤ UI Components (Tailwind CSS) - **✅ Updated Header Layout**
+DevStackBox has a modern header with three consistent buttons:
+
+```html
+<!-- Language Switcher (dropdown) -->
+<button class="inline-flex items-center justify-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50" id="languageSwitcher">
+  <span class="language-flag text-lg mr-1">🇺🇸</span>
+  <span class="language-text hidden sm:inline">English</span>
+</button>
+
+<!-- Theme Switcher -->
+<button class="inline-flex items-center justify-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50" id="themeSwitcherBtn">
+  <svg class="w-5 h-5"><!-- theme icons --></svg>
+</button>
+
+<!-- Preferences Button -->
+<button class="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-blue-700" id="downloadSettingsBtn">
+  <img src="assets/icons/system.svg" class="w-4 h-4 mr-1.5">
+  <span>Preferences</span>
+</button>
+```
+
+**Button Design Principles:**
+- Consistent `px-3 py-2` padding for uniform height
+- Similar border and hover states for visual consistency  
+- Responsive design (text hides on small screens)
+- Proper focus rings for accessibility
+
+For other UI components and modals:
 ```html
 <div class="bg-white rounded-lg shadow-xl max-w-3xl w-full mx-4 max-h-[90vh] flex flex-col">
   <!-- Modal header -->
@@ -102,27 +217,33 @@ Copilot will suggest complete documentation sections.
 
 ---
 
-## ⚙️ 5. Project Structure (for Copilot context)
+## ⚙️ 6. Project Structure (for Copilot context)
 
 ```
 DevStackBox/
 ├── src/             # Node.js logic (services, config)
-├── apache/          # Apache portable setup
-├── mysql/           # MySQL portable setup
-├── php/             # Multiple PHP versions
-├── phpmyadmin/      # phpMyAdmin setup
-├── apps/            # One-click app installers
+├── apache/          # Apache portable setup (🕓 planned)
+├── mysql/           # MySQL portable setup (✅ available)
+├── php/             # Multiple PHP versions (🕓 planned)
+├── phpmyadmin/      # phpMyAdmin setup (✅ available)
+├── apps/            # One-click app installers (🕓 planned)
 ├── scripts/         # Frontend JavaScript modules
 │   ├── app.js       # Main application logic
 │   ├── config-ui.js # Configuration UI handling
-│   ├── one-click-installers.js # App installation module
+│   ├── i18n.js      # Internationalization management (✅ available)
+│   ├── one-click-installers.js # App installation module (🕓 planned)
 │   └── service-status-helper.js # Service status management
 ├── styles/          # CSS stylesheets (Tailwind)
 ├── assets/          # Icons and images
 ├── config/          # Configuration files
-├── config-backups/  # Backup files for configurations
+├── config-backups/  # Backup files for configurations (✅ available)
 ├── logs/            # Log files directory
-├── www/             # Web root directory
+├── locales/         # Translation files for internationalization (✅ available)
+│   ├── en/          # English translations
+│   └── hi/          # Hindi translations
+├── downloads/       # Downloaded files and binaries
+├── tmp/             # Temporary files during installations
+├── www/             # Web root directory (🕓 planned)
 ├── main.js          # Electron main process
 ├── preload.js       # Electron bridge
 ├── index.html       # GUI window
@@ -137,13 +258,13 @@ DevStackBox/
 
 | Feature                    | Status      | Description                                                                 |
 |----------------------------|-------------|-----------------------------------------------------------------------------|
-| Electron Application       | ✅ Done     | Modern GUI interface with Tailwind CSS framework                            |
+| Electron Application       | ✅ Available| Modern GUI interface with Tailwind CSS framework                            |
 | Apache Control             | 📋 Planned  | Portable Apache with easy start/stop controls and logical button states     |
-| MySQL Integration          | ✅ Done     | Start/Stop MySQL server with logical button states                          |
-| Service Management         | ✅ Done     | Service management architecture with IPC communication                       |
-| phpMyAdmin                 | ✅ Done     | Built-in database management interface                                       |
-| Config Editors Framework   | ✅ Done     | Configuration management foundation with backup/restore                      |
-| Tailwind UI                | ✅ Done     | All UI components use Tailwind CSS (no custom CSS dependencies)             |
+| MySQL Integration          | ✅ Available| Embedded MySQL server with GUI management and proper state handling         |
+| Service Management         | ✅ Available| Service management architecture with IPC communication                       |
+| phpMyAdmin                 | ✅ Available| Built-in database management interface for MySQL                           |
+| Config Editors Framework   | ✅ Available| Easy access to config files with syntax highlighting and backup/restore     |
+| Tailwind UI                | ✅ Available| Clean, responsive design with no custom CSS dependencies                    |
 | Multi PHP Version Support  | � Planned  | Switch between PHP 8.1, 8.2 (default), 8.3, and 8.4                      |
 | PHP Extensions Management  | � Planned  | Enable/disable PHP extensions per version                                    |
 | Enhanced Error Handling    | 🔄 In Progress | Improved notifications with modals/banners                                 |
@@ -162,12 +283,12 @@ DevStackBox/
 | Full App/Data Backup       | 📋 Planned  | Option to back up all configs, databases, and logs in one click           |
 | Virtual Host Management    | 📋 Planned  | Pretty URLs like `myapp.test`                                              |
 | HTTPS/SSL Support          | 📋 Planned  | One-click self-signed SSL for local domains and phpMyAdmin                |
-| Multilanguage UI           | 📋 Planned  | Internationalization support                                               |
+| Multilanguage UI           | ✅ Available| i18next-based internationalization with English and Hindi support          |
 | Project Templates/Cloning  | 📋 Planned  | Clone projects from a git URL or start from template                      |
 
 ---
 
-## � Crash & Bug Reporting
+## 🐞 Crash & Bug Reporting
 
 DevStackBox uses a **user-initiated, secure crash and bug reporting system**:
 
@@ -182,7 +303,78 @@ It keeps reporting simple, protects user privacy, and leverages GitHub's powerfu
 
 ---
 
-## �🙌 7. Copilot Usage Etiquette
+## 🖥️ Portable CLI Terminal
+
+DevStackBox includes a powerful, integrated CLI terminal for all your PHP development needs:
+
+- **Integrated Terminal**: Built using [`node-pty`](https://github.com/microsoft/node-pty) and [`xterm.js`](https://xtermjs.org/), the terminal is embedded directly into the app for a seamless experience.
+- **Portable Environment**: The CLI terminal is automatically configured to use your bundled PHP, MySQL, and Composer binaries—no need for global installs.
+- **PHP Version Selector**: Easily switch between different PHP versions within the terminal session (planned).
+- **Composer & MySQL Support**: Run `composer` and `mysql` commands out-of-the-box.
+- **Cross-Platform**: Works on Windows (Linux/macOS planned).
+- **Custom DevStackBox CLI**: (Planned) Use `devstackbox` commands to manage services, switch PHP versions, backup/restore, and more, directly from the terminal.
+
+**How it works:**  
+
+- The terminal window inside DevStackBox launches with the correct environment variables (including PATH), so running `php`, `composer`, or `mysql` will use the versions shipped with DevStackBox.
+- You can open multiple terminals and work in your project directories just like a regular shell.
+- Future releases will enhance this with a custom `devstackbox` CLI for one-command service management and automation.
+
+---
+
+## 🌐 Working with Multilanguage Support
+
+DevStackBox now includes full internationalization support. Here are some practical examples for using Copilot effectively:
+
+### ➤ Adding New Translation Keys
+When adding new UI elements, always include translation support:
+
+```js
+// In your HTML - Copilot will suggest the pattern
+<button data-i18n="newFeature.buttonText">Default Text</button>
+<input placeholder="Search..." data-i18n="[placeholder]common.search">
+```
+
+### ➤ Updating Translation Files
+Add keys to both language files:
+
+**`locales/en/translation.json`:**
+```json
+{
+  "newFeature": {
+    "buttonText": "Enable Feature",
+    "description": "This feature allows you to..."
+  }
+}
+```
+
+**`locales/hi/translation.json`:**
+```json
+{
+  "newFeature": {
+    "buttonText": "सुविधा सक्षम करें",
+    "description": "यह सुविधा आपको अनुमति देती है..."
+  }
+}
+```
+
+### ➤ Programmatic Translation Usage
+```js
+// Get translation in JavaScript
+const buttonText = window.i18nManager.t('newFeature.buttonText');
+
+// Update content after language change
+window.i18nManager.updateContent();
+
+// Check current language
+const currentLang = window.i18nManager.getCurrentLanguage(); // 'en' or 'hi'
+```
+
+Copilot will help suggest appropriate Hindi translations and proper JSON structure.
+
+---
+
+## 🙌 7. Copilot Usage Etiquette
 
 - Use Copilot as a helper, not a replacement for critical thinking
 - Review code suggestions carefully
@@ -432,7 +624,106 @@ When adding dark mode, use the `dark:` variant:
 
 ---
 
-## 12. Recent Progress and Priorities
+## 🌐 11. Working with Multilanguage Support (i18next)
+
+DevStackBox uses i18next for internationalization with English and Hindi languages currently supported.
+
+### 🔧 Adding New Translation Keys
+
+When adding new UI elements, always include translation support:
+
+```html
+<!-- Use data-i18n attribute for text content -->
+<button data-i18n="buttons.save">Save</button>
+
+<!-- Use data-i18n with [attribute] for attributes -->
+<input type="text" data-i18n="[placeholder]forms.searchPlaceholder" placeholder="Search...">
+
+<!-- Use data-i18n-html for HTML content -->
+<div data-i18n-html="messages.welcomeHtml"></div>
+```
+
+### 📝 Translation Files Structure
+
+Add keys to both language files:
+
+**`locales/en/translation.json`:**
+```json
+{
+  "buttons": {
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  "forms": {
+    "searchPlaceholder": "Search..."
+  }
+}
+```
+
+**`locales/hi/translation.json`:**
+```json
+{
+  "buttons": {
+    "save": "सहेजें",
+    "cancel": "रद्द करें"
+  },
+  "forms": {
+    "searchPlaceholder": "खोजें..."
+  }
+}
+```
+
+### 🎛️ Language Switcher Components
+
+The header contains a language switcher with:
+- Dropdown button with flag icons
+- Current language display
+- Click-to-switch functionality
+- Consistent button styling with theme switcher and preferences
+
+### 💻 Using i18n in JavaScript
+
+```js
+// Get translation in code
+const message = window.i18nManager.t('messages.success');
+
+// Check if i18n is ready
+if (window.i18nManager.isReady()) {
+  // Update dynamic content
+  window.i18nManager.updateContent();
+}
+
+// Listen for language changes
+document.addEventListener('languageChanged', (e) => {
+  console.log('Language changed to:', e.detail.language);
+});
+```
+
+### 🔄 Dynamic Content Updates
+
+For content created dynamically, ensure translations are applied:
+
+```js
+// After creating new DOM elements
+const newElement = document.createElement('button');
+newElement.setAttribute('data-i18n', 'buttons.newAction');
+newElement.textContent = window.i18nManager.t('buttons.newAction');
+```
+
+### 🎨 UI Components with Multilanguage
+
+Language switcher button follows the same Tailwind pattern as other header buttons:
+
+```html
+<button class="inline-flex items-center justify-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors">
+  <span class="language-flag text-lg mr-1">🇺🇸</span>
+  <span class="language-text hidden sm:inline">English</span>
+</button>
+```
+
+---
+
+## 13. Recent Progress and Priorities
 
 ### ✅ Completed
 - Electron application framework
@@ -440,6 +731,7 @@ When adding dark mode, use the `dark:` variant:
 - MySQL service controls with logical button states
 - Config editors framework
 - phpMyAdmin integration
+- Multilanguage UI (i18next-based internationalization with English and Hindi support)
 
 ### 🔄 In Progress
 - Enhanced error handling and notifications (modals/banners)
@@ -467,12 +759,11 @@ When adding dark mode, use the `dark:` variant:
 - MySQL user management
 - Quick launch tools
 - Full app/data backup/restore
-- Multilanguage UI
 - Project templates & cloning
 
 ---
 
-## 13. Implementation Breakdown & Tasks
+## 14. Implementation Breakdown & Tasks
 
 ### 🎯 Priority 1: Core Service Management
 **Goal**: Robust service lifecycle management with real-time status
@@ -610,7 +901,7 @@ When adding dark mode, use the `dark:` variant:
 
 ---
 
-## 14. Development Guidelines
+## 15. Development Guidelines
 
 ### 🧹 Code Quality Standards
 - Use ESLint and Prettier for consistent formatting
