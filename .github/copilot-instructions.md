@@ -1,113 +1,165 @@
-# 🤖 Copilot Instructions for DevStackBox (Tauri Edition)
+# 🤖 GitHub Copilot Contributor Guide for DevStackBox (from Electron to Tauri)
 
 Welcome to the **DevStackBox** contributor and Copilot guide!  
-This project is a cross-platform, modern PHP dev environment built with **Tauri + Vite + React + Tailwind CSS + shadcn/ui + Framer Motion**.
+This file will help you transition from the Electron architecture to the new **Tauri + Vite + React + Tailwind CSS + shadcn/ui + Framer Motion** stack, and use GitHub Copilot in **Visual Studio Code** for efficient, maintainable development.
 
 **Author:** Nomad Programmer  
 **Contact:** shiv@srapsware.com  
 **Repository:** [ProgrammerNomad/DevStackBox](https://github.com/ProgrammerNomad/DevStackBox)  
-**Documentation & Issues:** Use [GitHub Issues](https://github.com/ProgrammerNomad/DevStackBox/issues) and [GitHub Wiki](https://github.com/ProgrammerNomad/DevStackBox/wiki) for all docs.
+**Documentation & Issues:** [GitHub Issues](https://github.com/ProgrammerNomad/DevStackBox/issues) and [GitHub Wiki](https://github.com/ProgrammerNomad/DevStackBox/wiki)  
+**Auto-updates:** Managed via GitHub Releases with Tauri’s updater.
 
 ---
 
-## 🖥️ Development Environment
+## 🚀 Introduction & Transition Overview
 
-- **Primary OS:** Windows 11 (tested and developed on Windows 11)
-- **Editor:** Visual Studio Code with [GitHub Copilot extension](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot)
-- **Frontend:** Vite, React, Tailwind CSS, shadcn/ui, Framer Motion
+DevStackBox started as an Electron-based PHP dev environment and is now being rebuilt with Tauri for a smaller, faster, and more native experience.  
+This guide is for contributors who are familiar with the Electron (Node.js) approach and want to adapt to the new Tauri (Rust backend + modern React frontend) architecture.
+
+**Key differences:**
+- All backend/service management now runs in Rust via Tauri, not Node.js.
+- The frontend is a Vite-powered React app, styled with Tailwind CSS and shadcn/ui, using Framer Motion for animations.
+- No custom CSS unless absolutely necessary; dark/light mode is required everywhere.
+- All documentation, project management, and bug reporting are via GitHub.
+
+---
+
+## 🛠️ 1. Development Environment & Prerequisites
+
+- **Primary OS:** Windows 11 (development and primary testing)
+- **Editor:** Visual Studio Code (with Copilot extension)
+- **Frontend:** Vite + React + Tailwind CSS + shadcn/ui + Framer Motion
 - **Backend:** Tauri (Rust)
-- **Styling:** Use **only** Tailwind CSS and shadcn/ui.  
-  **Do not use custom CSS unless absolutely necessary**, and document any custom CSS if you must add it.
-- **Theming:** The app must always support both **dark mode** and **light mode** (use shadcn/ui and Tailwind theming).
+- **No custom CSS:** Use only Tailwind and shadcn/ui, document any CSS exceptions.
+- **Dark/Light Mode:** All UI must fully support both (Tailwind/shadcn/ui patterns).
+- **Auto-update:** App is auto-updated from GitHub Releases.
+
+**Install:**
+```bash
+git clone https://github.com/ProgrammerNomad/DevStackBox.git
+cd DevStackBox
+pnpm install  # or npm/yarn
+cargo install tauri-cli
+pnpm tauri dev  # or npm run tauri dev
+```
 
 ---
 
-## 📦 Binary Management
+## 📂 2. Project Structure
+
+```
+DevStackBox/
+├── src-tauri/         # Rust backend (service mgmt, config, IPC, updater)
+├── src/               # Frontend: Vite + React + Tailwind + shadcn/ui + Framer Motion
+├── mysql/             # Portable MySQL setup
+├── php/               # PHP 8.2 binaries (default)
+├── apache/            # Apache setup (planned)
+├── phpmyadmin/        # phpMyAdmin
+├── apps/              # One-click app installers (planned)
+├── config/            # Config files (php.ini, my.cnf, httpd.conf, etc.)
+├── config-backups/    # Config backups
+├── logs/              # Service/app logs
+├── www/               # Web root (planned)
+├── locales/           # i18next translations (EN, HI)
+└── package.json
+```
+
+---
+
+## 🧑‍💻 3. Copilot Usage & Prompt Patterns
+
+- **Backend (Rust, src-tauri):**  
+  _"Write a Tauri command to start MySQL and return its status to the frontend."_  
+  _"Add a Tauri command to download additional PHP binaries via an in-app installer."_
+
+- **Frontend (React, src/):**  
+  _"Create a MySQL control panel using shadcn/ui, Tailwind, Framer Motion; support dark/light mode."_  
+  _"Add a modal for backup/restore using shadcn/ui and Tailwind."_  
+  _"Implement a language switcher with i18next and Unicode support for Hindi."_
+
+- **Config & Logs:**  
+  _"Show a real-time logs viewer with tabs for MySQL, Apache, PHP logs using Tailwind and xterm.js."_  
+  _"Add config editor with Monaco and backup/restore UI using shadcn/ui."_
+
+- **General:**  
+  _"All UI must support dark/light mode and be styled only with Tailwind/shadcn/ui."_
+
+---
+
+## 📦 4. Binary Management
 
 - **Default PHP:** Only **PHP 8.2** is bundled by default.
-- **Other Binaries:** Additional PHP versions and binaries should be made available via an in-app distribution installer (download on demand).  
-  Do not bundle multiple PHP versions or extra binaries by default to keep the app lightweight.
+- **Other Binaries:** Downloadable on demand via the in-app distribution installer—do not bundle extra binaries by default.
 
 ---
 
-## 📁 Project Structure
+## 🗃️ 5. Feature/Status Table
 
-- `src-tauri/` – Rust backend: manages services, configs, IPC, tray, updater, system integration.
-- `src/` – Frontend (Vite + React + Tailwind CSS + shadcn/ui + Framer Motion): UI, logic, state, service controls, editors, log viewers.
-- `mysql/`, `php/`, `apache/`, `phpmyadmin/` – Portable binaries.
-- `apps/` – One-click installers (planned).
-- `config/`, `config-backups/` – Configuration management.
-- `logs/` – Service and app log files.
-- `www/` – Web root (planned).
-- `locales/` – i18next translation files.
-
----
-
-## 🧑‍💻 UI/UX Guidelines
-
-- **React** with **shadcn/ui** components for all UI controls and dialogs.
-- **Tailwind CSS utility classes** for styling and layout.  
-  *Custom CSS is forbidden* unless absolutely unavoidable, and must be documented and justified.
-- **Dark mode and light mode support is required everywhere.**  
-  Use shadcn/ui and Tailwind's theming utilities.
-- Animations and transitions must use **Framer Motion** (not raw JS or CSS keyframes).
-- All UI should be accessible (keyboard, screen reader, high-contrast, etc).
-- All user-facing text must use i18next (EN, HI).
+| Feature                                      | Status        | Description                                                      |
+|-----------------------------------------------|--------------|------------------------------------------------------------------|
+| MySQL Database                               | ✅ Available  | Embedded MySQL with GUI control                                  |
+| phpMyAdmin Integration                        | ✅ Available  | Built-in database management                                     |
+| Modern Tailwind/shadcn/ui/Framer UI           | ✅ Available  | Responsive, animated, utility-first UI                           |
+| Config Management (Backup/Restore)            | ✅ Available  | Syntax highlighting, backup/restore                              |
+| Multilanguage UI (i18next, EN/HI)             | ✅ Available  | English & Hindi, Unicode correct                                 |
+| Crash & Bug Reporting via GitHub              | 🔄 In Progress| Report bugs/crashes via GitHub Issues                            |
+| Logs Viewer                                   | 🔄 In Progress| Real-time log viewing with filter/search                         |
+| System Tray Integration                       | 🔄 In Progress| Minimize to tray/quick actions                                   |
+| Auto-Update                                   | 🔄 In Progress| Via GitHub Releases                                              |
+| Apache HTTP Server                            | 🕓 Planned    | Portable Apache, vhost & HTTPS                                   |
+| Multiple PHP Versions                         | 🕓 Planned    | Download via in-app installer                                    |
+| One-Click App Installers                      | 🕓 Planned    | WordPress, Laravel, etc.                                         |
+| PHP Extensions Management                     | 🕓 Planned    | Enable/disable per version                                       |
+| Security Analyzer                             | 🕓 Planned    | Scan configs/code for issues                                     |
+| Mail Testing Tools                            | 🕓 Planned    | Mailhog, etc.                                                    |
+| Portable Mode                                 | 🕓 Planned    | All data in app folder                                           |
+| Database/User Management                      | 🕓 Planned    | Manage users, backup/restore, SSL                                |
 
 ---
 
-## 💡 Copilot Prompt Examples
+## 💡 6. Detailed Copilot Examples
 
-- _"Create a React service control panel using shadcn/ui for MySQL with start/stop/restart buttons, status, and dark/light mode support."_
-- _"Add a Tauri Rust command to launch Apache and stream stdout/stderr to the frontend."_
-- _"Implement a Framer Motion-powered slide-in drawer for config file editing."_
-- _"Make a Tailwind-styled, real-time log viewer component with search and filter."_
-- _"Add multilanguage support to all user-facing strings using i18next."_
-- _"Create a shadcn/ui modal for backup/restore confirmation, themed for dark and light mode."_
-- _"Implement a UI flow for downloading additional PHP versions through the in-app distribution installer."_
+- _"Add a config editor with Monaco and backup/restore, styled with Tailwind and shadcn/ui, supporting dark/light mode."_
+- _"Implement a logs viewer in React using xterm.js, with tabs for each service, filter and search, and animated transitions with Framer Motion."_
+- _"Write a Tauri command in Rust to download and extract a PHP version into the php/ directory and notify the frontend on completion."_
+- _"Create a modal with shadcn/ui for reporting bugs, which opens a GitHub Issue link with prefilled content."_
+- _"Implement a multilanguage language switcher with i18next and Unicode support for Hindi, styled for header consistency."_
 
 ---
 
-## 🛠️ Coding Guidelines
+## 🌐 7. Multilanguage & Unicode
 
-- All privileged logic (service management, file I/O) must be handled in Tauri (Rust).
-- All frontend logic communicates with backend via Tauri APIs/events, never direct system calls.
-- Use `xterm.js` for the embedded terminal.
-- Logs viewer must support real-time tailing, search, and filtering.
-- Config editors must support backup/restore and syntax highlighting.
-- Use shadcn/ui dialogs/alerts/menus for modals, tray menus, and notifications.
-- Never introduce custom CSS unless no other solution exists—prefer Tailwind/shadcn/ui utilities.
+- Use i18next for all user-facing text (English & Hindi)
+- Use Tailwind and system fonts for perfect Unicode/Devanagari rendering
+- Language switcher must use Unicode names ("English", "हिन्दी") and consistent header styling
 
 ---
 
-## 🚦 Must-have Features Checklist
+## 🎨 8. UI/UX & Styling Guidelines
 
-- [x] Embedded MySQL server with GUI
-- [x] phpMyAdmin integration
-- [x] Modern UI: Vite + React + Tailwind + shadcn/ui + Framer Motion
-- [x] Config editors (syntax highlight, backup/restore)
-- [x] Multilanguage UI (i18next: EN, HI)
-- [x] Full dark mode and light mode support everywhere
-- [x] Distribution installer for downloading extra PHP versions and binaries
-- [ ] Real-time logs viewer (search/filter)
-- [ ] System tray integration
-- [ ] Auto-update via Tauri (managed via GitHub Releases)
-- [ ] Apache HTTP server (portable, vhost, HTTPS)
-- [ ] Multiple PHP versions/extensions management
-- [ ] One-click app installers
-- [ ] Integrated terminal/CLI
-- [ ] Security analyzer, mail tools, bundled CLI tools
-- [ ] User management, SSL, backup/restore
-- [ ] Bug/crash reporting, tray notifications
+- All UI styled only with Tailwind and shadcn/ui; do not use custom CSS unless essential and well-documented.
+- All components must support both **dark and light mode** via Tailwind/shadcn/ui.
+- Animations and transitions must use Framer Motion (not CSS keyframes or raw JS).
+- Responsive, accessible, and visually consistent.
+- Use shadcn/ui dialogs, modals, menus everywhere possible.
 
 ---
 
-## 🤝 Contributing
+## 📦 9. Auto-Update & Issue Tracking
+
+- Releases and all auto-updates are via [GitHub Releases](https://github.com/ProgrammerNomad/DevStackBox/releases).
+- All bug/crash reporting and documentation is managed via [GitHub Issues](https://github.com/ProgrammerNomad/DevStackBox/issues) and [Wiki](https://github.com/ProgrammerNomad/DevStackBox/wiki).
+
+---
+
+## 🤝 10. Contributing
 
 - Fork, branch, code, and PR as usual.
-- Use Copilot to scaffold UI in React, backend in Rust, and connect via Tauri APIs.
+- Use Copilot for both Rust (backend) and React (frontend) code.
+- Comment/refactor Copilot suggestions as needed.
 - Keep code linted, typed, and documented.
-- Test all major OSes if possible (Windows 11 is primary).
+- Test on all platforms (Windows 11 is primary).
+- Contact: shiv@srapsware.com
 
 ---
 
