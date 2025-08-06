@@ -48,6 +48,12 @@ php/*/sessions/
 # phpMyAdmin runtime files
 phpmyadmin/tmp/
 phpmyadmin/upload/
+
+# Large binary distributions (downloaded via setup script)
+apache/
+mysql/
+php/
+phpmyadmin/
 phpmyadmin/save/
 phpmyadmin/config.secret.inc.php
 
