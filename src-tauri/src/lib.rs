@@ -2,10 +2,22 @@ use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
 use std::sync::LazyLock;
 use std::process::Command;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::fs;
 use std::time::Duration;
 use tokio::time::sleep;
+
+// Helper function to get the project root directory
+fn get_project_root() -> Result<PathBuf, String> {
+    let current_dir = std::env::current_dir().map_err(|e| e.to_string())?;
+    if current_dir.file_name().and_then(|name| name.to_str()) == Some("src-tauri") {
+        // If we're in src-tauri directory, go up one level to DevStackBox
+        Ok(current_dir.parent().unwrap_or(&current_dir).to_path_buf())
+    } else {
+        // If we're already in DevStackBox or elsewhere, use current directory
+        Ok(current_dir)
+    }
+}
 
 // Service status and process tracking
 static SERVICE_STATUS: LazyLock<Arc<Mutex<HashMap<String, bool>>>> = 
@@ -36,9 +48,15 @@ struct PHPVersionInfo {
 async fn check_binaries() -> Result<HashMap<String, bool>, String> {
     let mut binaries = HashMap::new();
     
-    // Get the current directory and construct proper paths
+    // Get the project root directory (DevStackBox)
     let current_dir = std::env::current_dir().map_err(|e| e.to_string())?;
-    let base_path = current_dir.parent().unwrap_or(&current_dir);
+    let base_path = if current_dir.file_name().and_then(|name| name.to_str()) == Some("src-tauri") {
+        // If we're in src-tauri directory, go up one level to DevStackBox
+        current_dir.parent().unwrap_or(&current_dir)
+    } else {
+        // If we're already in DevStackBox or elsewhere, use current directory
+        &current_dir
+    };
     
     // Check MySQL
     let mysql_path = base_path.join("mysql").join("bin").join("mysqld.exe");
@@ -59,9 +77,15 @@ async fn check_binaries() -> Result<HashMap<String, bool>, String> {
 async fn debug_paths() -> Result<HashMap<String, String>, String> {
     let mut paths = HashMap::new();
     
-    // Get the current directory and construct proper paths
+    // Get the project root directory (DevStackBox)
     let current_dir = std::env::current_dir().map_err(|e| e.to_string())?;
-    let base_path = current_dir.parent().unwrap_or(&current_dir);
+    let base_path = if current_dir.file_name().and_then(|name| name.to_str()) == Some("src-tauri") {
+        // If we're in src-tauri directory, go up one level to DevStackBox
+        current_dir.parent().unwrap_or(&current_dir)
+    } else {
+        // If we're already in DevStackBox or elsewhere, use current directory
+        &current_dir
+    };
     
     paths.insert("current_dir".to_string(), current_dir.display().to_string());
     paths.insert("base_path".to_string(), base_path.display().to_string());
@@ -113,7 +137,13 @@ async fn get_mysql_status() -> Result<ServiceInfo, String> {
 
 async fn initialize_mysql_data() -> Result<(), String> {
     let current_dir = std::env::current_dir().map_err(|e| e.to_string())?;
-    let base_path = current_dir.parent().unwrap_or(&current_dir);
+    let base_path = if current_dir.file_name().and_then(|name| name.to_str()) == Some("src-tauri") {
+        // If we're in src-tauri directory, go up one level to DevStackBox
+        current_dir.parent().unwrap_or(&current_dir)
+    } else {
+        // If we're already in DevStackBox or elsewhere, use current directory
+        &current_dir
+    };
     
     let data_dir = base_path.join("mysql").join("data");
     let mysql_bin_path = base_path.join("mysql").join("bin").join("mysqld.exe");
@@ -141,9 +171,15 @@ async fn initialize_mysql_data() -> Result<(), String> {
 
 #[tauri::command]
 async fn start_mysql() -> Result<bool, String> {
-    // Get the current directory and construct proper paths
+    // Get the project root directory (DevStackBox)
     let current_dir = std::env::current_dir().map_err(|e| e.to_string())?;
-    let base_path = current_dir.parent().unwrap_or(&current_dir);
+    let base_path = if current_dir.file_name().and_then(|name| name.to_str()) == Some("src-tauri") {
+        // If we're in src-tauri directory, go up one level to DevStackBox
+        current_dir.parent().unwrap_or(&current_dir)
+    } else {
+        // If we're already in DevStackBox or elsewhere, use current directory
+        &current_dir
+    };
     
     let mysql_path = base_path.join("mysql").join("bin").join("mysqld.exe");
     if !mysql_path.exists() {
@@ -242,8 +278,7 @@ async fn stop_mysql() -> Result<bool, String> {
 }
 
 async fn create_default_mysql_config() -> Result<(), String> {
-    let current_dir = std::env::current_dir().map_err(|e| e.to_string())?;
-    let base_path = current_dir.parent().unwrap_or(&current_dir);
+    let base_path = get_project_root()?;
     
     let mysql_base = base_path.join("mysql");
     let mysql_data = base_path.join("mysql").join("data");
@@ -305,8 +340,7 @@ async fn update_php_config(version: &str) -> Result<(), String> {
 }
 
 async fn get_mysql_version() -> Option<String> {
-    let current_dir = std::env::current_dir().ok()?;
-    let base_path = current_dir.parent().unwrap_or(&current_dir);
+    let base_path = get_project_root().ok()?;
     let mysql_path = base_path.join("mysql").join("bin").join("mysqld.exe");
     
     if !mysql_path.exists() {
@@ -478,9 +512,8 @@ async fn get_apache_status() -> Result<ServiceInfo, String> {
 
 #[tauri::command]
 async fn start_apache() -> Result<bool, String> {
-    // Get the current directory and construct proper paths
-    let current_dir = std::env::current_dir().map_err(|e| e.to_string())?;
-    let base_path = current_dir.parent().unwrap_or(&current_dir);
+    // Get the project root directory (DevStackBox)
+    let base_path = get_project_root()?;
     
     let apache_path = base_path.join("apache").join("bin").join("httpd.exe");
     if !apache_path.exists() {
@@ -495,6 +528,7 @@ async fn start_apache() -> Result<bool, String> {
     // Change to base directory before starting Apache
     std::env::set_current_dir(&base_path).map_err(|e| e.to_string())?;
 
+    // Test Apache configuration first
     match Command::new(&apache_path)
         .arg("-f")
         .arg(&config_path)
@@ -608,8 +642,7 @@ async fn stop_apache() -> Result<bool, String> {
 }
 
 async fn create_default_apache_config() -> Result<(), String> {
-    let current_dir = std::env::current_dir().map_err(|e| e.to_string())?;
-    let base_path = current_dir.parent().unwrap_or(&current_dir);
+    let base_path = get_project_root()?;
     
     let apache_root = base_path.join("apache");
     let www_root = base_path.join("www");
