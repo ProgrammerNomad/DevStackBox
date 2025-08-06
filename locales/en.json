@@ -1,0 +1,80 @@
+{
+  "common": {
+    "welcome": "Welcome",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "start": "Start",
+    "stop": "Stop",
+    "restart": "Restart",
+    "running": "Running",
+    "stopped": "Stopped",
+    "available": "Available",
+    "planned": "Planned",
+    "inProgress": "In Progress",
+    "comingSoon": "Coming Soon"
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "services": "Services",
+    "projects": "Projects",
+    "logs": "Logs",
+    "settings": "Settings",
+    "about": "About"
+  },
+  "app": {
+    "title": "DevStackBox",
+    "subtitle": "PHP Development Environment",
+    "description": "A lightweight, portable, open-source local development environment for PHP developers"
+  },
+  "services": {
+    "title": "Services",
+    "mysql": {
+      "title": "MySQL Database",
+      "description": "Embedded MySQL server with GUI management"
+    },
+    "php": {
+      "title": "PHP 8.2",
+      "description": "Default PHP runtime with extensions"
+    },
+    "apache": {
+      "title": "Apache Server",
+      "description": "Portable Apache with vhost management"
+    }
+  },
+  "features": {
+    "title": "Features",
+    "phpmyadmin": {
+      "title": "phpMyAdmin",
+      "description": "Built-in database management interface"
+    },
+    "config": {
+      "title": "Config Management",
+      "description": "Syntax highlighting and backup/restore"
+    },
+    "logs": {
+      "title": "Logs Viewer",
+      "description": "Real-time log viewing with search/filter"
+    },
+    "installers": {
+      "title": "One-Click Installers",
+      "description": "WordPress, Laravel, and more"
+    }
+  },
+  "theme": {
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System",
+    "toggle": "Toggle theme"
+  },
+  "language": {
+    "english": "English",
+    "hindi": "हिन्दी",
+    "switch": "Switch language"
+  }
+}

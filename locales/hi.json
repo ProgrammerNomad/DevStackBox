@@ -1,0 +1,80 @@
+{
+  "common": {
+    "welcome": "स्वागत है",
+    "loading": "लोड हो रहा है...",
+    "error": "त्रुटि",
+    "success": "सफलता",
+    "cancel": "रद्द करें",
+    "save": "सेव करें",
+    "delete": "डिलीट करें",
+    "edit": "एडिट करें",
+    "close": "बंद करें",
+    "start": "शुरू करें",
+    "stop": "रोकें",
+    "restart": "फिर से शुरू करें",
+    "running": "चल रहा है",
+    "stopped": "रुका हुआ",
+    "available": "उपलब्ध",
+    "planned": "योजनाबद्ध",
+    "inProgress": "प्रगति में",
+    "comingSoon": "जल्द आ रहा है"
+  },
+  "navigation": {
+    "dashboard": "डैशबोर्ड",
+    "services": "सेवाएं",
+    "projects": "प्रोजेक्ट्स",
+    "logs": "लॉग्स",
+    "settings": "सेटिंग्स",
+    "about": "के बारे में"
+  },
+  "app": {
+    "title": "डेवस्टैकबॉक्स",
+    "subtitle": "PHP विकास वातावरण",
+    "description": "PHP डेवलपर्स के लिए एक हल्का, पोर्टेबल, ओपन-सोर्स स्थानीय विकास वातावरण"
+  },
+  "services": {
+    "title": "सेवाएं",
+    "mysql": {
+      "title": "MySQL डेटाबेस",
+      "description": "GUI प्रबंधन के साथ एम्बेडेड MySQL सर्वर"
+    },
+    "php": {
+      "title": "PHP 8.2",
+      "description": "एक्सटेंशन के साथ डिफ़ॉल्ट PHP रनटाइम"
+    },
+    "apache": {
+      "title": "Apache सर्वर",
+      "description": "vhost प्रबंधन के साथ पोर्टेबल Apache"
+    }
+  },
+  "features": {
+    "title": "सुविधाएं",
+    "phpmyadmin": {
+      "title": "phpMyAdmin",
+      "description": "बिल्ट-इन डेटाबेस प्रबंधन इंटरफेस"
+    },
+    "config": {
+      "title": "कॉन्फ़िग प्रबंधन",
+      "description": "सिंटैक्स हाइलाइटिंग और बैकअप/रिस्टोर"
+    },
+    "logs": {
+      "title": "लॉग्स व्यूअर",
+      "description": "खोज/फ़िल्टर के साथ रीयल-टाइम लॉग देखना"
+    },
+    "installers": {
+      "title": "वन-क्लिक इंस्टॉलर",
+      "description": "WordPress, Laravel, और अन्य"
+    }
+  },
+  "theme": {
+    "light": "हल्का",
+    "dark": "गहरा",
+    "system": "सिस्टम",
+    "toggle": "थीम टॉगल करें"
+  },
+  "language": {
+    "english": "English",
+    "hindi": "हिन्दी",
+    "switch": "भाषा बदलें"
+  }
+}
