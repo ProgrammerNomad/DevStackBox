@@ -48,6 +48,8 @@ apache/logs/
 # PHP runtime files ONLY (keep all binaries)
 php/*/tmp/
 php/*/sessions/
+php/sessions/*
+tmp/*
 
 # phpMyAdmin runtime files ONLY (keep all binaries)
 phpmyadmin/tmp/
@@ -90,3 +92,4 @@ www/*/bootstrap/cache/
 # Temporary files
 *.tmp
 *.temp
+php/sessions/sess_328jk0pnb98gscpr7f150qme75
