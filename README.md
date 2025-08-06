@@ -5,7 +5,7 @@ A lightweight, portable, open-source local development environment for PHP devel
 **Author:** Nomad Programmer  
 **Contact:** shiv@srapsware.com  
 **Repository:** [ProgrammerNomad/DevStackBox](https://github.com/ProgrammerNomad/DevStackBox)  
-**Docs & Issues:** All documentation and issue tracking are managed through [GitHub Issues](https://github.com/ProgrammerNomad/DevStackBox/issues) and [GitHub Wiki](https://github.com/ProgrammerNomad/DevStackBox/wiki) (if available).
+**Docs & Issues:** Please use [GitHub Issues](https://github.com/ProgrammerNomad/DevStackBox/issues) and [GitHub Wiki](https://github.com/ProgrammerNomad/DevStackBox/wiki) for all documentation, feature requests, and bug reports.
 
 ---
 
@@ -50,15 +50,16 @@ A lightweight, portable, open-source local development environment for PHP devel
 
 ---
 
-## 🚀 Modern Features
+## 🚀 What is DevStackBox?
 
-- **Super lightweight:** Tauri apps are typically 5–30MB (excluding server binaries)
+DevStackBox is a next-generation, portable PHP development stack built using Tauri, Vite, React, Tailwind CSS, shadcn/ui, and Framer Motion.  
+It provides a **fast, modern, cross-platform GUI** for managing your entire PHP stack locally — all with minimal dependencies and a beautiful UI.
+
+- **Super lightweight:** Tauri core is 5–30MB (excluding service binaries)
 - **Cross-platform:** Windows 10/11, macOS, Linux
-- **Modern UI:** Vite + React + Tailwind CSS + shadcn/ui + Framer Motion
-- **Dark/Light Mode:** Fully supported, switchable everywhere
-- **Preinstalled dev stack:** MySQL, PHP 8.2 (default), phpMyAdmin
-- **Additional binaries:** Download more PHP versions/Apache/etc. from the in-app distribution installer
-- **Auto-update:** Always up-to-date via GitHub Releases
+- **Dark/Light Mode:** Fully supported everywhere
+- **Auto-update:** Releases and updates are managed via GitHub Releases and Tauri’s updater
+- **Community-first:** All features, bugs, and documentation are handled on GitHub
 
 ---
 
@@ -73,7 +74,7 @@ A lightweight, portable, open-source local development environment for PHP devel
 
 ---
 
-## 🛠 Installation
+## 🛠 Installation & Getting Started
 
 1. **Clone the repository:**
    ```bash
@@ -123,12 +124,22 @@ DevStackBox/
 
 ---
 
+## 🖥️ Menus & UI Navigation
+
+- **Sidebar Navigation**: Main sections (Dashboard, Projects, Services, Logs, Settings, About)
+- **Top Bar**: Quick actions (theme switcher, language, user menu, updates)
+- **Command Palette**: Fast action search/jump (Ctrl+P or Cmd+P, shadcn/ui’s Command component)
+- **Context Menus**: Right-click per-item actions (shadcn/ui ContextMenu)
+- **Tabs**: For sub-navigation within a page (e.g., “Overview | Logs” for a service)
+
+---
+
 ## 🖥️ Portable CLI Terminal
 
-- **Integrated Terminal:** Embedded xterm.js terminal using Tauri’s process management
-- **PHP Version Selector:** (Planned) Change PHP version per session (other versions downloadable)
-- **Composer & MySQL CLI:** Available in the app terminal
-- **Bundled Tools:** Optionally ship with curl, git, node, npm, etc.
+- **Integrated Terminal**: Embedded xterm.js terminal using Tauri’s process management
+- **PHP Version Selector**: (Planned) Change PHP version per session (other versions downloadable)
+- **Composer & MySQL CLI**: Available in the app terminal
+- **Bundled Tools**: Optionally ship with curl, git, node, npm, etc.
 
 ---
 
@@ -164,11 +175,19 @@ DevStackBox/
 
 ## 🎨 UI Design
 
-- **No Custom CSS Required:** All styling is done with Tailwind utility classes and shadcn/ui
+- **No Custom CSS Required:** Use Tailwind utility classes and shadcn/ui only (document rare exceptions)
 - **Consistent Design Language:** Unified styling across all components
 - **Mobile-First Responsiveness:** Adapts to any screen size
-- **Dark/Light Mode:** Easy theming with shadcn/ui and Tailwind variants
+- **Dark/Light Mode:** Easy theming (shadcn/ui + Tailwind)
 - **Animation:** Smooth transitions via Framer Motion
+
+---
+
+## 🌐 Multilanguage
+
+- All user-facing text must use i18next (EN, HI)
+- Language switcher styled with icons and Unicode support
+- Proper font handling for Devanagari/Hindi
 
 ---
 

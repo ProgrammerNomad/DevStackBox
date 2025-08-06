@@ -1,7 +1,7 @@
-# 🤖 GitHub Copilot Contributor Guide for DevStackBox (from Electron to Tauri)
+# 🤖 GitHub Copilot Contributor Guide for DevStackBox
 
 Welcome to the **DevStackBox** contributor and Copilot guide!  
-This file will help you transition from the Electron architecture to the new **Tauri + Vite + React + Tailwind CSS + shadcn/ui + Framer Motion** stack, and use GitHub Copilot in **Visual Studio Code** for efficient, maintainable development.
+This file will help you develop for the modern **Tauri + Vite + React + Tailwind CSS + shadcn/ui + Framer Motion** stack, and use GitHub Copilot in **Visual Studio Code** for efficient, maintainable development.
 
 **Author:** Nomad Programmer  
 **Contact:** shiv@srapsware.com  
@@ -11,16 +11,16 @@ This file will help you transition from the Electron architecture to the new **T
 
 ---
 
-## 🚀 Introduction & Transition Overview
+## 🚀 Overview
 
-DevStackBox started as an Electron-based PHP dev environment and is now being rebuilt with Tauri for a smaller, faster, and more native experience.  
-This guide is for contributors who are familiar with the Electron (Node.js) approach and want to adapt to the new Tauri (Rust backend + modern React frontend) architecture.
+DevStackBox is a lightweight, portable, open-source local development environment for PHP developers.  
+It is built with Tauri for a smaller, faster, and more native experience, using a modern, maintainable frontend stack.  
+All documentation, project management, and bug reporting are via GitHub.
 
-**Key differences:**
-- All backend/service management now runs in Rust via Tauri, not Node.js.
+**Key stack points:**
+- All backend/service management runs in Rust via Tauri.
 - The frontend is a Vite-powered React app, styled with Tailwind CSS and shadcn/ui, using Framer Motion for animations.
 - No custom CSS unless absolutely necessary; dark/light mode is required everywhere.
-- All documentation, project management, and bug reporting are via GitHub.
 
 ---
 
@@ -66,34 +66,7 @@ DevStackBox/
 
 ---
 
-## 🧑‍💻 3. Copilot Usage & Prompt Patterns
-
-- **Backend (Rust, src-tauri):**  
-  _"Write a Tauri command to start MySQL and return its status to the frontend."_  
-  _"Add a Tauri command to download additional PHP binaries via an in-app installer."_
-
-- **Frontend (React, src/):**  
-  _"Create a MySQL control panel using shadcn/ui, Tailwind, Framer Motion; support dark/light mode."_  
-  _"Add a modal for backup/restore using shadcn/ui and Tailwind."_  
-  _"Implement a language switcher with i18next and Unicode support for Hindi."_
-
-- **Config & Logs:**  
-  _"Show a real-time logs viewer with tabs for MySQL, Apache, PHP logs using Tailwind and xterm.js."_  
-  _"Add config editor with Monaco and backup/restore UI using shadcn/ui."_
-
-- **General:**  
-  _"All UI must support dark/light mode and be styled only with Tailwind/shadcn/ui."_
-
----
-
-## 📦 4. Binary Management
-
-- **Default PHP:** Only **PHP 8.2** is bundled by default.
-- **Other Binaries:** Downloadable on demand via the in-app distribution installer—do not bundle extra binaries by default.
-
----
-
-## 🗃️ 5. Feature/Status Table
+## 🗂️ 3. Full Feature/Status Table
 
 | Feature                                      | Status        | Description                                                      |
 |-----------------------------------------------|--------------|------------------------------------------------------------------|
@@ -114,6 +87,50 @@ DevStackBox/
 | Mail Testing Tools                            | 🕓 Planned    | Mailhog, etc.                                                    |
 | Portable Mode                                 | 🕓 Planned    | All data in app folder                                           |
 | Database/User Management                      | 🕓 Planned    | Manage users, backup/restore, SSL                                |
+| Database Backup/Restore (One-Click)           | 🕓 Planned    | UI to export/import MySQL databases                              |
+| Quick Launch Tools                            | 🕓 Planned    | Terminal (PHP/MySQL CLI), copy connection string, etc.           |
+| Full App/Data Backup/Restore                  | 🕓 Planned    | Backup configs, databases, logs in one click                     |
+| Automatic Virtual Host Management             | 🕓 Planned    | Pretty URLs like `myapp.test`                                    |
+| HTTPS/SSL for Local Sites                     | 🕓 Planned    | One-click SSL for local domains and phpMyAdmin                   |
+| Project Templates/Cloning                     | 🕓 Planned    | Clone from Git or use templates for new projects                 |
+| Composer Integration                          | 🕓 Planned    | Global/per-project Composer support                              |
+| PHP INI & Apache Config Editors               | 🕓 Planned    | User-friendly config editing                                     |
+| PHP Error Display Toggle                      | 🕓 Planned    | Enable/disable display_errors from UI                            |
+| Service Status & Tray Notifications           | 🕓 Planned    | Tray notifications for service events                            |
+| Portable PHP CLI                              | 🕓 Planned    | Terminal with PHP version selector                               |
+| Bundled Tools (curl, git, node, npm, etc.)    | 🕓 Planned    | Optionally bundle common CLI tools                               |
+| Log Viewer Enhancements                       | 🕓 Planned    | Real-time, filterable, tabbed log viewer for all services/apps   |
+| Project Full Backup/Restore                   | 🕓 Planned    | Backup/restore www files, configs, databases                     |
+
+**Legend:**  
+✅ Available  🔄 In Progress  🕓 Planned
+
+---
+
+## 🧑‍💻 4. Copilot Usage & Prompt Patterns
+
+- **Backend (Rust, src-tauri):**  
+  _"Write a Tauri command to start MySQL and return its status to the frontend."_  
+  _"Add a Tauri command to download additional PHP binaries via an in-app installer."_
+
+- **Frontend (React, src/):**  
+  _"Create a MySQL control panel using shadcn/ui, Tailwind, Framer Motion; support dark/light mode."_  
+  _"Add a modal for backup/restore using shadcn/ui and Tailwind."_  
+  _"Implement a language switcher with i18next and Unicode support for Hindi."_
+
+- **Config & Logs:**  
+  _"Show a real-time logs viewer with tabs for MySQL, Apache, PHP logs using Tailwind and xterm.js."_  
+  _"Add config editor with Monaco and backup/restore UI using shadcn/ui."_
+
+- **General:**  
+  _"All UI must support dark/light mode and be styled only with Tailwind/shadcn/ui."_
+
+---
+
+## 📦 5. Binary Management
+
+- **Default PHP:** Only **PHP 8.2** is bundled by default.
+- **Other Binaries:** Downloadable on demand via the in-app distribution installer—do not bundle extra binaries by default.
 
 ---
 
@@ -145,14 +162,54 @@ DevStackBox/
 
 ---
 
-## 📦 9. Auto-Update & Issue Tracking
+## 🖥️ 9. Modern Menu & Navigation Patterns
+
+**DevStackBox uses a combination of modern, desktop-inspired navigation patterns for clarity and usability:**
+
+- **Sidebar Navigation (Primary):**  
+  Use shadcn/ui's `NavigationMenu` or a custom sidebar for main sections (Dashboard, Projects, Services, Logs, Settings, About).  
+  - Supports icons, labels, section grouping, and collapsible "rail" mode.  
+  - **Copilot prompt:**  
+    _"Create a sidebar menu with shadcn/ui and Tailwind, supporting dark/light mode and collapsible icons."_
+
+- **Top Bar (Secondary):**  
+  Place global actions (theme switcher, language selector, user menu, updates) in a sticky top bar above or beside the sidebar.  
+  - **Copilot prompt:**  
+    _"Implement a top bar with theme and language switchers, using shadcn/ui and Tailwind."_
+
+- **Tabs (Sub-navigation):**  
+  Use shadcn/ui's `Tabs` for sub-sections within a page (e.g., "Overview | Logs | Settings" for a given service).  
+  - **Copilot prompt:**  
+    _"Add tabs for logs and settings in a service detail view, using shadcn/ui Tabs."_
+
+- **Context Menus:**  
+  Use shadcn/ui's `ContextMenu` for right-click/“more” actions on project, database, or service items.  
+  - **Copilot prompt:**  
+    _"Add a context menu for each database row with edit/delete options using shadcn/ui."_
+
+- **Command Palette:**  
+  Add a command palette (Ctrl+P/Cmd+P) with shadcn/ui's `Command` for fast search, navigation, and command execution (power user feature).  
+  - **Copilot prompt:**  
+    _"Create a command palette using shadcn/ui Command for quick actions and navigation."_
+
+- **Floating Action Buttons:**  
+  For quick “add” actions (e.g., new project/database), use floating shadcn/ui `Button` with fixed positioning (optional, desktop only).
+
+**Guidelines:**  
+- All navigation must be accessible (keyboard, screen readers).
+- Sidebar and command palette are primary navigation for all major DevStackBox features.
+- Always use Tailwind and shadcn/ui components for styling and transitions (no custom CSS unless needed).
+
+---
+
+## 📦 10. Auto-Update & Issue Tracking
 
 - Releases and all auto-updates are via [GitHub Releases](https://github.com/ProgrammerNomad/DevStackBox/releases).
 - All bug/crash reporting and documentation is managed via [GitHub Issues](https://github.com/ProgrammerNomad/DevStackBox/issues) and [Wiki](https://github.com/ProgrammerNomad/DevStackBox/wiki).
 
 ---
 
-## 🤝 10. Contributing
+## 🤝 11. Contributing
 
 - Fork, branch, code, and PR as usual.
 - Use Copilot for both Rust (backend) and React (frontend) code.
