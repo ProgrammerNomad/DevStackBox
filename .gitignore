@@ -50,7 +50,7 @@ phpmyadmin/tmp/
 phpmyadmin/upload/
 
 # Large binary distributions (downloaded via setup script)
-apache/
+
 mysql/
 
 phpmyadmin/
