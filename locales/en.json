@@ -76,5 +76,17 @@
     "english": "English",
     "hindi": "हिन्दी",
     "switch": "Switch language"
+  },
+  "updater": {
+    "checkUpdates": "Check Updates",
+    "updateAvailable": "Update Available",
+    "newVersionAvailable": "A new version {{version}} is available!",
+    "downloaded": "downloaded",
+    "later": "Later",
+    "updateNow": "Update Now",
+    "downloading": "Downloading...",
+    "installAndRestart": "Installing and restarting...",
+    "upToDate": "You are up to date",
+    "checkingForUpdates": "Checking for updates..."
   }
 }

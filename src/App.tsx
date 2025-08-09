@@ -1,13 +1,14 @@
 import { useState, useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
-import { motion } from "framer-motion";
-import { Server, Command as CommandIcon } from "lucide-react";
+import { Server } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { LanguageSwitcher } from "./components/language-switcher";
+import { AutoUpdater } from "./components/auto-updater";
 import { Sidebar } from "./components/sidebar";
 import { CommandPalette } from "./components/command-palette";
 import { PHPVersionSelector } from "./components/php-version-selector";
@@ -23,19 +24,13 @@ function App() {
   const [currentPhpVersion, setCurrentPhpVersion] = useState("8.2");
   const [configView, setConfigView] = useState<'apache' | 'mysql' | null>(null);
 
-  // Stub function for command palette - services are now managed by individual pages
-  const handleServiceToggle = (service: string) => {
-    console.log(`Service toggle requested: ${service}. Navigate to Services page for full management.`);
-    setCurrentPage("services");
-  };
+  // Initialize app and check binaries
+  useEffect(() => {
+    initializeApp();
+  }, []);
 
-  // Initialize directory structure on startup
   const initializeApp = async () => {
     try {
-      await invoke('create_directory_structure');
-      console.log('Directory structure created successfully');
-      
-      // Check if binaries exist
       const binaries = await invoke('check_binaries') as Record<string, boolean>;
       console.log('Binary status:', binaries);
       
@@ -54,6 +49,11 @@ function App() {
     }
   };
 
+  // Stub function for command palette - services are now managed by individual pages
+  const handleServiceToggle = (service: string) => {
+    console.log(`Toggle ${service} service`);
+  };
+
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -67,41 +67,67 @@ function App() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  useEffect(() => {
-    initializeApp();
-  }, []);
-
   const renderPage = () => {
     switch (currentPage) {
       case "services":
+        return <ServicesPage 
+          currentPhpVersion={currentPhpVersion} 
+          onOpenPHPVersionSelector={() => setPhpVersionSelectorOpen(true)}
+        />;
+      
+      case "projects":
         return (
-          <ServicesPage
-            onOpenPHPVersionSelector={() => setPhpVersionSelectorOpen(true)}
-            currentPhpVersion={currentPhpVersion}
-          />
+          <div className="space-y-6">
+            <h2 className="text-3xl font-bold">{t('navigation.projects')}</h2>
+            <Card>
+              <CardHeader>
+                <CardTitle>Project Management</CardTitle>
+                <CardDescription>Manage your PHP projects and virtual hosts</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">{t('common.comingSoon')}</p>
+              </CardContent>
+            </Card>
+          </div>
+        );
+      
+      case "logs":
+        return (
+          <div className="space-y-6">
+            <h2 className="text-3xl font-bold">{t('navigation.logs')}</h2>
+            <Card>
+              <CardHeader>
+                <CardTitle>Log Viewer</CardTitle>
+                <CardDescription>View real-time logs from all services</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">{t('common.comingSoon')}</p>
+              </CardContent>
+            </Card>
+          </div>
         );
       
       case "settings":
         return (
           <div className="space-y-6">
-            <div className="flex justify-between items-center">
-              <h2 className="text-3xl font-bold">{t('navigation.settings')}</h2>
-              {configView && (
-                <Button
-                  onClick={() => setConfigView(null)}
-                  variant="outline"
-                  size="sm"
-                >
-                  Back to General Settings
-                </Button>
-              )}
-            </div>
+            <h2 className="text-3xl font-bold">{t('navigation.settings')}</h2>
             
             {configView === 'apache' ? (
               <Card>
                 <CardHeader>
-                  <CardTitle>Apache Configuration</CardTitle>
-                  <CardDescription>Configure Apache HTTP Server settings</CardDescription>
+                  <div className="flex items-center gap-2">
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={() => setConfigView(null)}
+                    >
+                      ← Back
+                    </Button>
+                    <div>
+                      <CardTitle>Apache Configuration</CardTitle>
+                      <CardDescription>Configure Apache HTTP server settings</CardDescription>
+                    </div>
+                  </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div>
@@ -127,8 +153,19 @@ function App() {
             ) : configView === 'mysql' ? (
               <Card>
                 <CardHeader>
-                  <CardTitle>MySQL Configuration</CardTitle>
-                  <CardDescription>Configure MySQL database server settings</CardDescription>
+                  <div className="flex items-center gap-2">
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={() => setConfigView(null)}
+                    >
+                      ← Back
+                    </Button>
+                    <div>
+                      <CardTitle>MySQL Configuration</CardTitle>
+                      <CardDescription>Configure MySQL database server settings</CardDescription>
+                    </div>
+                  </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div>
@@ -152,15 +189,44 @@ function App() {
                 </CardContent>
               </Card>
             ) : (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Application Settings</CardTitle>
-                  <CardDescription>Configure DevStackBox preferences</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground">{t('common.comingSoon')}</p>
-                </CardContent>
-              </Card>
+              <div className="space-y-4">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Configuration</CardTitle>
+                    <CardDescription>Manage server configuration files</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <Button 
+                        variant="outline" 
+                        onClick={() => setConfigView('apache')}
+                        className="h-20 flex flex-col gap-2"
+                      >
+                        <Server className="h-5 w-5" />
+                        Apache Config
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        onClick={() => setConfigView('mysql')}
+                        className="h-20 flex flex-col gap-2"
+                      >
+                        <Server className="h-5 w-5" />
+                        MySQL Config
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+                
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Application Settings</CardTitle>
+                    <CardDescription>Configure DevStackBox preferences</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground">{t('common.comingSoon')}</p>
+                  </CardContent>
+                </Card>
+              </div>
             )}
           </div>
         );
@@ -176,12 +242,15 @@ function App() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <p className="font-semibold">Version: 1.0.0</p>
+                  <p className="font-semibold">Version: 0.1.0-alpha.1</p>
                   <p className="text-sm text-muted-foreground">Built with Tauri, React, and Rust</p>
                 </div>
                 <div>
                   <p className="font-semibold">Author: Nomad Programmer</p>
                   <p className="text-sm text-muted-foreground">shiv@srapsware.com</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <AutoUpdater />
                 </div>
               </CardContent>
             </Card>
@@ -209,6 +278,33 @@ function App() {
           onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
         />
 
+        {/* Main Content */}
+        <div className={`transition-all duration-200 ${
+          sidebarCollapsed ? 'ml-16' : 'ml-64'
+        }`}>
+          {/* Top Bar */}
+          <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+            <div className="container mx-auto px-4 py-3 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Server className="h-5 w-5" />
+                <h1 className="text-lg font-semibold">DevStackBox</h1>
+                <Badge variant="outline" className="text-xs">v0.1.0-alpha.1</Badge>
+              </div>
+              
+              <div className="flex items-center gap-2">
+                <AutoUpdater />
+                <LanguageSwitcher />
+                <ThemeToggle />
+              </div>
+            </div>
+          </header>
+
+          {/* Page Content */}
+          <main className="container mx-auto px-4 py-6">
+            {renderPage()}
+          </main>
+        </div>
+
         {/* Command Palette */}
         <CommandPalette
           isOpen={commandPaletteOpen}
@@ -224,50 +320,6 @@ function App() {
           currentVersion={currentPhpVersion}
           onVersionChange={setCurrentPhpVersion}
         />
-
-        {/* Main Content */}
-        <div 
-          className={`transition-all duration-300 ${
-            sidebarCollapsed ? 'ml-16' : 'ml-60'
-          }`}
-        >
-          {/* Header */}
-          <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40">
-            <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <motion.div
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ duration: 0.5 }}
-                  className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center"
-                >
-                  <Server className="w-6 h-6 text-primary-foreground" />
-                </motion.div>
-                <div>
-                  <h1 className="text-2xl font-bold">{t('app.title')}</h1>
-                  <p className="text-muted-foreground text-sm">{t('app.subtitle')}</p>
-                </div>
-              </div>
-              <div className="flex items-center space-x-4">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => setCommandPaletteOpen(true)}
-                  title="Command Palette (Ctrl+P)"
-                >
-                  <CommandIcon className="h-[1.2rem] w-[1.2rem]" />
-                </Button>
-                <LanguageSwitcher />
-                <ThemeToggle />
-              </div>
-            </div>
-          </header>
-
-          {/* Page Content */}
-          <main className="container mx-auto px-4 py-8">
-            {renderPage()}
-          </main>
-        </div>
       </div>
     </ThemeProvider>
   );
