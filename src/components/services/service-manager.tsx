@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { useTranslation } from "react-i18next";
 import { invoke } from "@tauri-apps/api/core";
 import { motion } from "framer-motion";
 import { ApacheService, MySQLService, PHPService, ServiceStatus } from "./index";
@@ -21,7 +20,6 @@ export function ServiceManager({
   onOpenPHPVersionSelector,
   currentPhpVersion = "8.2"
 }: ServiceManagerProps) {
-  const { t } = useTranslation();
   const [services, setServices] = useState({
     apache: { running: false } as ServiceStatus,
     mysql: { running: false } as ServiceStatus,

@@ -3,7 +3,6 @@ use std::sync::{Arc, Mutex};
 use std::sync::LazyLock;
 use std::process::Command;
 use std::path::{Path, PathBuf};
-use std::fs;
 use std::time::Duration;
 use tokio::time::sleep;
 
@@ -1038,7 +1037,7 @@ pub fn run() {
             get_service_logs,
             create_directory_structure
         ])
-        .setup(|app| {
+        .setup(|_app| {
             println!("DevStackBox setup complete, window should be opening...");
             Ok(())
         })
