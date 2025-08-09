@@ -4,6 +4,8 @@
 
 Welcome to the first alpha release of DevStackBox - a lightweight, portable, open-source local development environment for PHP developers!
 
+*Note: This release uses version number 0.1.0-1 for MSI compatibility, but represents v0.1.0-alpha.1*
+
 ### ✨ Features
 
 - **MySQL Database**: Embedded MySQL 8.0 with GUI control

@@ -5,8 +5,8 @@ Write-Host "🚀 DevStackBox Release Helper" -ForegroundColor Green
 Write-Host "================================" -ForegroundColor Green
 
 # Check if build artifacts exist
-$msiPath = "src-tauri\target\release\bundle\msi\DevStackBox_0.1.0-alpha.1_x64_en-US.msi"
-$nsisPath = "src-tauri\target\release\bundle\nsis\DevStackBox_0.1.0-alpha.1_x64-setup.exe"
+$msiPath = "src-tauri\target\release\bundle\msi\DevStackBox_0.1.0-1_x64_en-US.msi"
+$nsisPath = "src-tauri\target\release\bundle\nsis\DevStackBox_0.1.0-1_x64-setup.exe"
 
 if (-not (Test-Path $msiPath)) {
     Write-Host "❌ MSI installer not found. Please run 'npm run tauri build' first." -ForegroundColor Red
@@ -43,8 +43,8 @@ Write-Host "1. Create a new release on GitHub: https://github.com/ProgrammerNoma
 Write-Host "2. Tag: v0.1.0-alpha.1"
 Write-Host "3. Title: DevStackBox v0.1.0-alpha.1 - First Alpha Release"
 Write-Host "4. Upload these files as release assets:"
-Write-Host "   - DevStackBox_0.1.0-alpha.1_x64_en-US.msi"
-Write-Host "   - DevStackBox_0.1.0-alpha.1_x64-setup.exe"
+Write-Host "   - DevStackBox_0.1.0-1_x64_en-US.msi"
+Write-Host "   - DevStackBox_0.1.0-1_x64-setup.exe"
 Write-Host "5. Use RELEASE_NOTES.md as the release description"
 Write-Host "6. Mark as 'Pre-release' since it's an alpha"
 Write-Host ""
