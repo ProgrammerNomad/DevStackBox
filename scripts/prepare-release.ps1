@@ -46,7 +46,7 @@ Write-Host "4. Upload these files as release assets:"
 Write-Host "   - DevStackBox_0.1.0-1_x64_en-US.msi"
 Write-Host "   - DevStackBox_0.1.0-1_x64-setup.exe"
 Write-Host "5. Use RELEASE_NOTES.md as the release description"
-Write-Host "6. Mark as 'Pre-release' since it's an alpha"
+Write-Host "6. Mark as 'Pre-release' since it is an alpha"
 Write-Host ""
 Write-Host "🔗 GitHub Release URL: https://github.com/ProgrammerNomad/DevStackBox/releases/new" -ForegroundColor Cyan
 
